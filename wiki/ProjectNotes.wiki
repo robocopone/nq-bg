@@ -1,5 +1,6 @@
-Sept 9 2008:	Setup CVS & CVSD on the server
-		Setup the external IP 192.195.227.69 for the server
+=== Sept 9 2008 ===
+  * Setup CVS & CVSD on the server
+  * Setup the external IP 192.195.227.69 for the server
 
 Sept 16 2008:	Setup DNS on the server
 		Setup nq-2.2 as the starting point in the CVS repository
