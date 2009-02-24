@@ -38,36 +38,28 @@
 
 === Nov 12 2008 ===
   * I am putting the opening braces for function definitions on their own lines because i think it looks the best.  I am beginning to think putting the opening braces for if/for/while statements on their own line as well because it looks better when the ( ) portion of the statement has to be broken into multiple lines.  Also when you are at the } end of the block of code, it is easier to see the beginning brace.
-
   * I am doing a 3 space indent because that is what I've always done.
   * I am not putting a space between a function and the opening (.  I am, however, putting a space after if/for/while because that is how I've always done it, and also because it differentiates them from functions.
   * I am limiting the width of the code to 74 characters on the recommendation of Dr. Morse.
-
   * Large comment blocks go as such, and are generally found before definitions and describe what the definition pertains to.
-
 {{{
 /**************************(fill to 74 characters)
 ** Comment
 ** comment
 */
 }}}
-
-Smaller comment blocks go as such, and are for comments within definitions
+  * Smaller comment blocks go as such, and are for comments within definitions
 {{{
 /*
 ** comment
 ** comment
 */
 }}}
-
-Smaller still, these comments are for short notes within code
+  * Smaller still, these comments are for short notes within code
 {{{
 /* comment */
 }}}
-
-In situations when a for does not require { } but the statement nested does I am added { } to the original for to err on the side of clarity
-For example
-
+  * In situations when a for does not require { } but the statement nested does I am added { } to the original for to err on the side of clarity.  For example:
 {{{
 for ( ; ; ) {
    if ( etc ) {
@@ -76,9 +68,7 @@ for ( ; ; ) {
    }
 }
 }}}
-
-Instead of
-
+  * Instead of
 {{{
 for ( ; ; )
    if ( etc ) {
