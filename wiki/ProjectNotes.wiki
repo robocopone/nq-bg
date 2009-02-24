@@ -44,37 +44,38 @@
   * I am limiting the width of the code to 74 characters on the recommendation of Dr. Morse.
 
   * Large comment blocks go as such, and are generally found before definitions and describe what the definition pertains to.
-/**************************(fill to 74 characters)
+
+{{{/**************************(fill to 74 characters)
 ** Comment
 ** comment
-*/
+*/}}}
 
 Smaller comment blocks go as such, and are for comments within definitions
-/*
+{{{/*
 ** comment
 ** comment
-*/
+*/}}}
 
 Smaller still, these comments are for short notes within code
-/* comment */
+{{{/* comment */}}}
 
 In situations when a for does not require { } but the statement nested does I am added { } to the original for to err on the side of clarity
 For example
 
-for ( ; ; ) {
+{{{for ( ; ; ) {
    if ( etc ) {
       etc;
       etc;
    }
-}
+}}}}
 
 Instead of
 
-for ( ; ; )
+{{{for ( ; ; )
    if ( etc ) {
       etc;
       etc;
-   }
+   }}}}
 
 === Jan  26 2009 ===
   * I modified the options routine to use getopt.  I tested the output for a file using every argument against the output of the original
