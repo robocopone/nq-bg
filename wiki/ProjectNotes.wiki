@@ -1,0 +1,13 @@
+#summary Project notes
+
+= Introduction =
+
+This page is for notes I have written up about the project as I go along.
+
+
+= Details =
+
+Add your content here.  Format your content with:
+  * Text in *bold* or _italic_
+  * Headings, paragraphs, and lists
+  * Automatic links to other wiki pages
