@@ -78,8 +78,4 @@ for ( ; ; )
 }}}
 
 === Jan  26 2009 ===
-  * I modified the options routine to use getopt.  I tested the output for a file using every argument against the output of the original
-		it matched perfectly except for the time spent processing lines.  I originally did this to see if it would fix an error that valgrind
-		is reporting, but it did not fix the error.  I would like to keep it because it offers more robust option processing & also fixed a
-		bug that existed in the old code that was calculating the wait improperly for the -t option. For example, 1d was processed as 24 seconds
-		rather than 24 hours.  Getopt is not ansi C however, so I had to remove the -std=c99 option in order to use it.
+  * I modified the options routine to use getopt.  I tested the output for a file using every argument against the output of the original, and it matched perfectly except for the time spent processing lines.  I originally did this to see if it would fix an error that valgrind is reporting, but it did not fix the error.  I would like to keep it because it offers more robust option processing & also fixed a bug that existed in the old code that was calculating the wait improperly for the -t option. For example, 1d was processed as 24 seconds	rather than 24 hours.  Getopt is not ansi C however, so I had to remove the -std=c99 option in order to use it.
