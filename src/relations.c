@@ -3,7 +3,7 @@
 **    relations.c                     NQ-BG                  Bradley Graber
 **                                                      bg41@evansville.edu
 **
-**    $Id: relations.c,v 1.6 2008-09-30 18:16:05 bg41 Exp $
+**    $Rev$
 */
 
 

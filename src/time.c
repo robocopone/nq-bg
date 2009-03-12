@@ -3,7 +3,7 @@
 **    time.c                         NQ-BG                   Bradley Graber
 **                                                      bg41@evansville.edu
 **
-**    $Id: time.c,v 1.3 2008-09-25 19:22:13 bg41 Exp $
+**    $Rev$
 */
 
 #include <stdio.h>

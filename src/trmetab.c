@@ -3,7 +3,7 @@
 **    trmetab.c                     NQ-BG                     Bradley Graber
 **                                                       bg41@evansville.edu
 **
-**    $Id: trmetab.c,v 1.5 2008-09-26 15:13:39 bg41 Exp $
+**    $Rev$
 */
 
 #include "nq.h"

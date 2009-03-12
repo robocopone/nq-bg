@@ -3,7 +3,7 @@
 **    pc.c                          NQ-BG                  Bradley Graber
 **                                                    bg41@evansville.edu
 **
-**    $Id: pc.c,v 1.6 2008-12-04 14:45:14 bg41 Exp $
+**    $Rev$
 */
 
 

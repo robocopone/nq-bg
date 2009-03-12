@@ -3,7 +3,7 @@
 **    engel.c                       NQ-BG                  Bradley Graber
 **                                                    bg41@evansville.edu
 **
-**    $Id: engel.c,v 1.5 2008-11-12 17:18:53 bg41 Exp $
+**    $Rev$
 */
 
 #include "nq.h"

@@ -3,7 +3,7 @@
 **    system.c                      NQ-BG                     Bradley Graber
 **                                                       bg41@evansville.edu
 **
-**    $Id: system.c,v 1.8 2008-10-30 19:08:24 bg41 Exp $
+**    $Rev$
 */
 
 #include <stdlib.h>

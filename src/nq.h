@@ -3,7 +3,7 @@
 **    nq.h                          NQ-BG                    Bradley Graber
 **                                                      bg41@evansville.edu
 **
-**   $Id: nq.h,v 1.2 2008-09-25 19:58:21 bg41 Exp $
+**   $Rev$
 */
 
 /*

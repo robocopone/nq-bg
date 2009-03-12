@@ -3,7 +3,7 @@
 **    gap.c                         NQ-BG                  Bradley Graber
 **                                                    bg41@evansville.edu
 **
-**    $Id: gap.c,v 1.9 2008-11-12 18:38:05 bg41 Exp $
+**    $Rev$
 */
 
 #include "nq.h"

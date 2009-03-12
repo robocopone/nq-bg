@@ -3,7 +3,7 @@
 **    presentation.c          Presentation                   Bradley Graber
 **                                                      bg41@evansville.edu
 **
-**    $Id: presentation.c,v 1.9 2008-09-30 16:44:12 bg41 Exp $
+**    $Rev$
 */
 
 #include <stdlib.h>

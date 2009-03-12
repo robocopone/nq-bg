@@ -3,7 +3,7 @@
 **    consistency.c                 NQ-BG                  Bradley Graber
 **                                                    bg41@evansville.edu
 **
-**    $Id: consistency.c,v 1.5 2008-11-12 16:58:12 bg41 Exp $
+**    $Rev$
 */
 
 

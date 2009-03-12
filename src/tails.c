@@ -3,7 +3,7 @@
 **    tails.c                       NQ-BG                    Bradley Graber
 **                                                      bg41@evansville.edu
 **
-**    $Id: tails.c,v 1.3 2008-09-30 18:06:10 bg41 Exp $
+**    $Rev$
 */
 
 
