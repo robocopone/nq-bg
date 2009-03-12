@@ -1,40 +1,13 @@
-=== Sept 9 2008 ===
-  * Setup CVS & CVSD on the server
-  * Setup the external IP 192.195.227.69 for the server
+=== Mar 12, 2009 ===
+  * I added the code to the SVN repository, and changed the $ID$ to $Rev$ because that is what SVN uses
+  * $Log$ is not supported in SVN for [http://subversion.tigris.org/faq.html#log-in-source this reason]
+  * I reversed the chronology of this file to make it easier to update
 
-=== Sept 16 2008===
-  * Setup DNS on the server
-  * Setup nq-2.2 as the starting point in the CVS repository
+=== Feb 24, 2009 ===
+  * I discovered Google's code site & decided to set up a project using it.
 
-=== Sept 18 2008 ===
-  * CVS Repository approved.
-  * Starting work on commenting and finding out why the test cases fail.
-
-=== Sept 23 2008 ===
-  * The date was wrong on the supplied control test cases.  It was July 2002, and needed to be January 2003.
-
-=== Sept 25 2008 ===
-  * Added the $Id$ and $Log$ to some files.  A style format needs to be set.
-  * Cleaned up the initial compiler errors.  All were caused by the lack of an #include, mostly <stdlib.h>
-  * Compiled with ANSI '99 Standard & discovered a ton of work.
-
-=== Sept 26 2008 ===
-  * ANSI '99 now has only 3 warnings.  $Id$ and $Log$ are on most source files.
-
-=== Sept 30 2008 ===
-  * I fixed the -Wall warnings.  It was mostly unused variables, uninitialized variables and mismatching data types in printf.
-
-=== Oct 2 2008 ===
-  * I installed GAP & considered some style changes for the project.
-
-=== Oct 28 2008 ===
-  * There are still a few problems with the C99 code standard.  Gethostname() is not supported, but is checked in the configure script.  The program also uses multi-threading which is not specified in C99.
-
-=== Oct 30 2008 ===
-  * If there is an ANSI compliant way to call sbrk(0) I can't find it...  I'm not sure why it is even necessary to report the size of memory used to compute.
-
-=== Nov 5 2008 ===
-  * The call to sbrk(0) is the only problem left to fix for ANSI compatibility.  I am converting all the code to a specific style now.  
+=== Jan 26 2009 ===
+  * I modified the options routine to use getopt.  I tested the output for a file using every argument against the output of the original, and it matched perfectly except for the time spent processing lines.  I originally did this to see if it would fix an error that valgrind is reporting, but it did not fix the error.  I would like to keep it because it offers more robust option processing & also fixed a bug that existed in the old code that was calculating the wait improperly for the -t option. For example, 1d was processed as 24 seconds	rather than 24 hours.  Getopt is not ansi C however, so I had to remove the -std=c99 option in order to use it.
 
 === Nov 12 2008 ===
   * I am putting the opening braces for function definitions on their own lines because i think it looks the best.  I am beginning to think putting the opening braces for if/for/while statements on their own line as well because it looks better when the ( ) portion of the statement has to be broken into multiple lines.  Also when you are at the } end of the block of code, it is easier to see the beginning brace.
@@ -77,8 +50,41 @@ for ( ; ; )
    }
 }}}
 
-=== Jan 26 2009 ===
-  * I modified the options routine to use getopt.  I tested the output for a file using every argument against the output of the original, and it matched perfectly except for the time spent processing lines.  I originally did this to see if it would fix an error that valgrind is reporting, but it did not fix the error.  I would like to keep it because it offers more robust option processing & also fixed a bug that existed in the old code that was calculating the wait improperly for the -t option. For example, 1d was processed as 24 seconds	rather than 24 hours.  Getopt is not ansi C however, so I had to remove the -std=c99 option in order to use it.
+=== Nov 5 2008 ===
+  * The call to sbrk(0) is the only problem left to fix for ANSI compatibility.  I am converting all the code to a specific style now.  
 
-=== Feb 24, 2009 ===
-  * I discovered Google's code site & decided to set up a project using it.
+=== Oct 30 2008 ===
+  * If there is an ANSI compliant way to call sbrk(0) I can't find it...  I'm not sure why it is even necessary to report the size of memory used to compute.
+
+=== Oct 28 2008 ===
+  * There are still a few problems with the C99 code standard.  Gethostname() is not supported, but is checked in the configure script.  The program also uses multi-threading which is not specified in C99.
+
+=== Oct 2 2008 ===
+  * I installed GAP & considered some style changes for the project.
+
+=== Sept 30 2008 ===
+  * I fixed the -Wall warnings.  It was mostly unused variables, uninitialized variables and mismatching data types in printf.
+
+=== Sept 26 2008 ===
+  * ANSI '99 now has only 3 warnings.  $Id$ and $Log$ are on most source files.
+
+=== Sept 25 2008 ===
+  * Added the $Id$ and $Log$ to some files.  A style format needs to be set.
+  * Cleaned up the initial compiler errors.  All were caused by the lack of an #include, mostly <stdlib.h>
+  * Compiled with ANSI '99 Standard & discovered a ton of work.
+
+=== Sept 23 2008 ===
+  * The date was wrong on the supplied control test cases.  It was July 2002, and needed to be January 2003.
+
+=== Sept 18 2008 ===
+  * CVS Repository approved.
+  * Starting work on commenting and finding out why the test cases fail.
+
+=== Sept 16 2008===
+  * Setup DNS on the server
+  * Setup nq-2.2 as the starting point in the CVS repository
+
+=== Sept 9 2008 ===
+  * Setup CVS & CVSD on the server
+  * Setup the external IP 192.195.227.69 for the server
+
