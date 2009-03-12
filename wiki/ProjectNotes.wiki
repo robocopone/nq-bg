@@ -1,6 +1,6 @@
 === Mar 12, 2009 ===
   * I added the code to the SVN repository, and changed the $ID$ to $Rev$ because that is what SVN uses
-  * $Log$ is not supported in SVN for [http://subversion.tigris.org/faq.html#log-in-source this reason]
+  * $Log$ is not supported in SVN for [http://subversion.tigris.org/faq.html#log-in-source this reason].  I have left the old CVS logs, however.
   * I reversed the chronology of this file to make it easier to update
 
 === Feb 24, 2009 ===
@@ -87,4 +87,3 @@ for ( ; ; )
 === Sept 9 2008 ===
   * Setup CVS & CVSD on the server
   * Setup the external IP 192.195.227.69 for the server
-
