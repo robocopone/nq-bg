@@ -3,7 +3,7 @@
 **    mem.c                         NQ-BG                  Bradley Graber
 **                                                    bg41@evansville.edu
 **
-**    $Id: mem.c,v 1.5 2008-11-18 16:20:39 bg41 Exp $
+**    $Rev$
 */
 
 #include <stdio.h>

@@ -3,7 +3,7 @@
 **    collect.c                     NQ-BG                  Bradley Graber
 **                                                    bg41@evansville.edu
 **
-**    $Id: collect.c,v 1.9 2008-11-12 16:36:34 bg41 Exp $
+**    $Rev$
 */
 
 #include <stdlib.h>

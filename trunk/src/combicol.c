@@ -3,7 +3,7 @@
 **    combicol.c                    NQ-BG                  Bradley Graber
 **                                                    bg41@evansville.edu
 **
-**    $Id: combicol.c,v 1.5 2008-11-12 16:53:09 bg41 Exp $
+**    $Rev$
 */
 
 #include "mem.h"

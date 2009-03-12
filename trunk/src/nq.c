@@ -3,7 +3,7 @@
 **    nq.c                          NQ-BG                  Bradley Graber
 **                                                    bg41@evansville.edu
 **
-**    $Id: nq.c,v 1.11 2008-11-18 16:26:03 bg41 Exp $
+**    $Rev$
 */
 
 #include <stdlib.h>

@@ -3,7 +3,7 @@
 **    eliminate.c                   NQ-BG                  Bradley Graber
 **                                                    bg41@evansville.edu
 **
-**    $Id: eliminate.c,v 1.8 2008-11-12 17:13:02 bg41 Exp $
+**    $Rev$
 */
 
 

@@ -3,7 +3,7 @@
 **    addgen.c                      NQ-BG                  Bradley Graber
 **                                                    bg41@evansville.edu
 **
-**    $Id: addgen.c,v 1.9 2008-11-12 16:10:01 bg41 Exp $
+**    $Rev$
 */
 
 #include <stdlib.h>

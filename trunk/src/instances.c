@@ -3,7 +3,7 @@
 **    instances.c                   NQ-BG                  Bradley Graber
 **                                                    bg41@evansville.edu
 **
-**    $Id: instances.c,v 1.4 2008-11-18 16:16:33 bg41 Exp $
+**    $Rev$
 */
 
 

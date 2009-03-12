@@ -3,7 +3,7 @@
 **    pcarith.c                     NQ-BG                  Bradley Graber
 **                                                    bg41@evansville.edu
 **
-**    $Id: pcarith.c,v 1.3 2008-11-18 17:03:41 bg41 Exp $
+**    $Rev$
 **
 **  This file contains an arithmetic for elements of a group that is
 **  given by a polycyclic presentation. The elements are in generator

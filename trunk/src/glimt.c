@@ -3,7 +3,7 @@
 **    glimt.c                       NQ-BG                  Bradley Graber
 **                                                    bg41@evansville.edu
 **
-**    $Id: glimt.c,v 1.8 2008-11-12 19:25:02 bg41 Exp $
+**    $Rev$
 */
 
 #include <stdlib.h>
