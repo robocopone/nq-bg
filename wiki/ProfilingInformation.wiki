@@ -2,7 +2,8 @@
 
 == Initial Run - March 17, 2009 ==
 
-  * G2 is omitted because it runs too quickly to generate interesting information
+  * G2 is omitted because it runs too quickly to generate interesting information.
+  * All runtimes were ~45-60 seconds.
 <table> 
 <tr valign=top> 
 
