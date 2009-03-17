@@ -4,6 +4,7 @@
 
 === G1 ===
 
+  * Upper bound is Class 18
   * Flat Profile (Functions using > 1% of the total time)
 {{{
   %   cumulative   self              self     total
@@ -129,3 +130,21 @@ index % time    self  children    called     name
   * This test file executes too quickly to generate any interesting information.
 
 === G3 ===
+
+  * Upper bound is class 55
+  * Flat Profile (Functions using > 1% of the total time)
+{{{
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls  ms/call  ms/call  name    
+ 51.97      2.51     2.51   363935     0.01     0.01  SimpleCollect
+ 19.77      3.46     0.95 11954180     0.00     0.00  vSub
+  9.94      3.94     0.48    29830     0.02     0.02  elimRHS
+  3.11      4.09     0.15    87786     0.00     0.03  do_cba
+  2.69      4.22     0.13  6746491     0.00     0.00  ltom
+  2.07      4.33     0.10    89095     0.00     0.02  addRow
+  1.86      4.42     0.09    55291     0.00     0.01  vReduce
+  1.76      4.50     0.09     4759     0.02     0.20  lastReduce
+  1.66      4.58     0.08    55291     0.00     0.00  freeVector
+  1.24      4.64     0.06    12384     0.00     0.04  do_cnb
+  1.04      4.69     0.05  6912673     0.00     0.00  Free
+}}}
