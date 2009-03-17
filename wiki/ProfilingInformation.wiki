@@ -2,12 +2,12 @@
 
 == Initial Run - March 17, 2009 ==
 
-|| table || cells ||
-
 === G1 ===
 
   * Upper bound is Class 18
   * Flat Profile (Functions using > 1% of the total time)
+
+|| 
 {{{
   %   cumulative   self              self     total
  time   seconds   seconds    calls  ms/call  ms/call  name
@@ -15,7 +15,7 @@
  17.02      3.42     0.65  6236599     0.00     0.00  vSub
   7.07      3.69     0.27     8590     0.03     0.03  elimRHS
   1.05      3.73     0.04     1285     0.03     0.53  lastReduce
-}}}
+}}} || right ||
 
   * Call Graph for relevant functions
 {{{
