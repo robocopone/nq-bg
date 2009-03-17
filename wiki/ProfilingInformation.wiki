@@ -127,3 +127,5 @@ index % time    self  children    called     name
 === G2 ===
 
   * This test file executes too quickly to generate any interesting information.
+
+=== G3 ===
