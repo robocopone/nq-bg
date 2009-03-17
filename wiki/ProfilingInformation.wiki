@@ -2,6 +2,8 @@
 
 == Initial Run - March 17, 2009 ==
 
+|| table || cells ||
+
 === G1 ===
 
   * Upper bound is Class 18
