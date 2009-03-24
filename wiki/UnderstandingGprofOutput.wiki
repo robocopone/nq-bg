@@ -1,9 +1,4 @@
-[http://code.google.com/p/nq-bg/wiki/UnderstandingGprofOutput#flatprofile Understanding the Flat Profile] <BR>
-[http://code.google.com/p/nq-bg/wiki/UnderstandingGprofOutput#callgraph Understanding the Call Graph]
-
-<a id="bookmark" name="flatprofile">
 =How to Understand the Flat Profile=
-</a>
 
 The flat profile shows the total amount of time your program spent executing each function. 
 {{{
@@ -44,9 +39,7 @@ Each sample counts as 0.01 seconds.
   * name
     * This is the name of the function. The flat profile is sorted by this field alphabetically after the self seconds field is sorted.
 
-<a id="bookmark" name="callgraph">
 =How to Read the Call Graph=
-</a>
 
 The call graph shows how much time was spent in each function and its children. From this information, you can find functions that, while they themselves may not have used much time, called other functions that did use unusual amounts of time.
 
