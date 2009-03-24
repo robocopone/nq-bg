@@ -1,3 +1,6 @@
+=== Mar 24, 2009 ===
+  * I added the gprof information for the initial run.
+
 === Mar 12, 2009 ===
   * I added the code to the SVN repository, and changed the $ID$ to $Rev$ because that is what SVN uses
   * $Log$ is not supported in SVN for [http://subversion.tigris.org/faq.html#log-in-source this reason].  I have left the old CVS logs, however.
