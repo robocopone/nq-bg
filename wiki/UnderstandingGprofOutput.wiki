@@ -1,3 +1,5 @@
+<wiki:toc max_depth="1" />
+
 =How to Understand the Flat Profile=
 
 The flat profile shows the total amount of time your program spent executing each function. 
