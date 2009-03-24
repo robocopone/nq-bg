@@ -1,4 +1,4 @@
-<wiki:toc max_depth="1" />
+<wiki:toc max_depth="2" />
 
 =How to Understand the Flat Profile=
 
@@ -82,7 +82,7 @@ In each entry, the primary line is the one that starts with an index number in s
 
 The entries are sorted by time spent in the function and its subroutines.
 
-===The Primary Line===
+==The Primary Line==
 
 The primary line in a call graph entry is the line that describes the function which the entry is about and gives the overall statistics for this function.
 
@@ -115,7 +115,7 @@ If the function is part of a cycle of recursion, the cycle number is printed bet
 
 gnurr <cycle 1> `[12]`
 
-===Lines for a Function's Callers===
+==Lines for a Function's Callers==
 
 A function's entry has a line for each function it was called by. These lines' fields correspond to the fields of the primary line, but their meanings are different because of the difference in context.
 
@@ -142,7 +142,7 @@ Here are the meanings of the fields in the caller-line for report called from ma
 
 If the identity of the callers of a function cannot be determined, a dummy caller-line is printed which has `'<spontaneous>'` as the "caller's name" and all other fields blank. This can happen for signal handlers. 
 
-===Lines for a Function's Subroutines===
+==Lines for a Function's Subroutines==
 
 A function's entry has a line for each of its subroutines--in other words, a line for each other function that it called. These lines' fields correspond to the fields of the primary line, but their meanings are different because of the difference in context.
 
