@@ -8,7 +8,6 @@
 
 <td>
 === G1 ===
-
   * Upper bound is Class 24
   * total runtime : 56467 msec
   * Flat Profile (Functions using > 1% of the total time) 
@@ -23,7 +22,6 @@
 
 <td>
 === G3 ===
-
   * Upper bound is class 75
   * total runtime : 54479 msec
   * Flat Profile (Functions using > 1% of the total time)
