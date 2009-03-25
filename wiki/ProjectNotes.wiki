@@ -1,6 +1,6 @@
 === Mar 25, 2009 ===
-  * vSub analasys.
-    * [http://www.google.com/codesearch/p?hl=en#1psUwYYcK9c/trunk/src/glimt.c&q=vsub&exact_package=http://nq-bg.googlecode.com/svn&l=471 vSub] is the bottleneck function in G4 & G5.
+  * [http://www.google.com/codesearch/p?hl=en#1psUwYYcK9c/trunk/src/glimt.c&q=vsub&exact_package=http://nq-bg.googlecode.com/svn&l=471 vSub] analasys.
+    *  vSub is the bottleneck function in G4 & G5.
     * This is not because the function takes a long time to execute, however.  The function takes essentially no time to execute, but is called 324 million times by the function lastReduce (Defined directly below vSub).  Any increase in efficency, therefore, would be achieved through reducing the amount of times lastReduce calls vSub.
     * lastReduce consists soley of the following code.
 {{{
@@ -8,6 +8,10 @@
        for ( j = i-1; j >= 0; j-- )
           vSub( Matrix[j], Matrix[i], Heads[i] );
 }}}
+  * [http://www.google.com/codesearch/p?hl=en#1psUwYYcK9c/trunk/src/collect.c&q=simplecollect&exact_package=http://nq-bg.googlecode.com/svn&l=62 simpleCollect] analasys
+    *  simpleCollect is the bottleneck function in G1 & G2.  vSub plays a role in bogging the program down also, but not nearly as much as it does in G4 & G5.
+    * simpleCollect is nearly the slowest function in the program, but is also called 300k times.
+    * simpleCollect is called exclusivly from Collect, which is defined directly below simpleCollect.  Collect is also called 300k times, and is called from multiple other subroutines.  Reducing the number of times the function is called would probably very arduous.  Focusing on increasing the speed of the function would probably be the best route to reducing this bottleneck.
 
 === Mar 24, 2009 ===
   * I added the gprof information for the initial run.
