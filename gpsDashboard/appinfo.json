@@ -1,0 +1,9 @@
+{
+	"id": "net.bradleygraber.gpsdashboard",
+	"version": "1.0.0",
+	"vendor": "Bradley Graber",
+	"type": "web",
+	"main": "index.html",
+	"title": "gpsDashboard",
+	"icon": "icon.png"
+}
