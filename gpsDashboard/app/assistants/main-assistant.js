@@ -13,7 +13,7 @@ MainAssistant.prototype.setup = function() {
 	this.scrim = Mojo.View.createScrim(this.controller.document, {scrimClass:'palm-scrim'});
 	this.controller.get('exScrim').appendChild(this.scrim).appendChild($('spinner'));
 
-	this.controller.get('announce').update("Getting GPS coordinates...");	
+	//this.controller.get('announce').update("Getting GPS information...");	
 }
 
 MainAssistant.prototype.activate = function(event) {
@@ -43,9 +43,51 @@ MainAssistant.prototype.handleServiceResponse = function(event) {
 	this.controller.get('announce').update("");	
 	this.scrim.hide();
 	if (event.errorCode == 0) 
-	{	this.controller.get('speed').update("Speed: " + (event.velocity * 2.23693629).toFixed(1) + " mph");
-		this.controller.get('altitude').update("Altitude: " + (event.altitude * 3.2808399).toFixed(1) + " feet");
-		this.controller.get('heading').update("Heading: " + event.heading + " degrees");
+	{	
+		if ( (event.heading >= 348.75 && event.heading <= 360) ||
+			 (event.heading >=0 && event.heading < 11.25) )
+			this.controller.get('heading').update("Heading: North");
+		if (event.heading >= 11.25 && event.heading < 33.75)
+			this.controller.get('heading').update("Heading: North-northeast");
+		if (event.heading >= 33.75 && event.heading < 56.25)
+			this.controller.get('heading').update("Heading: Northeast");
+		if (event.heading >= 56.25 && event.heading < 78.75)
+			this.controller.get('heading').update("Heading: East-northeast");
+		if (event.heading >= 78.75 && event.heading < 101.25)
+			this.controller.get('heading').update("Heading: East");
+		if (event.heading >= 101.25 && event.heading < 123.75)
+			this.controller.get('heading').update("Heading: East-southeast");
+		if (event.heading >= 123.75 && event.heading < 146.25)
+			this.controller.get('heading').update("Heading: Southeast");
+		if (event.heading >= 146.25 && event.heading < 168.75)
+			this.controller.get('heading').update("Heading: South-southeast");
+		if (event.heading >= 168.75 && event.heading < 191.25)
+			this.controller.get('heading').update("Heading: South");
+		if (event.heading >= 191.25 && event.heading < 213.75)
+			this.controller.get('heading').update("Heading: South-southwest");
+		if (event.heading >= 213.75 && event.heading < 236.25)
+			this.controller.get('heading').update("Heading: Southwest");
+		if (event.heading >= 236.25 && event.heading < 258.75)
+			this.controller.get('heading').update("Heading: West-southwest");
+		if (event.heading >= 258.75 && event.heading < 281.25)
+			this.controller.get('heading').update("Heading: West");
+		if (event.heading >= 281.25 && event.heading < 303.75)
+			this.controller.get('heading').update("Heading: West-northwest");
+		if (event.heading >= 303.75 && event.heading < 326.25)
+			this.controller.get('heading').update("Heading: Northwest");
+		if (event.heading >= 326.25 && event.heading < 348.75)
+			this.controller.get('heading').update("Heading: North-northwest");
+
+		if (event.velocity == 0) {
+			this.controller.get('speed').update("speed: -");
+			this.controller.get('heading').update("Heading: -");
+		} else
+			this.controller.get('speed').update("Speed: " + (event.velocity * 2.23693629).toFixed(1) + " mph");
+		if (event.vertAccuracy == 0)
+			this.controller.get('altitude').update("Altitude: -");
+		else
+			this.controller.get('altitude').update("Altitude: " + (event.altitude * 3.2808399).toFixed(1) + " feet");
+
 		if (event.horizAccuracy > 999)
 			this.controller.get('accuracy').update("Accuracy:  Poor");
 		else if (event.horizAccuracy > 99)

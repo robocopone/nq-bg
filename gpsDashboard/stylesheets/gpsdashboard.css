@@ -1,9 +1,13 @@
+#head {
+	text-align: center;
+	font-size: 150%;
+}
 #announce {
 	text-align: center;
-	margin-top: 50px;
+	margin-top: 25px;
 }
 #speed {
-	margin-top: 50px;
+	margin-top: 25px;
 	margin-left: 20px;
 	font-size: 150%;
 }
