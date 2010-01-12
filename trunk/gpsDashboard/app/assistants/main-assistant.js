@@ -13,7 +13,7 @@ MainAssistant.prototype.setup = function() {
 	this.scrim = Mojo.View.createScrim(this.controller.document, {scrimClass:'palm-scrim'});
 	this.controller.get('exScrim').appendChild(this.scrim).appendChild($('spinner'));
 
-	this.controller.get('speed').update("Getting GPS coordinates...");	
+	this.controller.get('announce').update("Getting GPS coordinates...");	
 }
 
 MainAssistant.prototype.activate = function(event) {
@@ -40,6 +40,7 @@ MainAssistant.prototype.cleanup = function(event) {
 }
 
 MainAssistant.prototype.handleServiceResponse = function(event) {
+	this.controller.get('announce').update("");	
 	this.scrim.hide();
 	if (event.errorCode == 0) 
 	{	this.controller.get('speed').update("Speed: " + (event.velocity * 2.23693629).toFixed(1) + " mph");
