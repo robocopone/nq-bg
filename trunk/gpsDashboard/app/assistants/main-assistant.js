@@ -105,6 +105,7 @@ MainAssistant.prototype.handleServiceResponseError = function(event) {
 	this.controller.stageController.pushScene("gpsError", event.errorCode);
 }
 
+/*
 MainAssistant.prototype.handleCommand = function (event) {
 	if (event.type == Mojo.Event.commandEnable &&
 	   (event.command == Mojo.Menu.helpCmd)) 
@@ -125,5 +126,6 @@ MainAssistant.prototype.handleCommand = function (event) {
 				Mojo.Controller.stageController.pushScene('preferences');
 				break;
 		}
-	}	
+	}
 }
+*/	
