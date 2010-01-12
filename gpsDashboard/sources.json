@@ -11,5 +11,9 @@
     {
         "scenes": "preferences",
         "source": "app/assistants/preferences-assistant.js"
+    },
+    {
+        "scenes": "gpsError",
+        "source": "app/assistants/gpsError-assistant.js"
     }
 ]
