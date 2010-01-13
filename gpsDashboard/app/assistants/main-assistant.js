@@ -20,8 +20,6 @@ MainAssistant.prototype.setup = function() {
 MainAssistant.prototype.activate = function(event) {
 	if (gpsDashboard.backlight == 1)
 		this.controller.stageController.setWindowProperties({blockScreenTimeout: true});
-	else if (gpsDashboard.backlight == 2)
-		this.controller.stageController.setWindowProperties({blockScreenTimeout: false});
 
 	this.trackingHandle = this.controller.serviceRequest
 	(	'palm://com.palm.location', 
@@ -38,10 +36,12 @@ MainAssistant.prototype.activate = function(event) {
 
 
 MainAssistant.prototype.deactivate = function(event) {
+	this.controller.stageController.setWindowProperties({blockScreenTimeout: false});
 	this.trackingHandle.cancel(); 
 }
 
 MainAssistant.prototype.cleanup = function(event) {
+	this.controller.stageController.setWindowProperties({blockScreenTimeout: false});
 	this.trackingHandle.cancel(); 
 }
 
@@ -131,7 +131,8 @@ MainAssistant.prototype.handleCommand = function (event) {
 	if (event.type == Mojo.Event.command) {
 		switch (event.command) {
 			case Mojo.Menu.helpCmd:
-				Mojo.Controller.stageController.pushScene('support');
+//				Mojo.Controller.stageController.pushScene('support');
+				Mojo.Controller.stageController.pushAppSupportInfoScene();
 				break;
 			case Mojo.Menu.prefsCmd:
 				Mojo.Controller.stageController.pushScene('preferences');
