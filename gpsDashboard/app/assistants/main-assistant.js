@@ -1,26 +1,53 @@
+/*
+ *	gpsDashboard environment
+ */
 gpsDashboard = { };
 gpsDashboard.units = 1;
 gpsDashboard.backlight = 1;
 
+gpsDashboard.cookie = ({
+	initialize: function() {
+		this.cookieData = new Mojo.Model.Cookie("netBradleyGraberGPSDashboardPrefs");
+		storedPrefs = this.cookieData.get();
+		if (storedPrefs){
+			gpsDashboard.units = storedPrefs.units;
+			gpsDashboard.backlight = storedPrefs.backlight;
+		}
+		this.storeCookie();
+	},
+	storeCookie: function() {
+		this.cookieData.put({  
+			units: gpsDashboard.units,                                                
+			backlight: gpsDashboard.backlight,
+		});		
+	}
+});
+
+/*
+ * 	Main Scene
+ */
 function MainAssistant() {
 }
 
 MainAssistant.prototype.setup = function() {
+	gpsDashboard.cookie.initialize();
 	if (this.controller.stageController.setWindowOrientation) {
 		this.controller.stageController.setWindowOrientation("free");
 	}	
+
 	this.controller.setupWidget("spinner", 
 								this.spinnerAttr = { spinnerSize: 'large'},
 								this.model = { spinning: true } 
 								);
 	this.scrim = Mojo.View.createScrim(this.controller.document, {scrimClass:'palm-scrim'});
-	this.controller.get('exScrim').appendChild(this.scrim).appendChild($('spinner'));
+	this.controller.get('scrim').appendChild(this.scrim).appendChild($('spinner'));
 }
 
 MainAssistant.prototype.activate = function(event) {
 	if (gpsDashboard.backlight == 1)
 		this.controller.stageController.setWindowProperties({blockScreenTimeout: true});
 
+	// GPS Information gathering
 	this.trackingHandle = this.controller.serviceRequest
 	(	'palm://com.palm.location', 
 		{	method : 'startTracking', 
@@ -34,23 +61,11 @@ MainAssistant.prototype.activate = function(event) {
 	);
 }
 
-
-MainAssistant.prototype.deactivate = function(event) {
-	this.controller.stageController.setWindowProperties({blockScreenTimeout: false});
-	this.trackingHandle.cancel(); 
-}
-
-MainAssistant.prototype.cleanup = function(event) {
-	this.controller.stageController.setWindowProperties({blockScreenTimeout: false});
-	this.trackingHandle.cancel(); 
-}
-
 MainAssistant.prototype.handleServiceResponse = function(event) {
 	this.controller.get('announce').update("");	
 	this.scrim.hide();
 	if (event.errorCode == 0) 
-	{	
-		if ( (event.heading >= 348.75 && event.heading <= 360) ||
+	{	if ( (event.heading >= 348.75 && event.heading <= 360) ||
 			 (event.heading >=0 && event.heading < 11.25) )
 			this.controller.get('heading').update("Heading: North");
 		if (event.heading >= 11.25 && event.heading < 33.75)
@@ -117,6 +132,16 @@ MainAssistant.prototype.handleServiceResponseError = function(event) {
 	this.controller.stageController.pushScene("gpsError", event.errorCode);
 }
 
+MainAssistant.prototype.deactivate = function(event) {
+	this.controller.stageController.setWindowProperties({blockScreenTimeout: false});
+	this.trackingHandle.cancel(); 
+}
+
+MainAssistant.prototype.cleanup = function(event) {
+	this.controller.stageController.setWindowProperties({blockScreenTimeout: false});
+	this.trackingHandle.cancel(); 
+}
+
 MainAssistant.prototype.handleCommand = function (event) {
 	if (event.type == Mojo.Event.commandEnable &&
 	   (event.command == Mojo.Menu.helpCmd)) 
@@ -131,7 +156,6 @@ MainAssistant.prototype.handleCommand = function (event) {
 	if (event.type == Mojo.Event.command) {
 		switch (event.command) {
 			case Mojo.Menu.helpCmd:
-//				Mojo.Controller.stageController.pushScene('support');
 				Mojo.Controller.stageController.pushAppSupportInfoScene();
 				break;
 			case Mojo.Menu.prefsCmd:

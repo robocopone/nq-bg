@@ -51,10 +51,12 @@ PreferencesAssistant.prototype.setup = function() {
 }
 PreferencesAssistant.prototype.changeUnitsSelector = function(event) {
 	gpsDashboard.units = this.unitsSelectorModel.value;
+	gpsDashboard.cookie.storeCookie();
 }
 
 PreferencesAssistant.prototype.changeBacklightSelector = function(event){
 	gpsDashboard.backlight = this.backlightSelectorModel.value;
+	gpsDashboard.cookie.storeCookie();
 }
 
 PreferencesAssistant.prototype.activate = function(event) {
