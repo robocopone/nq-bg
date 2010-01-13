@@ -7,5 +7,13 @@
 	"title": "gpsDashboard",
 	"icon": "icon.png",
 	"noDeprecatedStyles": "true",
-	"theme": "light"
+	"theme": "light",
+	"copyright": "Copyright 2010 Bradley Graber",
+	"support": 
+	{	"email": 
+		{	address: "bradgraber@gmail.com",
+			subject: "Support"
+		},
+		"phone": "812-488-2068"
+	}
 }

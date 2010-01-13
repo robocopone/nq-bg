@@ -62,7 +62,6 @@ PreferencesAssistant.prototype.changeBacklightSelector = function(event){
 PreferencesAssistant.prototype.activate = function(event) {
 }
 
-
 PreferencesAssistant.prototype.deactivate = function(event) {
 }
 
