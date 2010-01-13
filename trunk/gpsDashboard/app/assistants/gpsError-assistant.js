@@ -24,7 +24,6 @@ GpsErrorAssistant.prototype.setup = function() {
 GpsErrorAssistant.prototype.activate = function(event) {
 }
 
-
 GpsErrorAssistant.prototype.deactivate = function(event) {
 }
 
