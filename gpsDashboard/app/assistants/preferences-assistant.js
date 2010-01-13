@@ -2,36 +2,59 @@ function PreferencesAssistant() {
 }
 
 PreferencesAssistant.prototype.setup = function() {
+	//Units Selector Widget
 	this.controller.setupWidget(
-		"exampleSelector1",
-		this.attributes = {
-			label: "One",
+		"unitsSelector",
+		this.unitsSelectorAttributes = {
+			label: "Units",
 			choices: [
-				{label: "One", value: 1},
-				{label: "Two", value: 2},
-				{label: "Three", value: 3}
+				{label: "Miles/Feet", value: 1},
+				{label: "Kilometers/Meters", value: 2},
 			],
 		},
-		this.model = {
-			value: 3,
+		this.unitsSelectorModel = {
+			value: gpsDashboard.units,
 			disabled: false
 		}
 	);
+	//Units Selector Handler
+	this.changeUnitsSelectorHandler = this.changeUnitsSelector.bindAsEventListener(this);
+	this.controller.listen(
+		"unitsSelector",
+		Mojo.Event.propertyChange,
+		this.changeUnitsSelectorHandler
+	);
+	
+	//Backlight Selector Widget
 	this.controller.setupWidget(
-		"exampleSelector2",
-		this.attributes = {
-			label: "Two",
+		"backlightSelector",
+		this.backlightSelectorAttributes = {
+			label: "Backlight",
 			choices: [
-				{label: "One", value: 1},
-				{label: "Two", value: 2},
-				{label: "Three", value: 3}
+				{label: "Always On", value: 1},
+				{label: "Device Settings", value: 2},
 			],
 		},
-		this.model = {
-			value: 3,
+		this.backlightSelectorModel = {
+			value: gpsDashboard.backlight,
 			disabled: false
 		}
 	);
+	//Backlight Selector Handler
+	this.changeBacklightSelectorHandler = this.changeBacklightSelector.bindAsEventListener(this);
+	this.controller.listen(
+		"backlightSelector", 
+		Mojo.Event.propertyChange,
+		this.changeBacklightSelectorHandler
+	);
+
+}
+PreferencesAssistant.prototype.changeUnitsSelector = function(event) {
+	gpsDashboard.units = this.unitsSelectorModel.value;
+}
+
+PreferencesAssistant.prototype.changeBacklightSelector = function(event){
+	gpsDashboard.backlight = this.backlightSelectorModel.value;
 }
 
 PreferencesAssistant.prototype.activate = function(event) {

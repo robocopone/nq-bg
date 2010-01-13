@@ -1,3 +1,6 @@
+gpsDashboard = { };
+gpsDashboard.units = 1;
+gpsDashboard.backlight = 1;
 
 function MainAssistant() {
 }
@@ -12,11 +15,14 @@ MainAssistant.prototype.setup = function() {
 								);
 	this.scrim = Mojo.View.createScrim(this.controller.document, {scrimClass:'palm-scrim'});
 	this.controller.get('exScrim').appendChild(this.scrim).appendChild($('spinner'));
-
-	//this.controller.get('announce').update("Getting GPS information...");	
 }
 
 MainAssistant.prototype.activate = function(event) {
+	if (gpsDashboard.backlight == 1)
+		this.controller.stageController.setWindowProperties({blockScreenTimeout: true});
+	else if (gpsDashboard.backlight == 2)
+		this.controller.stageController.setWindowProperties({blockScreenTimeout: false});
+
 	this.trackingHandle = this.controller.serviceRequest
 	(	'palm://com.palm.location', 
 		{	method : 'startTracking', 
@@ -81,12 +87,18 @@ MainAssistant.prototype.handleServiceResponse = function(event) {
 		if (event.velocity == 0) {
 			this.controller.get('speed').update("speed: -");
 			this.controller.get('heading').update("Heading: -");
-		} else
+		}
+		else if (gpsDashboard.units == 1)
 			this.controller.get('speed').update("Speed: " + (event.velocity * 2.23693629).toFixed(1) + " mph");
+		else if (gpsDashboard.units == 2)
+			this.controller.get('speed').update("Speed: " + (event.velocity * 3.6).toFixed(1) + " kph");
+			
 		if (event.vertAccuracy == 0)
 			this.controller.get('altitude').update("Altitude: -");
-		else
+		else if (gpsDashboard.units == 1)
 			this.controller.get('altitude').update("Altitude: " + (event.altitude * 3.2808399).toFixed(1) + " feet");
+		else if (gpsDashboard.units == 2)
+			this.controller.get('altitude').update("Altitude: " + event.altitude.toFixed(1) + " meters");
 
 		if (event.horizAccuracy > 999)
 			this.controller.get('accuracy').update("Accuracy:  Poor");
