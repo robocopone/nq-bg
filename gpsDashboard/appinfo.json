@@ -10,10 +10,7 @@
 	"theme": "light",
 	"copyright": "Copyright 2010 Bradley Graber",
 	"support": 
-	{	"email": 
-		{	address: "bradgraber@gmail.com",
-			subject: "Support"
-		},
+	{	"url": "http://www.facebook.com/bradley.graber",
 		"phone": "812-488-2068"
 	}
 }
