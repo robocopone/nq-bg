@@ -1,6 +1,5 @@
 #head {
 	text-align: center;
-	font-size: 150%;
 }
 #announce {
 	text-align: center;
@@ -9,10 +8,8 @@
 #speed {
 	margin-top: 25px;
 	margin-left: 20px;
-	font-size: 150%;
 }
 .announcement {
 	margin-top: 10px;
 	margin-left: 20px;
-	font-size: 150%;
 }

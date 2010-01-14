@@ -10,9 +10,9 @@ GpsErrorAssistant.prototype.setup = function() {
 	if (this.errCode == 3)
 		this.controller.get('message').update("Unknown Error");
 	if (this.errCode == 4)
-		this.controller.get('message').update("GPS Permanent Error, no more GPS fixes");
+		this.controller.get('message').update("Check Location Services to ensure that GPS Fixes are turned on");
 	if (this.errCode == 5)
-		this.controller.get('message').update("Error: Location Services is Off");
+		this.controller.get('message').update("Error: Location Services are Off");
 	if (this.errCode == 6)
 		this.controller.get('message').update("Error: You have not accepted Location Services terms of service");
 	if (this.errCode == 7)
