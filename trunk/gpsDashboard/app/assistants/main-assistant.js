@@ -63,8 +63,21 @@ MainAssistant.prototype.activate = function(event) {
 		}
 	);
 }
+MainAssistant.prototype.handleReverseResponse = function( event ) {
+	add = event.address.split(";");
+	this.controller.get('address1').update(add[0]);
+	this.controller.get('address2').update(add[1]);
+}
+MainAssistant.prototype.handleReverseResponseError = function(event){
+}
 
 MainAssistant.prototype.handleServiceResponse = function( event ) {
+	this.controller.serviceRequest('palm://com.palm.location', {
+		method: "getReverseLocation",
+		parameters: { latitude: event.latitude, longitude: event.longitude},
+		onSuccess: this.handleReverseResponse.bind(this),
+		onFailure: this.handleReverseResponseError.bind(this)
+	});
 	this.controller.get('announce').update("");	
 	this.scrim.hide();
 	if (event.errorCode == 0) 
