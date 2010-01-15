@@ -5,9 +5,9 @@ gpsDashboard = { };
 gpsDashboard.units = 1;
 gpsDashboard.backlight = 1;
 gpsDashboard.avgSpeed = { count: 0, value: 0 };
-gpsDashboard.prevLoc = { };
+gpsDashboard.initialLoc = { };
 gpsDashboard.tripometer = 0;
-
+gpsDashboard.iteration = 0;
 gpsDashboard.cookie = ({
 	initialize: function() {
 		this.cookieData = new Mojo.Model.Cookie("netBradleyGraberGPSDashboardPrefs");
@@ -31,12 +31,37 @@ gpsDashboard.cookie = ({
  */
 function MainAssistant() {
 }
-
+MainAssistant.prototype.handleOrientation = function( event ) {
+	if (event.position == 4 || event.position == 5) {
+		this.controller.get('heading').style.width = "42.5%";
+		this.controller.get('heading').style.float = "left";
+		this.controller.get('speed').style.width = "42.5%";
+		this.controller.get('speed').style.float = "left";
+		this.controller.get('altitude').style.width = "42.5%";
+		this.controller.get('altitude').style.float = "left";
+		this.controller.get('accuracy').style.width = "42.5%";
+		this.controller.get('accuracy').style.float = "left";
+		this.controller.get('calcSpeed').style.width = "42.5%";
+		this.controller.get('calcSpeed').style.float = "left";
+		this.controller.get('address').style.width = "42.5%";
+		this.controller.get('address').style.float = "right";
+	}
+	if (event.position == 2 || event.position == 3) {
+		this.controller.get('heading').style.width = "85%";
+		this.controller.get('speed').style.width = "85%";
+		this.controller.get('altitude').style.width = "85%";
+		this.controller.get('accuracy').style.width = "85%";
+		this.controller.get('calcSpeed').style.width = "85%";		
+		this.controller.get('address').style.width = "85%";
+	}
+}
 MainAssistant.prototype.setup = function() {
 	gpsDashboard.cookie.initialize();
 	if (this.controller.stageController.setWindowOrientation) {
 		this.controller.stageController.setWindowOrientation("free");
 	}	
+	this.controller.listen(document, 'orientationchange', this.handleOrientation.bindAsEventListener(this));
+
 
 	this.controller.setupWidget("spinner", 
 								this.spinnerAttr = { spinnerSize: 'large'},
@@ -69,20 +94,25 @@ MainAssistant.prototype.handleReverseResponse = function( event ) {
 	this.controller.get('address2').update(add[1]);
 }
 MainAssistant.prototype.handleReverseResponseError = function(event){
+	this.controller.get('address1').update(event.errorCode);
 }
 
 MainAssistant.prototype.handleServiceResponse = function( event ) {
-	this.controller.serviceRequest('palm://com.palm.location', {
-		method: "getReverseLocation",
-		parameters: { latitude: event.latitude, longitude: event.longitude},
-		onSuccess: this.handleReverseResponse.bind(this),
-		onFailure: this.handleReverseResponseError.bind(this)
-	});
-	this.controller.get('announce').update("");	
-	this.scrim.hide();
+    gpsDashboard.iteration++;
+	if (gpsDashboard.iteration == 1) {
+		this.controller.get('announce').update("");	
+		this.scrim.hide();
+		gpsDashboard.initialLoc = event;
+	}
+	if (gpsDashboard.iteration % 10 == 1)
+		this.controller.serviceRequest('palm://com.palm.location', {
+			method: "getReverseLocation",
+			parameters: { latitude: event.latitude, longitude: event.longitude},
+			onSuccess: this.handleReverseResponse.bind(this),
+			onFailure: this.handleReverseResponseError.bind(this)
+		});
 	if (event.errorCode == 0) 
-	{	
-		this.controller.get('heading').update(this.heading(event));
+	{	this.controller.get('heading').update(this.heading(event));
 		this.controller.get('speed').update(this.speed(event));
 		this.controller.get('altitude').update(this.altitude(event));
 		this.controller.get('accuracy').update(this.accuracy(event));
@@ -99,11 +129,11 @@ MainAssistant.prototype.calcSpeed = function( event ){
 	if (gpsDashboard.units = 1)
 		return "Calculated Speed: " +
 			(this.calcDist(gpsDashboard.prevLoc, event) / 
-			 this.calcTime(gpsDashboard.prevLoc, event) * .621371192).toFixed(1) + " mph";
+			 this.calcTime(gpsDashboard.prevLoc, event) * 3600 * .621371192).toFixed(1) + " mph";
 	if (gpsDashboard.units = 2)
 		return "Calculated Speed: " +
 			(this.calcDist(gpsDashboard.prevLoc, event) / 
-		 	 this.calcTime(gpsDashboard.prevLoc, event)).toFixed(1) + " kph";
+		 	 this.calcTime(gpsDashboard.prevLoc, event) * 3600).toFixed(1) + " kph";
 }
 MainAssistant.prototype.calcTime = function( event1, event2 ) {
 	return (event2.timestamp - event1.timestamp) / 1000;
@@ -127,7 +157,6 @@ MainAssistant.prototype.handleServiceResponseError = function(event) {
 }
 
 MainAssistant.prototype.deactivate = function(event) {
-	this.controller.get('speed').update("Deactivated");
 	this.controller.stageController.setWindowProperties({blockScreenTimeout: false});
 	this.trackingHandle.cancel(); 
 }
