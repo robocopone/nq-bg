@@ -10,16 +10,31 @@
 
 <div id="announce">Getting GPS information...</div>
 
-	<div id="speed"></div>
-	<div id="Avg Speed"></div>
-	<div id="calcSpeed" class="announcement"></div>
-	<div id="heading" class="announcement"></div>
-	<div id="altitude" class="announcement"></div>
-	<div id="accuracy" class="announcement"></div>
 
-	<div id="address" class="palm-group">
-		<div class="palm-group-title">Address</div>
-		<div id="address1"></div>
-		<div id="address2"></div>
-	</div>
+
+<div id="leftGroup">
+	<table id="table" style="width: 100%; margin: 0;">
+		<tbody>
+			<tr>
+				<th style="width: 28%">Speed:</th>
+				<td style="width:38%"><div id="speed"></div></td>
+				<td><div id="heading"></div></td>
+			</tr>
+			<tr>
+				<th>Altitude:</th>
+				<td><div id="altitude"></div></td>
+			</tr>
+			<tr>
+				<th>Accuracy:</th>
+				<td><div id="accuracy"></div></td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+
+<div id="address" class="palm-group">
+	<div class="palm-group-title">Address</div>
+	<div id="address1"></div>
+	<div id="address2"></div>
+</div>
 

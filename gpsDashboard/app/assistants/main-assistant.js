@@ -33,28 +33,15 @@ function MainAssistant() {
 }
 MainAssistant.prototype.handleOrientation = function( event ) {
 	if (event.position == 4 || event.position == 5) {
-		this.controller.get('heading').style.width = "42.5%";
-		this.controller.get('heading').style.float = "left";
-		this.controller.get('speed').style.width = "42.5%";
-		this.controller.get('speed').style.float = "left";
-		this.controller.get('altitude').style.width = "42.5%";
-		this.controller.get('altitude').style.float = "left";
-		this.controller.get('accuracy').style.width = "42.5%";
-		this.controller.get('accuracy').style.float = "left";
-		this.controller.get('calcSpeed').style.width = "42.5%";
-		this.controller.get('calcSpeed').style.float = "left";
-		this.controller.get('address').style.width = "42.5%";
-		this.controller.get('address').style.float = "right";
-	}
+		this.controller.get('address').addClassName('landscape');
+		this.controller.get('leftGroup').addClassName('landscape');
+	}	
 	if (event.position == 2 || event.position == 3) {
-		this.controller.get('heading').style.width = "85%";
-		this.controller.get('speed').style.width = "85%";
-		this.controller.get('altitude').style.width = "85%";
-		this.controller.get('accuracy').style.width = "85%";
-		this.controller.get('calcSpeed').style.width = "85%";		
-		this.controller.get('address').style.width = "85%";
+		this.controller.get('address').removeClassName('landscape');
+		this.controller.get('leftGroup').removeClassName('landscape');
 	}
 }
+
 MainAssistant.prototype.setup = function() {
 	gpsDashboard.cookie.initialize();
 	if (this.controller.stageController.setWindowOrientation) {
@@ -63,6 +50,7 @@ MainAssistant.prototype.setup = function() {
 	this.controller.listen(document, 'orientationchange', this.handleOrientation.bindAsEventListener(this));
 
 
+	this.controller.get('address').addClassName('hidden');
 	this.controller.setupWidget("spinner", 
 								this.spinnerAttr = { spinnerSize: 'large'},
 								this.model = { spinning: true } 
@@ -90,6 +78,7 @@ MainAssistant.prototype.activate = function(event) {
 }
 MainAssistant.prototype.handleReverseResponse = function( event ) {
 	add = event.address.split(";");
+	this.controller.get('address').removeClassName('hidden');
 	this.controller.get('address1').update(add[0]);
 	this.controller.get('address2').update(add[1]);
 }
@@ -100,7 +89,7 @@ MainAssistant.prototype.handleReverseResponseError = function(event){
 MainAssistant.prototype.handleServiceResponse = function( event ) {
     gpsDashboard.iteration++;
 	if (gpsDashboard.iteration == 1) {
-		this.controller.get('announce').update("");	
+		this.controller.get('announce').addClassName('hidden');	
 		this.scrim.hide();
 		gpsDashboard.initialLoc = event;
 	}
@@ -190,65 +179,65 @@ MainAssistant.prototype.handleCommand = function (event) {
 }
 MainAssistant.prototype.heading = function(event){
 	if (event.velocity == 0)
-		return "Heading: -";
+		return "";
 	if ((event.heading >= 348.75 && event.heading <= 360) ||
 		(event.heading >= 0 && event.heading < 11.25)		) 
-		return "Heading: North";
+		return "N";
 	if (event.heading >= 11.25 && event.heading < 33.75) 
-		return "Heading: North-northeast";
+		return "NNE";
 	if (event.heading >= 33.75 && event.heading < 56.25) 
-		return "Heading: Northeast";
+		return "NE";
 	if (event.heading >= 56.25 && event.heading < 78.75) 
-		return "Heading: East-northeast";
+		return "ENE";
 	if (event.heading >= 78.75 && event.heading < 101.25) 
-		return "Heading: East";
+		return "E";
 	if (event.heading >= 101.25 && event.heading < 123.75) 
-		return "Heading: East-southeast";
+		return "ESE";
 	if (event.heading >= 123.75 && event.heading < 146.25) 
-		return "Heading: Southeast";
+		return "SE";
 	if (event.heading >= 146.25 && event.heading < 168.75) 
-		return "Heading: South-southeast";
+		return "SSE";
 	if (event.heading >= 168.75 && event.heading < 191.25) 
-		return "Heading: South";
+		return "S";
 	if (event.heading >= 191.25 && event.heading < 213.75) 
-		return "Heading: South-southwest";
+		return "SSW";
 	if (event.heading >= 213.75 && event.heading < 236.25) 
-		return "Heading: Southwest";
+		return "SW";
 	if (event.heading >= 236.25 && event.heading < 258.75) 
-		return "Heading: West-southwest";
+		return "WSW";
 	if (event.heading >= 258.75 && event.heading < 281.25) 
-		return "Heading: West";
+		return "W";
 	if (event.heading >= 281.25 && event.heading < 303.75) 
-		return "Heading: West-northwest";
+		return "WNW";
 	if (event.heading >= 303.75 && event.heading < 326.25) 
-		return "Heading: Northwest";
+		return "NW";
 	if (event.heading >= 326.25 && event.heading < 348.75) 
-		return "Heading: North-northwest";
+		return "NNW";
 }
 MainAssistant.prototype.speed = function(event) {
 	if (event.velocity == 0)
-		return "Speed: -";
+		return "-";
 	if (gpsDashboard.units == 1)
-		return "Speed: " + (event.velocity * 2.23693629).toFixed(1) + " mph";
+		return (event.velocity * 2.23693629).toFixed(1) + " mph";
 	if (gpsDashboard.units == 2)
-		return "Speed: " + (event.velocity * 3.6).toFixed(1) + " kph";
+		return (event.velocity * 3.6).toFixed(1) + " kph";
 }
 MainAssistant.prototype.altitude = function(event){
 	if (event.vertAccuracy == 0)
-		return "Altitude: -";
+		return "-";
 	if (gpsDashboard.units == 1)
-		return "Altitude: " + (event.altitude * 3.2808399).toFixed(1) + " feet";
+		return (event.altitude * 3.2808399).toFixed(1) + " feet";
 	if (gpsDashboard.units == 2)
-		return "Altitude: " + event.altitude.toFixed(1) + " meters";
+		return event.altitude.toFixed(1) + " meters";
 }
 MainAssistant.prototype.accuracy = function(event){
 	if (event.horizAccuracy > 999) 
-		return "Accuracy:  Poor";
+		return "Poor";
 	if (event.horizAccuracy > 99) 
-		return "Accuracy:  Medium";
+		return "Medium";
 	if (event.horizAccuracy > 9) 
-		return "Accuracy:  Good";
-	return "Accuracy: Excellent";
+		return "Good";
+	return "Excellent";
 }
 Number.prototype.toRad = function() {  // convert degrees to radians
   return this * Math.PI / 180;
