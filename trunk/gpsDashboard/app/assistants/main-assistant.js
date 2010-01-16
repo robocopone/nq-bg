@@ -8,6 +8,7 @@ gpsDashboard.avgSpeed = { count: 0, value: 0 };
 gpsDashboard.initialLoc = { };
 gpsDashboard.tripometer = 0;
 gpsDashboard.iteration = 0;
+
 gpsDashboard.cookie = ({
 	initialize: function() {
 		this.cookieData = new Mojo.Model.Cookie("netBradleyGraberGPSDashboardPrefs");
@@ -30,16 +31,6 @@ gpsDashboard.cookie = ({
  * 	Main Scene
  */
 function MainAssistant() {
-}
-MainAssistant.prototype.handleOrientation = function( event ) {
-	if (event.position == 4 || event.position == 5) {
-		this.controller.get('address').addClassName('landscape');
-		this.controller.get('leftGroup').addClassName('landscape');
-	}	
-	if (event.position == 2 || event.position == 3) {
-		this.controller.get('address').removeClassName('landscape');
-		this.controller.get('leftGroup').removeClassName('landscape');
-	}
 }
 
 MainAssistant.prototype.setup = function() {
@@ -69,33 +60,6 @@ MainAssistant.prototype.setup = function() {
 	Mojo.Event.listen(this.controller.get('addressButton'),Mojo.Event.tap, this.getAddressListener)
 }
 
-MainAssistant.prototype.getAddress = function(){
-	this.controller.serviceRequest('palm://com.palm.location', {
-		method: "getReverseLocation",
-		parameters: {
-			latitude: gpsDashboard.prevLoc.latitude,
-			longitude: gpsDashboard.prevLoc.longitude
-		},
-		onSuccess: this.handleReverseResponse.bind(this),
-		onFailure: this.handleReverseResponseError.bind(this)
-	});
-}
-
-MainAssistant.prototype.handleReverseResponse = function( event ) {
-	this.buttonWidget = this.controller.get('addressButton');
-	this.buttonWidget.mojo.deactivate();
-
-	add = event.address.split(";");
-	this.controller.get('address').removeClassName('hidden');
-	this.controller.get('address1').update(add[0]);
-	this.controller.get('address2').update(add[1]);
-}
-
-MainAssistant.prototype.handleReverseResponseError = function(event){
-	this.controller.get('address1').update(event.errorCode);
-}
-
-
 MainAssistant.prototype.activate = function(event) {
 	if (gpsDashboard.backlight == 1)
 		this.controller.stageController.setWindowProperties({blockScreenTimeout: true});
@@ -112,6 +76,18 @@ MainAssistant.prototype.activate = function(event) {
 			onFailure: this.handleServiceResponseError.bind(this)
 		}
 	);
+}
+
+MainAssistant.prototype.getAddress = function(){
+	this.controller.serviceRequest('palm://com.palm.location', {
+		method: "getReverseLocation",
+		parameters: {
+			latitude: gpsDashboard.prevLoc.latitude,
+			longitude: gpsDashboard.prevLoc.longitude
+		},
+		onSuccess: this.handleReverseResponse.bind(this),
+		onFailure: this.handleReverseResponseError.bind(this)
+	});
 }
 
 MainAssistant.prototype.handleServiceResponse = function( event ) {
@@ -133,6 +109,24 @@ MainAssistant.prototype.handleServiceResponse = function( event ) {
 		this.controller.stageController.pushScene("gpsError", event.errorCode);
 }
 
+MainAssistant.prototype.handleServiceResponseError = function(event) {
+	this.controller.stageController.pushScene("gpsError", event.errorCode);
+}
+
+MainAssistant.prototype.handleReverseResponse = function( event ) {
+	this.buttonWidget = this.controller.get('addressButton');
+	this.buttonWidget.mojo.deactivate();
+
+	add = event.address.split(";");
+	this.controller.get('address').removeClassName('hidden');
+	this.controller.get('address1').update(add[0]);
+	this.controller.get('address2').update(add[1]);
+}
+
+MainAssistant.prototype.handleReverseResponseError = function(event){
+	this.controller.get('address1').update(event.errorCode);
+}
+
 MainAssistant.prototype.calcSpeed = function( event ){
 	if (!gpsDashboard.prevLoc)
 		return "Calculated Speed: -";
@@ -145,9 +139,11 @@ MainAssistant.prototype.calcSpeed = function( event ){
 			(this.calcDist(gpsDashboard.prevLoc, event) / 
 		 	 this.calcTime(gpsDashboard.prevLoc, event) * 3600).toFixed(1) + " kph";
 }
+
 MainAssistant.prototype.calcTime = function( event1, event2 ) {
 	return (event2.timestamp - event1.timestamp) / 1000;
 }
+
 MainAssistant.prototype.calcDist = function( point1, point2 ) {
 	dLat = point2.latitude - point1.latitude;
 	dLon = point2.longitude - point1.longitude;
@@ -162,10 +158,6 @@ MainAssistant.prototype.calcDist = function( point1, point2 ) {
 	return dist;
 }
 
-MainAssistant.prototype.handleServiceResponseError = function(event) {
-	this.controller.stageController.pushScene("gpsError", event.errorCode);
-}
-
 MainAssistant.prototype.deactivate = function(event) {
 	this.controller.stageController.setWindowProperties({blockScreenTimeout: false});
 	this.trackingHandle.cancel(); 
@@ -174,6 +166,17 @@ MainAssistant.prototype.deactivate = function(event) {
 MainAssistant.prototype.cleanup = function(event) {
 	this.controller.stageController.setWindowProperties({blockScreenTimeout: false});
 	this.trackingHandle.cancel(); 
+}
+
+MainAssistant.prototype.handleOrientation = function( event ) {
+	if (event.position == 4 || event.position == 5) {
+		this.controller.get('address').addClassName('landscape');
+		this.controller.get('leftGroup').addClassName('landscape');
+	}	
+	if (event.position == 2 || event.position == 3) {
+		this.controller.get('address').removeClassName('landscape');
+		this.controller.get('leftGroup').removeClassName('landscape');
+	}
 }
 
 MainAssistant.prototype.handleCommand = function (event) {
@@ -198,6 +201,7 @@ MainAssistant.prototype.handleCommand = function (event) {
 		}
 	}
 }
+
 MainAssistant.prototype.heading = function(event){
 	if (event.velocity == 0)
 		return "";
@@ -235,6 +239,7 @@ MainAssistant.prototype.heading = function(event){
 	if (event.heading >= 326.25 && event.heading < 348.75) 
 		return "NNW";
 }
+
 MainAssistant.prototype.speed = function(event) {
 	if (event.velocity == 0)
 		return "-";
@@ -243,6 +248,7 @@ MainAssistant.prototype.speed = function(event) {
 	if (gpsDashboard.units == 2)
 		return (event.velocity * 3.6).toFixed(1) + " kph";
 }
+
 MainAssistant.prototype.altitude = function(event){
 	if (event.vertAccuracy == 0)
 		return "-";
@@ -251,6 +257,7 @@ MainAssistant.prototype.altitude = function(event){
 	if (gpsDashboard.units == 2)
 		return event.altitude.toFixed(1) + " meters";
 }
+
 MainAssistant.prototype.accuracy = function(event){
 	if (event.horizAccuracy > 999) 
 		return "Poor";
@@ -260,6 +267,7 @@ MainAssistant.prototype.accuracy = function(event){
 		return "Good";
 	return "Excellent";
 }
+
 Number.prototype.toRad = function() {  // convert degrees to radians
   return this * Math.PI / 180;
 }
