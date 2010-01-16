@@ -15,17 +15,34 @@
 	opacity: 0;
 }
 
-#leftGroup {
-	padding: 0;
-	border: 0;
-	margin: 0;
-	margin-top: 50px;
-/*	margin-left: 20px; */
-
-/*	width: 85%; */
-	float: none;
+.heading {
+	font-weight: bold;
+	float: left;
+	margin-bottom: 5px;
 }
-#leftGroup.landscape {
+.data {
+	float: left;
+	margin-left: 10px;
+	margin-bottom: 5px;
+	width: 50%;
+}
+.tripData {
+	float: left;
+	margin-left: 10px;
+	margin-bottom: 5px;
+	width: 70%;
+}
+
+#tripInfo{
+	height: 105px;
+	font-size: medium;
+}
+
+#currentInfo {
+	margin-top: 50px;
+	height: 80px;
+}
+#currentInfo.landscape {
 	margin-top: 50px;
 	margin-left: 20px;
 
