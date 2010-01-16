@@ -57,7 +57,44 @@ MainAssistant.prototype.setup = function() {
 								);
 	this.scrim = Mojo.View.createScrim(this.controller.document, {scrimClass:'palm-scrim'});
 	this.controller.get('scrim').appendChild(this.scrim).appendChild($('spinner'));
+
+	this.controller.setupWidget('addressButton', this.atts = {
+		type: Mojo.Widget.activityButton
+	}, this.model = {
+		buttonLabel: 'Get Address',
+		buttonClass: 'affirmative',
+		disabled: false
+	});
+	this.getAddressListener = this.getAddress.bind(this);
+	Mojo.Event.listen(this.controller.get('addressButton'),Mojo.Event.tap, this.getAddressListener)
 }
+
+MainAssistant.prototype.getAddress = function(){
+	this.controller.serviceRequest('palm://com.palm.location', {
+		method: "getReverseLocation",
+		parameters: {
+			latitude: gpsDashboard.prevLoc.latitude,
+			longitude: gpsDashboard.prevLoc.longitude
+		},
+		onSuccess: this.handleReverseResponse.bind(this),
+		onFailure: this.handleReverseResponseError.bind(this)
+	});
+}
+
+MainAssistant.prototype.handleReverseResponse = function( event ) {
+	this.buttonWidget = this.controller.get('addressButton');
+	this.buttonWidget.mojo.deactivate();
+
+	add = event.address.split(";");
+	this.controller.get('address').removeClassName('hidden');
+	this.controller.get('address1').update(add[0]);
+	this.controller.get('address2').update(add[1]);
+}
+
+MainAssistant.prototype.handleReverseResponseError = function(event){
+	this.controller.get('address1').update(event.errorCode);
+}
+
 
 MainAssistant.prototype.activate = function(event) {
 	if (gpsDashboard.backlight == 1)
@@ -76,15 +113,6 @@ MainAssistant.prototype.activate = function(event) {
 		}
 	);
 }
-MainAssistant.prototype.handleReverseResponse = function( event ) {
-	add = event.address.split(";");
-	this.controller.get('address').removeClassName('hidden');
-	this.controller.get('address1').update(add[0]);
-	this.controller.get('address2').update(add[1]);
-}
-MainAssistant.prototype.handleReverseResponseError = function(event){
-	this.controller.get('address1').update(event.errorCode);
-}
 
 MainAssistant.prototype.handleServiceResponse = function( event ) {
     gpsDashboard.iteration++;
@@ -93,19 +121,12 @@ MainAssistant.prototype.handleServiceResponse = function( event ) {
 		this.scrim.hide();
 		gpsDashboard.initialLoc = event;
 	}
-	if (gpsDashboard.iteration % 10 == 1)
-		this.controller.serviceRequest('palm://com.palm.location', {
-			method: "getReverseLocation",
-			parameters: { latitude: event.latitude, longitude: event.longitude},
-			onSuccess: this.handleReverseResponse.bind(this),
-			onFailure: this.handleReverseResponseError.bind(this)
-		});
 	if (event.errorCode == 0) 
 	{	this.controller.get('heading').update(this.heading(event));
 		this.controller.get('speed').update(this.speed(event));
 		this.controller.get('altitude').update(this.altitude(event));
 		this.controller.get('accuracy').update(this.accuracy(event));
-		this.controller.get('calcSpeed').update(this.calcSpeed(event));
+		//this.controller.get('calcSpeed').update(this.calcSpeed(event));
 		gpsDashboard.prevLoc = event;
 	}
 	else
