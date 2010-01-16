@@ -34,13 +34,13 @@
 }
 
 #tripInfo{
-	height: 105px;
+	height: 90px;
 	font-size: medium;
 }
 
 #currentInfo {
 	margin-top: 50px;
-	height: 80px;
+	height: 90px;
 }
 #currentInfo.landscape {
 	margin-top: 50px;
