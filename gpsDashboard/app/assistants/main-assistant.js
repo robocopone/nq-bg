@@ -57,7 +57,8 @@ MainAssistant.prototype.setup = function() {
 		disabled: false
 	});
 	this.getAddressListener = this.getAddress.bind(this);
-	Mojo.Event.listen(this.controller.get('addressButton'),Mojo.Event.tap, this.getAddressListener)
+	Mojo.Event.listen(this.controller.get('addressButton'),Mojo.Event.tap, this.getAddressListener);
+	//this.controller.setupWidget('avgSpeedReset', {}, {buttonLabel: 'Reset'});	
 }
 
 MainAssistant.prototype.activate = function(event) {
@@ -102,11 +103,30 @@ MainAssistant.prototype.handleServiceResponse = function( event ) {
 		this.controller.get('speed').update(this.speed(event));
 		this.controller.get('altitude').update(this.altitude(event));
 		this.controller.get('accuracy').update(this.accuracy(event));
-		//this.controller.get('calcSpeed').update(this.calcSpeed(event));
+		this.controller.get('avgSpeed').update(this.avgSpeed(event));
+		this.controller.get('distTraveled').update(this.distTraveled(event));
+		this.controller.get('distFromInit').update(this.distFromInit(event));
+		this.controller.get('lifeDist').update(this.lifeDist(event));
 		gpsDashboard.prevLoc = event;
 	}
 	else
 		this.controller.stageController.pushScene("gpsError", event.errorCode);
+}
+
+MainAssistant.prototype.distFromInit = function( event ) {
+	return "000.0 miles";
+}
+
+MainAssistant.prototype.lifeDist = function( event ) {
+	return "000.0 miles";
+}
+
+MainAssistant.prototype.avgSpeed = function( event ) {
+	return "000.0 mph";
+}
+
+MainAssistant.prototype.distTraveled = function( event ) {
+	return "000.0 miles";
 }
 
 MainAssistant.prototype.handleServiceResponseError = function(event) {
