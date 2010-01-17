@@ -4,20 +4,19 @@
 gpsDashboard = { };
 gpsDashboard.units = 1;
 gpsDashboard.backlight = 1;
-gpsDashboard.avgSpeed = { count: 0, value: 0 };
-gpsDashboard.initialLoc = { };
-gpsDashboard.prevLoc = { };
-gpsDashboard.tripometer = 0;
+gpsDashboard.avgSpeedPref = 1;
+gpsDashboard.tripometer = {time: 0, dist: 0};
 gpsDashboard.iteration = 0;
 gpsDashboard.lifeDist = 0;
 
 gpsDashboard.cookie = ({
 	initialize: function() {
-		this.cookieData = new Mojo.Model.Cookie("netBradleyGraberGPSDashboardPrefs");
+		this.cookieData = new Mojo.Model.Cookie("netBradleyGraberGPSDashboardData");
 		storedData = this.cookieData.get();
 		if (storedData){
 			gpsDashboard.units = storedData.units;
 			gpsDashboard.backlight = storedData.backlight;
+			gpsDashboard.avgSpeedPref = storedData.avgSpeedPref;
 			gpsDashboard.lifeDist = storedData.lifeDist;
 		}
 		this.storeCookie();
@@ -26,7 +25,8 @@ gpsDashboard.cookie = ({
 		this.cookieData.put({  
 			units: gpsDashboard.units,                                                
 			backlight: gpsDashboard.backlight,
-			lifeDist: gpsDashboard.lifeDist
+			lifeDist: gpsDashboard.lifeDist,
+			avgSpeedPref: gpsDashboard.avgSpeedPref
 		});		
 	}
 });
@@ -60,7 +60,6 @@ MainAssistant.prototype.setup = function(){
 	});
 	this.controller.get('scrim').appendChild(this.scrim).appendChild(this.controller.get('spinner'));
 
-
 	this.controller.setupWidget('addressButton', this.atts = {
 		type: Mojo.Widget.activityButton
 	}, this.model = {
@@ -69,7 +68,7 @@ MainAssistant.prototype.setup = function(){
 		disabled: false
 	});
 	this.getAddressListener = this.getAddress.bind(this);
-	Mojo.Event.listen(this.controller.get('addressButton'),Mojo.Event.tap, this.getAddressListener);
+	this.controller.listen(this.controller.get('addressButton'),Mojo.Event.tap, this.getAddressListener);
 	//this.controller.setupWidget('avgSpeedReset', {}, {buttonLabel: 'Reset'});	
 }
 
@@ -112,20 +111,29 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 		this.controller.get('currentInfo').removeClassName('hidden');
 		this.controller.get('tripInfo').removeClassName('hidden');
 		this.controller.get('addressButton').removeClassName('hidden');
-		
-		gpsDashboard.initialLoc = event;
 	}
 	
+	if (!gpsDashboard.initialLoc && event.horizAccuracy <= 9)
+		gpsDashboard.initialLoc = event;
+		
 	if (event.errorCode == 0) {
 		this.controller.get('heading').update(this.heading(event));
 		this.controller.get('speed').update(this.speed(event));
 		this.controller.get('altitude').update(this.altitude(event));
 		this.controller.get('accuracy').update(this.accuracy(event));
-		this.controller.get('avgSpeed').update(this.avgSpeed(event));
-		this.controller.get('distTraveled').update(this.distTraveled(event));
-		this.controller.get('distFromInit').update(this.distFromInit(event));
-		this.controller.get('lifeDist').update(this.lifeDist(event));
-		gpsDashboard.prevLoc = event;
+		if (event.horizAccuracy <= 9) {
+			this.controller.get('avgSpeed').update(this.avgSpeed(event));
+			this.controller.get('distTraveled').update(this.distTraveled(event));
+			this.controller.get('distFromInit').update(this.distFromInit(event));
+			this.controller.get('lifeDist').update(this.lifeDist(event));
+			gpsDashboard.prevLoc = event;
+		}
+		else if (!gpsDashboard.prevLoc){
+			this.controller.get('avgSpeed').update("-");
+			this.controller.get('distTraveled').update("-");
+			this.controller.get('distFromInit').update("-");
+			this.controller.get('lifeDist').update("-");
+		}
 	}
 	else 
 		this.controller.stageController.pushScene("gpsError", event.errorCode);
@@ -133,41 +141,62 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 }
 
 MainAssistant.prototype.distFromInit = function( event ) {
-	if (gpsDashboard.units == 1)
-		return (this.calcDist(event, gpsDashboard.initialLoc) * 0.621371192).toFixed(1) + " miles";
-	if (gpsDashboard.units == 2)
-		return this.calcDist(event, gpsDashboard.initialLoc).toFixed(1) + " km";
-}
-
-MainAssistant.prototype.lifeDist = function(event){
-	if (gpsDashboard.iteration > 1) {
-		gpsDashboard.lifeDist += this.calcDist(event, gpsDashboard.prevLoc);
+	if (gpsDashboard.initialLoc) {
 		if (gpsDashboard.units == 1) 
-			return (gpsDashboard.lifeDist * 0.621371192).toFixed(1) + " miles";
+			return (this.calcDist(event, gpsDashboard.initialLoc) * 0.621371192).toFixed(1) + " miles";
 		if (gpsDashboard.units == 2) 
-			return gpsDashboard.lifeDist.toFixed(1) + " km";
+			return this.calcDist(event, gpsDashboard.initialLoc).toFixed(1) + " km";
 	}
 	return "-";
 }
 
+MainAssistant.prototype.lifeDist = function(event){
+	if (gpsDashboard.prevLoc)
+		gpsDashboard.lifeDist += this.calcDist(event, gpsDashboard.prevLoc);
+	if (gpsDashboard.units == 1)
+		return (gpsDashboard.lifeDist * 0.621371192).toFixed(1) + " miles";
+	if (gpsDashboard.units == 2)
+		return gpsDashboard.lifeDist.toFixed(1) + " km";
+}
+
 MainAssistant.prototype.avgSpeed = function(event){
-	if (gpsDashboard.units == 1) 
-		return (this.calcDist(gpsDashboard.initialLoc, event) /
-				this.calcTime(gpsDashboard.initialLoc, event) *
-				60 * 60 * .621371192).toFixed(1) + " mph";
-	if (gpsDashboard.units == 2) 
-		return (this.calcDist(gpsDashboard.initialLoc, event) /
-				this.calcTime(gpsDashboard.initialLoc, event) *
-				60 * 60).toFixed(1) + " kph";
+	if (gpsDashboard.avgSpeedPref == 1 && gpsDashboard.initialLoc) {
+		if (this.calcTime(gpsDashboard.initialLoc, event) == 0)
+			return "-";
+		if (gpsDashboard.units == 1) 
+			return (this.calcDist(gpsDashboard.initialLoc, event) /
+			this.calcTime(gpsDashboard.initialLoc, event) *
+			60 * 60 * .621371192).toFixed(1) + " mph";
+		if (gpsDashboard.units == 2) 
+			return (this.calcDist(gpsDashboard.initialLoc, event) /
+			this.calcTime(gpsDashboard.initialLoc, event) *
+			60 * 60).toFixed(1) + " kph";
+	}
+	else if (gpsDashboard.avgSpeedPref == 1 && !gpsDashboard.initialLoc)
+		return "-";
+
+	if (gpsDashboard.avgSpeedPref == 2 && gpsDashboard.tripometer.time != 0) {
+		if (gpsDashboard.units == 1)
+			return (gpsDashboard.tripometer.dist /
+			gpsDashboard.tripometer.time *
+			60 * 60 * 621371192).toFixed(1) + " mph";
+		if (gpsDashboard.units == 2)
+			return (gpsDashboard.tripometer.dist /
+			gpsDashboard.tripometer.time *
+			60 * 60).toFixed(1) + " kph";
+	}
+	else if (gpsDashboard.tripometer.time == 0)
+		return "-";
 }
 
 MainAssistant.prototype.distTraveled = function( event ) {
-	if (gpsDashboard.iteration > 1) {
-		gpsDashboard.tripometer += this.calcDist(event, gpsDashboard.prevLoc);
+	if (gpsDashboard.prevLoc) {
+		gpsDashboard.tripometer.dist += this.calcDist(gpsDashboard.prevLoc, event);
+		gpsDashboard.tripometer.time += this.calcTime(gpsDashboard.prevLoc, event);
 		if (gpsDashboard.units == 1) 
-			return (gpsDashboard.tripometer * 0.621371192).toFixed(1) + " miles";
+			return (gpsDashboard.tripometer.dist * 0.621371192).toFixed(1) + " miles";
 		if (gpsDashboard.units == 2) 
-			return gpsDashboard.tripometer.toFixed(1) + " km";
+			return gpsDashboard.tripometer.dist.toFixed(1) + " km";
 	}
 	return "-";
 }
@@ -230,9 +259,13 @@ MainAssistant.prototype.deactivate = function(event) {
 	this.trackingHandle.cancel(); 
 }
 
-MainAssistant.prototype.cleanup = function(event) {
-	this.controller.stageController.setWindowProperties({blockScreenTimeout: false});
-	this.trackingHandle.cancel(); 
+MainAssistant.prototype.cleanup = function(event){
+	this.controller.stopListening(this.controller.get('addressButton'), Mojo.Event.tap, this.getAddressListener);
+	this.controller.stopListening(document, 'orientationchange', this.handleOrientation.bindAsEventListener(this));	
+	this.controller.stageController.setWindowProperties({
+		blockScreenTimeout: false
+	});
+	this.trackingHandle.cancel();
 	gpsDashboard.cookie.storeCookie();
 }
 
@@ -276,7 +309,7 @@ MainAssistant.prototype.handleCommand = function (event) {
 
 MainAssistant.prototype.heading = function(event){
 	if (event.velocity == 0)
-		return "WSW";
+		return "-";
 	if ((event.heading >= 348.75 && event.heading <= 360) ||
 		(event.heading >= 0 && event.heading < 11.25)		) 
 		return "N";
@@ -314,7 +347,7 @@ MainAssistant.prototype.heading = function(event){
 
 MainAssistant.prototype.speed = function(event) {
 	if (event.velocity == 0)
-		return "000.0 mph";
+		return "-";
 	if (gpsDashboard.units == 1)
 		return (event.velocity * 2.23693629).toFixed(1) + " mph";
 	if (gpsDashboard.units == 2)
