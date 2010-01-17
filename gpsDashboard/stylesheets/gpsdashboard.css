@@ -1,17 +1,15 @@
-/*
-#table {
-	border-collapse: collapse;
-}
-#table th, #table td {
-	border: 1px solid black;
-}
-*/
-#table th {text-align: right;}
 #announce {
 	text-align: center;
 	margin-top: 80px;
 }
 #announce.hidden {
+	opacity: 0;
+}
+#addressButton.landscape {
+	width: 53%;
+	float: left;
+}
+#addressButton.hidden {
 	opacity: 0;
 }
 
@@ -24,7 +22,7 @@
 	float: left;
 	margin-left: 10px;
 	margin-bottom: 5px;
-	width: 50%;
+	width: 40%;
 }
 .tripData {
 	float: left;
@@ -36,18 +34,34 @@
 #tripInfo{
 	height: 90px;
 	font-size: medium;
+	float: none;
+}
+#tripInfo.landscape {
+	height: 170px;
+	margin-top: 50px;
+	width: 85%;
+	margin-left: 0;
+	margin-right: 2px;
+	float: left;
+}
+#tripInfo.hidden {
+	
 }
 
 #currentInfo {
 	margin-top: 50px;
 	height: 90px;
+	float: none;
 }
 #currentInfo.landscape {
 	margin-top: 50px;
-	margin-left: 20px;
+	margin-left: 2px;
 
 	width: 85%;
 	float: left;	
+}
+#currentInfo.hidden {
+	opacity: 0;
 }
 
 #address {
@@ -58,12 +72,10 @@
 	opacity: 1;
 }
 #address.landscape {
-	margin-top: 10px;	
-
-	width: 85%;
-	float: left;
 	opacity: 1;
+	width: 35%;
+	float: left;
 }
-address.hidden {
+#address.hidden {
 	opacity: 0;
 }
