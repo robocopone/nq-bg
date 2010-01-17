@@ -6,16 +6,19 @@ gpsDashboard.units = 1;
 gpsDashboard.backlight = 1;
 gpsDashboard.avgSpeed = { count: 0, value: 0 };
 gpsDashboard.initialLoc = { };
+gpsDashboard.prevLoc = { };
 gpsDashboard.tripometer = 0;
 gpsDashboard.iteration = 0;
+gpsDashboard.lifeDist = 0;
 
 gpsDashboard.cookie = ({
 	initialize: function() {
 		this.cookieData = new Mojo.Model.Cookie("netBradleyGraberGPSDashboardPrefs");
-		storedPrefs = this.cookieData.get();
-		if (storedPrefs){
-			gpsDashboard.units = storedPrefs.units;
-			gpsDashboard.backlight = storedPrefs.backlight;
+		storedData = this.cookieData.get();
+		if (storedData){
+			gpsDashboard.units = storedData.units;
+			gpsDashboard.backlight = storedData.backlight;
+			gpsDashboard.lifeDist = storedData.lifeDist;
 		}
 		this.storeCookie();
 	},
@@ -23,6 +26,7 @@ gpsDashboard.cookie = ({
 		this.cookieData.put({  
 			units: gpsDashboard.units,                                                
 			backlight: gpsDashboard.backlight,
+			lifeDist: gpsDashboard.lifeDist
 		});		
 	}
 });
@@ -33,21 +37,29 @@ gpsDashboard.cookie = ({
 function MainAssistant() {
 }
 
-MainAssistant.prototype.setup = function() {
+MainAssistant.prototype.setup = function(){
 	gpsDashboard.cookie.initialize();
+	
 	if (this.controller.stageController.setWindowOrientation) {
 		this.controller.stageController.setWindowOrientation("free");
-	}	
+	}
 	this.controller.listen(document, 'orientationchange', this.handleOrientation.bindAsEventListener(this));
-
-
+	
 	this.controller.get('address').addClassName('hidden');
-	this.controller.setupWidget("spinner", 
-								this.spinnerAttr = { spinnerSize: 'large'},
-								this.model = { spinning: true } 
-								);
-	this.scrim = Mojo.View.createScrim(this.controller.document, {scrimClass:'palm-scrim'});
-	this.controller.get('scrim').appendChild(this.scrim).appendChild($('spinner'));
+	this.controller.get('currentInfo').addClassName('hidden');
+	this.controller.get('tripInfo').addClassName('hidden');
+	this.controller.get('addressButton').addClassName('hidden');
+	
+	this.controller.setupWidget("spinner", this.spinnerAttr = {
+		spinnerSize: 'large'
+	}, this.model = {
+		spinning: true
+	});
+	this.scrim = Mojo.View.createScrim(this.controller.document, {
+		scrimClass: 'palm-scrim'
+	});
+	this.controller.get('scrim').appendChild(this.scrim).appendChild(this.controller.get('spinner'));
+
 
 	this.controller.setupWidget('addressButton', this.atts = {
 		type: Mojo.Widget.activityButton
@@ -91,15 +103,21 @@ MainAssistant.prototype.getAddress = function(){
 	});
 }
 
-MainAssistant.prototype.handleServiceResponse = function( event ) {
-    gpsDashboard.iteration++;
+MainAssistant.prototype.handleServiceResponse = function(event){
+	gpsDashboard.iteration++;
 	if (gpsDashboard.iteration == 1) {
-		this.controller.get('announce').addClassName('hidden');	
+		this.controller.get('announce').addClassName('hidden');
 		this.scrim.hide();
+		
+		this.controller.get('currentInfo').removeClassName('hidden');
+		this.controller.get('tripInfo').removeClassName('hidden');
+		this.controller.get('addressButton').removeClassName('hidden');
+		
 		gpsDashboard.initialLoc = event;
 	}
-	if (event.errorCode == 0) 
-	{	this.controller.get('heading').update(this.heading(event));
+	
+	if (event.errorCode == 0) {
+		this.controller.get('heading').update(this.heading(event));
 		this.controller.get('speed').update(this.speed(event));
 		this.controller.get('altitude').update(this.altitude(event));
 		this.controller.get('accuracy').update(this.accuracy(event));
@@ -109,24 +127,49 @@ MainAssistant.prototype.handleServiceResponse = function( event ) {
 		this.controller.get('lifeDist').update(this.lifeDist(event));
 		gpsDashboard.prevLoc = event;
 	}
-	else
+	else 
 		this.controller.stageController.pushScene("gpsError", event.errorCode);
+
 }
 
 MainAssistant.prototype.distFromInit = function( event ) {
-	return "000.0 miles";
+	if (gpsDashboard.units == 1)
+		return (this.calcDist(event, gpsDashboard.initialLoc) * 0.621371192).toFixed(1) + " miles";
+	if (gpsDashboard.units == 2)
+		return this.calcDist(event, gpsDashboard.initialLoc).toFixed(1) + " km";
 }
 
-MainAssistant.prototype.lifeDist = function( event ) {
-	return "000.0 miles";
+MainAssistant.prototype.lifeDist = function(event){
+	if (gpsDashboard.iteration > 1) {
+		gpsDashboard.lifeDist += this.calcDist(event, gpsDashboard.prevLoc);
+		if (gpsDashboard.units == 1) 
+			return (gpsDashboard.lifeDist * 0.621371192).toFixed(1) + " miles";
+		if (gpsDashboard.units == 2) 
+			return gpsDashboard.lifeDist.toFixed(1) + " km";
+	}
+	return "-";
 }
 
-MainAssistant.prototype.avgSpeed = function( event ) {
-	return "000.0 mph";
+MainAssistant.prototype.avgSpeed = function(event){
+	if (gpsDashboard.units == 1) 
+		return (this.calcDist(gpsDashboard.initialLoc, event) /
+				this.calcTime(gpsDashboard.initialLoc, event) *
+				60 * 60 * .621371192).toFixed(1) + " mph";
+	if (gpsDashboard.units == 2) 
+		return (this.calcDist(gpsDashboard.initialLoc, event) /
+				this.calcTime(gpsDashboard.initialLoc, event) *
+				60 * 60).toFixed(1) + " kph";
 }
 
 MainAssistant.prototype.distTraveled = function( event ) {
-	return "000.0 miles";
+	if (gpsDashboard.iteration > 1) {
+		gpsDashboard.tripometer += this.calcDist(event, gpsDashboard.prevLoc);
+		if (gpsDashboard.units == 1) 
+			return (gpsDashboard.tripometer * 0.621371192).toFixed(1) + " miles";
+		if (gpsDashboard.units == 2) 
+			return gpsDashboard.tripometer.toFixed(1) + " km";
+	}
+	return "-";
 }
 
 MainAssistant.prototype.handleServiceResponseError = function(event) {
@@ -147,24 +190,15 @@ MainAssistant.prototype.handleReverseResponseError = function(event){
 	this.controller.get('address1').update(event.errorCode);
 }
 
-MainAssistant.prototype.calcSpeed = function( event ){
-	if (!gpsDashboard.prevLoc)
-		return "Calculated Speed: -";
-	if (gpsDashboard.units = 1)
-		return "Calculated Speed: " +
-			(this.calcDist(gpsDashboard.prevLoc, event) / 
-			 this.calcTime(gpsDashboard.prevLoc, event) * 3600 * .621371192).toFixed(1) + " mph";
-	if (gpsDashboard.units = 2)
-		return "Calculated Speed: " +
-			(this.calcDist(gpsDashboard.prevLoc, event) / 
-		 	 this.calcTime(gpsDashboard.prevLoc, event) * 3600).toFixed(1) + " kph";
-}
-
 MainAssistant.prototype.calcTime = function( event1, event2 ) {
 	return (event2.timestamp - event1.timestamp) / 1000;
 }
 
 MainAssistant.prototype.calcDist = function( point1, point2 ) {
+	if (point1.latitude == point2.latitude && 
+		point1.longitude == point2.longitude)
+		return 0;
+
 	dLat = point2.latitude - point1.latitude;
 	dLon = point2.longitude - point1.longitude;
 	mLat = ((point2.latitude + point1.latitude) / 2).toRad();
@@ -178,6 +212,19 @@ MainAssistant.prototype.calcDist = function( point1, point2 ) {
 	return dist;
 }
 
+MainAssistant.prototype.calcSpeed = function( event ){
+	if (!gpsDashboard.prevLoc)
+		return "Calculated Speed: -";
+	if (gpsDashboard.units = 1)
+		return "Calculated Speed: " +
+			(this.calcDist(gpsDashboard.prevLoc, event) / 
+			 this.calcTime(gpsDashboard.prevLoc, event) * 3600 * .621371192).toFixed(1) + " mph";
+	if (gpsDashboard.units = 2)
+		return "Calculated Speed: " +
+			(this.calcDist(gpsDashboard.prevLoc, event) / 
+		 	 this.calcTime(gpsDashboard.prevLoc, event) * 3600).toFixed(1) + " kph";
+}
+
 MainAssistant.prototype.deactivate = function(event) {
 	this.controller.stageController.setWindowProperties({blockScreenTimeout: false});
 	this.trackingHandle.cancel(); 
@@ -186,16 +233,21 @@ MainAssistant.prototype.deactivate = function(event) {
 MainAssistant.prototype.cleanup = function(event) {
 	this.controller.stageController.setWindowProperties({blockScreenTimeout: false});
 	this.trackingHandle.cancel(); 
+	gpsDashboard.cookie.storeCookie();
 }
 
 MainAssistant.prototype.handleOrientation = function( event ) {
 	if (event.position == 4 || event.position == 5) {
 		this.controller.get('address').addClassName('landscape');
-		this.controller.get('leftGroup').addClassName('landscape');
+		this.controller.get('currentInfo').addClassName('landscape');
+		this.controller.get('tripInfo').addClassName('landscape');
+		this.controller.get('addressButton').addClassName('landscape');
 	}	
 	if (event.position == 2 || event.position == 3) {
 		this.controller.get('address').removeClassName('landscape');
-		this.controller.get('leftGroup').removeClassName('landscape');
+		this.controller.get('currentInfo').removeClassName('landscape');
+		this.controller.get('tripInfo').removeClassName('landscape');
+		this.controller.get('addressButton').removeClassName('landscape');
 	}
 }
 
@@ -224,7 +276,7 @@ MainAssistant.prototype.handleCommand = function (event) {
 
 MainAssistant.prototype.heading = function(event){
 	if (event.velocity == 0)
-		return "";
+		return "WSW";
 	if ((event.heading >= 348.75 && event.heading <= 360) ||
 		(event.heading >= 0 && event.heading < 11.25)		) 
 		return "N";
@@ -262,7 +314,7 @@ MainAssistant.prototype.heading = function(event){
 
 MainAssistant.prototype.speed = function(event) {
 	if (event.velocity == 0)
-		return "-";
+		return "000.0 mph";
 	if (gpsDashboard.units == 1)
 		return (event.velocity * 2.23693629).toFixed(1) + " mph";
 	if (gpsDashboard.units == 2)
