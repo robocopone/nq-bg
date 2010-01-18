@@ -2,15 +2,17 @@
  *	gpsDashboard environment
  */
 gpsDashboard = { };
-gpsDashboard.units = 1;
-gpsDashboard.backlight = 1;
-gpsDashboard.avgSpeedPref = 2;
-gpsDashboard.tripometer = {time: 0, dist: 0};
-gpsDashboard.iteration = 0;
-gpsDashboard.lifeDist = 0;
-gpsDashboard.hidden = true;
-gpsDashboard.maxError = 10;
+gpsDashboard.units = 1;							// Preferred unit of measure
+gpsDashboard.backlight = 1;						// Backlight preference
+gpsDashboard.avgSpeedPref = 2;					// Average speed calculation preference
+gpsDashboard.tripometer = {time: 0, dist: 0};	// Distance traveled data
+gpsDashboard.lifeDist = 0;						// Lifetime distance traveled
+gpsDashboard.hidden = true;						// Is the dashboard visable?
+gpsDashboard.maxError = 10;						// Max error in meters
 
+/*
+ * Stores and recalls data stored between sessions
+ */
 gpsDashboard.cookie = ({
 	initialize: function() {
 		this.cookieData = new Mojo.Model.Cookie("netBradleyGraberGPSDashboardData");
@@ -35,25 +37,26 @@ gpsDashboard.cookie = ({
 	}
 });
 
-/*
- * 	Main Scene
- */
 function MainAssistant() {
 }
 
+/*
+ * 	Main Scene Setup
+ */
 MainAssistant.prototype.setup = function(){
 	gpsDashboard.cookie.initialize();
 	
-	if (this.controller.stageController.setWindowOrientation) {
+	if (this.controller.stageController.setWindowOrientation)
 		this.controller.stageController.setWindowOrientation("free");
-	}
 	this.controller.listen(document, 'orientationchange', this.handleOrientation.bindAsEventListener(this));
 	
+	// Hides the dashboard
 	this.controller.get('address').addClassName('hidden');
 	this.controller.get('currentInfo').addClassName('hidden');
 	this.controller.get('tripInfo').addClassName('hidden');
 	this.controller.get('addressButton').addClassName('hidden');
 
+	// Scrim and activity spinner
 	this.controller.setupWidget("spinner", this.spinnerAttr = {
 		spinnerSize: 'large'
 	}, this.model = {
@@ -64,6 +67,7 @@ MainAssistant.prototype.setup = function(){
 	});
 	this.controller.get('scrim').appendChild(this.scrim).appendChild(this.controller.get('spinner'));
 
+	// Address button widget
 	this.controller.setupWidget('addressButton', this.atts = {
 		type: Mojo.Widget.activityButton
 	}, this.model = {
@@ -73,7 +77,6 @@ MainAssistant.prototype.setup = function(){
 	});
 	this.getAddressListener = this.getAddress.bind(this);
 	this.controller.listen(this.controller.get('addressButton'),Mojo.Event.tap, this.getAddressListener);
-	//this.controller.setupWidget('avgSpeedReset', {}, {buttonLabel: 'Reset'});	
 }
 
 MainAssistant.prototype.activate = function(event) {
@@ -92,18 +95,6 @@ MainAssistant.prototype.activate = function(event) {
 			onFailure: this.handleServiceResponseError.bind(this)
 		}
 	);
-}
-
-MainAssistant.prototype.getAddress = function(){
-	this.controller.serviceRequest('palm://com.palm.location', {
-		method: "getReverseLocation",
-		parameters: {
-			latitude: gpsDashboard.prevLoc.latitude,
-			longitude: gpsDashboard.prevLoc.longitude
-		},
-		onSuccess: this.handleReverseResponse.bind(this),
-		onFailure: this.handleReverseResponseError.bind(this)
-	});
 }
 
 MainAssistant.prototype.handleServiceResponse = function(event){
@@ -211,20 +202,6 @@ MainAssistant.prototype.distTraveled = function( event ) {
 
 MainAssistant.prototype.handleServiceResponseError = function(event) {
 	this.controller.stageController.pushScene("gpsError", event.errorCode);
-}
-
-MainAssistant.prototype.handleReverseResponse = function( event ) {
-	this.buttonWidget = this.controller.get('addressButton');
-	this.buttonWidget.mojo.deactivate();
-
-	add = event.address.split(";");
-	this.controller.get('address').removeClassName('hidden');
-	this.controller.get('address1').update(add[0]);
-	this.controller.get('address2').update(add[1]);
-}
-
-MainAssistant.prototype.handleReverseResponseError = function(event){
-	this.controller.get('address1').update(event.errorCode);
 }
 
 MainAssistant.prototype.calcTime = function( event1, event2 ) {
@@ -373,4 +350,31 @@ MainAssistant.prototype.altitude = function(event){
 
 Number.prototype.toRad = function() {  // convert degrees to radians
   return this * Math.PI / 180;
+}
+
+// Gets reverse location when the button is pressed
+MainAssistant.prototype.getAddress = function(){
+	this.controller.serviceRequest('palm://com.palm.location', {
+		method: "getReverseLocation",
+		parameters: {
+			latitude: gpsDashboard.prevLoc.latitude,
+			longitude: gpsDashboard.prevLoc.longitude
+		},
+		onSuccess: this.handleReverseResponse.bind(this),
+		onFailure: this.handleReverseResponseError.bind(this)
+	});
+}
+
+MainAssistant.prototype.handleReverseResponse = function( event ) {
+	this.controller.get('addressButton').mojo.deactivate();
+
+	add = event.address.split(";");
+	this.controller.get('address').removeClassName('hidden');
+	this.controller.get('address1').update(add[0]);
+	this.controller.get('address2').update(add[1]);
+}
+
+MainAssistant.prototype.handleReverseResponseError = function(event){
+	this.controller.get('address').removeClassName('hidden');
+	this.controller.get('address1').update("Error: " + event.errorCode);
 }
