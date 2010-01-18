@@ -139,6 +139,10 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 
 }
 
+MainAssistant.prototype.handleServiceResponseError = function(event) {
+	this.controller.stageController.pushScene("gpsError", event.errorCode);
+}
+
 MainAssistant.prototype.distFromInit = function( event ) {
 	if (gpsDashboard.initialLoc) {
 		if (gpsDashboard.units == 1) 
@@ -198,10 +202,6 @@ MainAssistant.prototype.distTraveled = function( event ) {
 			return gpsDashboard.tripometer.dist.toFixed(1) + " km";
 	}
 	return "-";
-}
-
-MainAssistant.prototype.handleServiceResponseError = function(event) {
-	this.controller.stageController.pushScene("gpsError", event.errorCode);
 }
 
 MainAssistant.prototype.calcTime = function( event1, event2 ) {
