@@ -1,3 +1,62 @@
+.heading {
+	font-weight: bold;
+	float: left;
+	margin-bottom: 5px;
+	margin-right: 10px;
+}
+.data {
+	margin-right: 10px;
+	margin-bottom: 5px;
+	float: left;
+}
+
+#speed {
+	width: 95px;
+}
+#avgSpeed {
+	width: 80px;
+}
+#heading {
+	text-align: center;
+	width: 50px;
+}
+#distTraveled {
+	width: 100px;
+}
+#distFromInit {
+	width: 81px;
+}
+#lifeDist {
+	width: 100px;
+}
+
+#currentInfo {
+	margin-top: 50px;
+	height: 60px;
+}
+
+#currentInfo.landscape {
+	height: 30px;
+}
+
+#currentInfo.hidden {
+	opacity: 0;
+}
+
+#tripInfo{
+	letter-spacing: .1em;
+	height: 90px;
+	font-size: medium;
+}
+#tripInfo.landscape {
+	margin-right: 0;
+	width: 52%;
+	float: left;
+}
+#tripInfo.hidden {
+	opacity: 0;
+}
+
 #initialDisplay {
 	text-align: center;
 	margin-top: 80px;
@@ -10,77 +69,19 @@
 	margin-top: 200px;
 }
 
-#addressButton.landscape {
-	width: 53%;
-	float: left;
-}
-#addressButton.hidden {
-	opacity: 0;
-}
-
-.heading {
-	font-weight: bold;
-	float: left;
-	margin-bottom: 5px;
-}
-.data {
-	float: left;
-	margin-left: 10px;
-	margin-bottom: 5px;
-	width: 40%;
-}
-.tripData {
-	float: left;
-	margin-left: 10px;
-	margin-bottom: 5px;
-	width: 50%;
-}
-
-#tripInfo{
-	height: 90px;
+#addressInfo.landscape {
 	font-size: medium;
-	float: none;
-}
-#tripInfo.landscape {
-	height: 170px;
-	margin-top: 50px;
-	width: 85%;
-	margin-left: 0;
-	margin-right: 2px;
+	width: 39%;
 	float: left;
 }
-#tripInfo.hidden {
-	
-}
-
-#currentInfo {
-	margin-top: 50px;
-	height: 90px;
-	float: none;
-}
-#currentInfo.landscape {
-	margin-top: 50px;
-	margin-left: 2px;
-
-	width: 85%;
-	float: left;	
-}
-#currentInfo.hidden {
+#addressInfo.hidden {
 	opacity: 0;
 }
 
 #address {
-	margin-top: 10px;	
+	margin-top: 5px;	
+}
 
-	width: 85%;
-	float: none;
-	opacity: 1;
-}
-#address.landscape {
-	opacity: 1;
-	width: 35%;
-	float: left;
-}
 #address.hidden {
 	opacity: 0;
 }

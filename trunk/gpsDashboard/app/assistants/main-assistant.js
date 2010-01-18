@@ -54,7 +54,7 @@ MainAssistant.prototype.setup = function(){
 	this.controller.get('address').addClassName('hidden');
 	this.controller.get('currentInfo').addClassName('hidden');
 	this.controller.get('tripInfo').addClassName('hidden');
-	this.controller.get('addressButton').addClassName('hidden');
+	this.controller.get('addressInfo').addClassName('hidden');
 
 	// Scrim and activity spinner
 	this.controller.setupWidget("spinner", this.spinnerAttr = {
@@ -88,8 +88,7 @@ MainAssistant.prototype.activate = function(event) {
 	(	'palm://com.palm.location', 
 		{	method : 'startTracking', 
 			parameters: 
-			{	accuracy: 1, 
-				subscribe: true 
+			{	subscribe: true 
 			},
 			onSuccess: this.handleServiceResponse.bind(this),
 			onFailure: this.handleServiceResponseError.bind(this)
@@ -108,7 +107,7 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 		
 		this.controller.get('currentInfo').removeClassName('hidden');
 		this.controller.get('tripInfo').removeClassName('hidden');
-		this.controller.get('addressButton').removeClassName('hidden');
+		this.controller.get('addressInfo').removeClassName('hidden');
 	}
 	else 
 		if (event.horizAccuracy > gpsDashboard.maxError && !gpsDashboard.hidden) {
@@ -118,7 +117,7 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 			
 			this.controller.get('currentInfo').addClassName('hidden');
 			this.controller.get('tripInfo').addClassName('hidden');
-			this.controller.get('addressButton').addClassName('hidden');
+			this.controller.get('addressInfo').addClassName('hidden');
 			this.controller.get('address').addClassName('hidden');
 		}
 	this.controller.get('accuracyNotice').update("Satellite Strength too Low");
@@ -150,7 +149,7 @@ MainAssistant.prototype.distFromInit = function( event ) {
 		if (gpsDashboard.units == 2) 
 			return this.calcDist(event, gpsDashboard.initialLoc).toFixed(1) + " km";
 	}
-	return "-";
+	return "&nbsp;";
 }
 
 MainAssistant.prototype.lifeDist = function(event){
@@ -165,7 +164,7 @@ MainAssistant.prototype.lifeDist = function(event){
 MainAssistant.prototype.avgSpeed = function(event){
 	if (gpsDashboard.avgSpeedPref == 1 && gpsDashboard.initialLoc) {
 		if (this.calcTime(gpsDashboard.initialLoc, event) == 0)
-			return "-";
+			return "&nbsp;";
 		if (gpsDashboard.units == 1) 
 			return (this.calcDist(gpsDashboard.initialLoc, event) /
 			this.calcTime(gpsDashboard.initialLoc, event) *
@@ -176,7 +175,7 @@ MainAssistant.prototype.avgSpeed = function(event){
 			60 * 60).toFixed(1) + " kph";
 	}
 	else if (gpsDashboard.avgSpeedPref == 1 && !gpsDashboard.initialLoc)
-		return "-";
+		return "&nbsp;";
 
 	if (gpsDashboard.avgSpeedPref == 2 && gpsDashboard.tripometer.time != 0) {
 		if (gpsDashboard.units == 1)
@@ -189,7 +188,7 @@ MainAssistant.prototype.avgSpeed = function(event){
 			60 * 60).toFixed(1) + " kph";
 	}
 	else
-		return "-";
+		return "&nbsp;";
 }
 
 MainAssistant.prototype.distTraveled = function( event ) {
@@ -201,7 +200,7 @@ MainAssistant.prototype.distTraveled = function( event ) {
 		if (gpsDashboard.units == 2) 
 			return gpsDashboard.tripometer.dist.toFixed(1) + " km";
 	}
-	return "-";
+	return "&nbsp;";
 }
 
 MainAssistant.prototype.calcTime = function( event1, event2 ) {
@@ -259,13 +258,13 @@ MainAssistant.prototype.handleOrientation = function( event ) {
 		this.controller.get('address').addClassName('landscape');
 		this.controller.get('currentInfo').addClassName('landscape');
 		this.controller.get('tripInfo').addClassName('landscape');
-		this.controller.get('addressButton').addClassName('landscape');
+		this.controller.get('addressInfo').addClassName('landscape');
 	}	
 	if (event.position == 2 || event.position == 3) {
 		this.controller.get('address').removeClassName('landscape');
 		this.controller.get('currentInfo').removeClassName('landscape');
 		this.controller.get('tripInfo').removeClassName('landscape');
-		this.controller.get('addressButton').removeClassName('landscape');
+		this.controller.get('addressInfo').removeClassName('landscape');
 	}
 }
 
@@ -294,7 +293,7 @@ MainAssistant.prototype.handleCommand = function (event) {
 
 MainAssistant.prototype.heading = function(event){
 	if (event.velocity == 0)
-		return "-";
+		return "&nbsp;";
 	if ((event.heading >= 348.75 && event.heading <= 360) ||
 		(event.heading >= 0 && event.heading < 11.25)		) 
 		return "N";
@@ -332,7 +331,7 @@ MainAssistant.prototype.heading = function(event){
 
 MainAssistant.prototype.speed = function(event) {
 	if (event.velocity == 0)
-		return "-";
+		return "&nbsp;";
 	if (gpsDashboard.units == 1)
 		return (event.velocity * 2.23693629).toFixed(1) + " mph";
 	if (gpsDashboard.units == 2)
@@ -341,11 +340,11 @@ MainAssistant.prototype.speed = function(event) {
 
 MainAssistant.prototype.altitude = function(event){
 	if (event.vertAccuracy == 0)
-		return "-";
+		return "&nbsp;";
 	if (gpsDashboard.units == 1)
 		return (event.altitude * 3.2808399).toFixed(1) + " feet";
 	if (gpsDashboard.units == 2)
-		return event.altitude.toFixed(1) + " meters";
+		return event.altitude.toFixed(1) + " m";
 }
 
 Number.prototype.toRad = function() {  // convert degrees to radians
