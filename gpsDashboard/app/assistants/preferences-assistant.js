@@ -55,7 +55,38 @@ PreferencesAssistant.prototype.setup = function(){
 	//Avg Speed Selector Handler
 	this.changeAvgSpeedHandler = this.changeAvgSpeed.bindAsEventListener(this);
 	this.controller.listen("avgSpeedPref", Mojo.Event.propertyChange, this.changeAvgSpeedHandler);
-	
+
+	//Max Error Selector Widget
+	this.controller.setupWidget("maxErrorPrefSelector", this.maxErrorAttributes = {
+		label: "Max Error",
+		choices: [{
+			label: "5 meters",
+			value: 5
+		}, {
+			label: "10 meters",
+			value: 10
+		}, {
+			label: "15 meters",
+			value: 15
+		}, {
+			label: "20 meters",
+			value: 20
+		}, {
+			label: "30 meters",
+			value: 30
+		},],
+	}, this.maxErrorModel = {
+		value: gpsDashboard.maxError,
+		disabled: false
+	});
+	//Max Error Selector Handler
+	this.maxErrorSelectorHandler = this.maxErrorSelector.bindAsEventListener(this);
+	this.controller.listen("maxErrorPrefSelector", Mojo.Event.propertyChange, this.maxErrorSelectorHandler);
+
+}
+PreferencesAssistant.prototype.maxErrorSelector = function (event) {
+	gpsDashboard.maxError = this.maxErrorModel.value;
+	gpsDashboard.cookie.storeCookie();
 }
 PreferencesAssistant.prototype.changeAvgSpeed = function (event) {
 	gpsDashboard.avgSpeedPref = this.avgSpeedModel.value;
