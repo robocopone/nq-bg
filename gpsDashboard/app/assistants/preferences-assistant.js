@@ -54,7 +54,7 @@ PreferencesAssistant.prototype.setup = function(){
 	});
 	//Avg Speed Selector Handler
 	this.changeAvgSpeedHandler = this.changeAvgSpeed.bindAsEventListener(this);
-	this.controller.listen("avgSpeed", Mojo.Event.propertyChange, this.changeAvgSpeedHandler);
+	this.controller.listen("avgSpeedPref", Mojo.Event.propertyChange, this.changeAvgSpeedHandler);
 	
 }
 PreferencesAssistant.prototype.changeAvgSpeed = function (event) {

@@ -8,7 +8,11 @@
 	<div id="spinner" x-mojo-element="Spinner"></div>
 </div>
 
-<div id="announce">Getting GPS information...</div>
+<div id="initialDisplay">
+	<div id="announce">Getting GPS information...</div>
+	<div id="accuracyNotice"></div>
+	<div id="horizAccuracy"></div>
+</div>
 
 <div id="currentInfo" class="palm-group">
 	<div class="palm-group-title">Current Information</div>
@@ -18,8 +22,6 @@
 			<div id="heading" style="float: left; margin-left: 10px; margin-bottom: 5px;"></div>
 	<div class="heading">Altitude:</div>
 		<div id="altitude" class="data"></div>
-	<div class="heading">Accuracy:</div>
-		<div id="accuracy" class="data"></div>
 </div>
 
 <div id="tripInfo" class="palm-group">
