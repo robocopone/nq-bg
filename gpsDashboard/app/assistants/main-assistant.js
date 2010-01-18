@@ -124,8 +124,8 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 	this.controller.get('horizAccuracy').update("Horizontal Error = " + event.horizAccuracy.toFixed(1) + "m > " + gpsDashboard.maxError + "m");
 
 	if (event.errorCode == 0 && event.horizAccuracy <= gpsDashboard.maxError) {
-		this.controller.get('heading').update(this.heading(event));
 		this.controller.get('speed').update(this.speed(event));
+		this.controller.get('heading').update(this.heading(event));
 		this.controller.get('altitude').update(this.altitude(event));
 		this.controller.get('avgSpeed').update(this.avgSpeed(event));
 		this.controller.get('distTraveled').update(this.distTraveled(event));
@@ -142,155 +142,21 @@ MainAssistant.prototype.handleServiceResponseError = function(event) {
 	this.controller.stageController.pushScene("gpsError", event.errorCode);
 }
 
-MainAssistant.prototype.distFromInit = function( event ) {
-	if (gpsDashboard.initialLoc) {
-		if (gpsDashboard.units == 1) 
-			return (this.calcDist(event, gpsDashboard.initialLoc) * 0.621371192).toFixed(1) + " miles";
-		if (gpsDashboard.units == 2) 
-			return this.calcDist(event, gpsDashboard.initialLoc).toFixed(1) + " km";
-	}
-	return "&nbsp;";
-}
-
-MainAssistant.prototype.lifeDist = function(event){
-	if (gpsDashboard.prevLoc)
-		gpsDashboard.lifeDist += this.calcDist(event, gpsDashboard.prevLoc);
+/*
+ * Current speed display
+ */
+MainAssistant.prototype.speed = function(event) {
+	if (event.velocity == 0)
+		return "&nbsp;";
 	if (gpsDashboard.units == 1)
-		return (gpsDashboard.lifeDist * 0.621371192).toFixed(1) + " miles";
+		return (event.velocity * 2.23693629).toFixed(1) + " mph";
 	if (gpsDashboard.units == 2)
-		return gpsDashboard.lifeDist.toFixed(1) + " km";
+		return (event.velocity * 3.6).toFixed(1) + " kph";
 }
 
-MainAssistant.prototype.avgSpeed = function(event){
-	if (gpsDashboard.avgSpeedPref == 1 && gpsDashboard.initialLoc) {
-		if (this.calcTime(gpsDashboard.initialLoc, event) == 0)
-			return "&nbsp;";
-		if (gpsDashboard.units == 1) 
-			return (this.calcDist(gpsDashboard.initialLoc, event) /
-			this.calcTime(gpsDashboard.initialLoc, event) *
-			60 * 60 * .621371192).toFixed(1) + " mph";
-		if (gpsDashboard.units == 2) 
-			return (this.calcDist(gpsDashboard.initialLoc, event) /
-			this.calcTime(gpsDashboard.initialLoc, event) *
-			60 * 60).toFixed(1) + " kph";
-	}
-	else if (gpsDashboard.avgSpeedPref == 1 && !gpsDashboard.initialLoc)
-		return "&nbsp;";
-
-	if (gpsDashboard.avgSpeedPref == 2 && gpsDashboard.tripometer.time != 0) {
-		if (gpsDashboard.units == 1)
-			return (gpsDashboard.tripometer.dist /
-			gpsDashboard.tripometer.time *
-			60 * 60 * .621371192).toFixed(1) + " mph";
-		if (gpsDashboard.units == 2)
-			return (gpsDashboard.tripometer.dist /
-			gpsDashboard.tripometer.time *
-			60 * 60).toFixed(1) + " kph";
-	}
-	else
-		return "&nbsp;";
-}
-
-MainAssistant.prototype.distTraveled = function( event ) {
-	if (gpsDashboard.prevLoc) {
-		gpsDashboard.tripometer.dist += this.calcDist(gpsDashboard.prevLoc, event);
-		gpsDashboard.tripometer.time += this.calcTime(gpsDashboard.prevLoc, event);
-		if (gpsDashboard.units == 1) 
-			return (gpsDashboard.tripometer.dist * 0.621371192).toFixed(1) + " miles";
-		if (gpsDashboard.units == 2) 
-			return gpsDashboard.tripometer.dist.toFixed(1) + " km";
-	}
-	return "&nbsp;";
-}
-
-MainAssistant.prototype.calcTime = function( event1, event2 ) {
-	return (event2.timestamp - event1.timestamp) / 1000;
-}
-
-MainAssistant.prototype.calcDist = function( point1, point2 ) {
-	if (point1.latitude == point2.latitude && 
-		point1.longitude == point2.longitude)
-		return 0;
-
-	dLat = point2.latitude - point1.latitude;
-	dLon = point2.longitude - point1.longitude;
-	mLat = ((point2.latitude + point1.latitude) / 2).toRad();
-	K1 = 111.13209 - 
-		 (0.56605 * Math.cos(2 * mLat)) + 
-		 (0.00120 * Math.cos(4 * mLat));
-	K2 = (111.41513 * Math.cos(mLat)) - 
-		 (0.09455 * Math.cos(3 * mLat)) + 
-		 (0.00012 * Math.cos(5 * mLat));
-	dist = Math.sqrt( Math.pow((K1 * dLat), 2) + Math.pow((K2 * dLon), 2));
-	return dist;
-}
-
-MainAssistant.prototype.calcSpeed = function( event ){
-	if (!gpsDashboard.prevLoc)
-		return "Calculated Speed: -";
-	if (gpsDashboard.units = 1)
-		return "Calculated Speed: " +
-			(this.calcDist(gpsDashboard.prevLoc, event) / 
-			 this.calcTime(gpsDashboard.prevLoc, event) * 3600 * .621371192).toFixed(1) + " mph";
-	if (gpsDashboard.units = 2)
-		return "Calculated Speed: " +
-			(this.calcDist(gpsDashboard.prevLoc, event) / 
-		 	 this.calcTime(gpsDashboard.prevLoc, event) * 3600).toFixed(1) + " kph";
-}
-
-MainAssistant.prototype.deactivate = function(event) {
-	this.controller.stageController.setWindowProperties({blockScreenTimeout: false});
-	this.trackingHandle.cancel(); 
-}
-
-MainAssistant.prototype.cleanup = function(event){
-	this.controller.stopListening(this.controller.get('addressButton'), Mojo.Event.tap, this.getAddressListener);
-	this.controller.stopListening(document, 'orientationchange', this.handleOrientation.bindAsEventListener(this));	
-	this.controller.stageController.setWindowProperties({
-		blockScreenTimeout: false
-	});
-	this.trackingHandle.cancel();
-	gpsDashboard.cookie.storeCookie();
-}
-
-MainAssistant.prototype.handleOrientation = function( event ) {
-	if (event.position == 4 || event.position == 5) {
-		this.controller.get('address').addClassName('landscape');
-		this.controller.get('currentInfo').addClassName('landscape');
-		this.controller.get('tripInfo').addClassName('landscape');
-		this.controller.get('addressInfo').addClassName('landscape');
-	}	
-	if (event.position == 2 || event.position == 3) {
-		this.controller.get('address').removeClassName('landscape');
-		this.controller.get('currentInfo').removeClassName('landscape');
-		this.controller.get('tripInfo').removeClassName('landscape');
-		this.controller.get('addressInfo').removeClassName('landscape');
-	}
-}
-
-MainAssistant.prototype.handleCommand = function (event) {
-	if (event.type == Mojo.Event.commandEnable &&
-	   (event.command == Mojo.Menu.helpCmd)) 
-	{	event.stopPropagation(); 
-	}
-
-	if (event.type == Mojo.Event.commandEnable &&
-	   (event.command == Mojo.Menu.prefsCmd)) 
-	{	event.stopPropagation(); 
-	}
-
-	if (event.type == Mojo.Event.command) {
-		switch (event.command) {
-			case Mojo.Menu.helpCmd:
-				Mojo.Controller.stageController.pushAppSupportInfoScene();
-				break;
-			case Mojo.Menu.prefsCmd:
-				Mojo.Controller.stageController.pushScene('preferences');
-				break;
-		}
-	}
-}
-
+/*
+ * Converts degrees to N/S/E/W
+ */
 MainAssistant.prototype.heading = function(event){
 	if (event.velocity == 0)
 		return "&nbsp;";
@@ -329,15 +195,9 @@ MainAssistant.prototype.heading = function(event){
 		return "NNW";
 }
 
-MainAssistant.prototype.speed = function(event) {
-	if (event.velocity == 0)
-		return "&nbsp;";
-	if (gpsDashboard.units == 1)
-		return (event.velocity * 2.23693629).toFixed(1) + " mph";
-	if (gpsDashboard.units == 2)
-		return (event.velocity * 3.6).toFixed(1) + " kph";
-}
-
+/*
+ * Current altitude display
+ */
 MainAssistant.prototype.altitude = function(event){
 	if (event.vertAccuracy == 0)
 		return "&nbsp;";
@@ -347,11 +207,204 @@ MainAssistant.prototype.altitude = function(event){
 		return event.altitude.toFixed(1) + " m";
 }
 
-Number.prototype.toRad = function() {  // convert degrees to radians
+/*
+ * Trip average speed display
+ */
+MainAssistant.prototype.avgSpeed = function(event){
+	if (gpsDashboard.avgSpeedPref == 1 && gpsDashboard.initialLoc) {
+		if (this.calcTime(gpsDashboard.initialLoc, event) == 0)
+			return "&nbsp;";
+		if (gpsDashboard.units == 1) 
+			return (this.calcDist(gpsDashboard.initialLoc, event) /
+			this.calcTime(gpsDashboard.initialLoc, event) *
+			60 * 60 * .621371192).toFixed(1) + " mph";
+		if (gpsDashboard.units == 2) 
+			return (this.calcDist(gpsDashboard.initialLoc, event) /
+			this.calcTime(gpsDashboard.initialLoc, event) *
+			60 * 60).toFixed(1) + " kph";
+	}
+	else if (gpsDashboard.avgSpeedPref == 1 && !gpsDashboard.initialLoc)
+		return "&nbsp;";
+
+	if (gpsDashboard.avgSpeedPref == 2 && gpsDashboard.tripometer.time != 0) {
+		if (gpsDashboard.units == 1)
+			return (gpsDashboard.tripometer.dist /
+			gpsDashboard.tripometer.time *
+			60 * 60 * .621371192).toFixed(1) + " mph";
+		if (gpsDashboard.units == 2)
+			return (gpsDashboard.tripometer.dist /
+			gpsDashboard.tripometer.time *
+			60 * 60).toFixed(1) + " kph";
+	}
+	else
+		return "&nbsp;";
+}
+
+/*
+ * Trip distance display
+ */
+MainAssistant.prototype.distTraveled = function( event ) {
+	if (gpsDashboard.prevLoc) {
+		gpsDashboard.tripometer.dist += this.calcDist(gpsDashboard.prevLoc, event);
+		gpsDashboard.tripometer.time += this.calcTime(gpsDashboard.prevLoc, event);
+		if (gpsDashboard.units == 1) 
+			return (gpsDashboard.tripometer.dist * 0.621371192).toFixed(1) + " miles";
+		if (gpsDashboard.units == 2) 
+			return gpsDashboard.tripometer.dist.toFixed(1) + " km";
+	}
+	return "&nbsp;";
+}
+
+/*
+ * Displays the current distance from the 
+ * the initial position
+ */
+MainAssistant.prototype.distFromInit = function( event ) {
+	if (gpsDashboard.initialLoc) {
+		if (gpsDashboard.units == 1) 
+			return (this.calcDist(event, gpsDashboard.initialLoc) * 0.621371192).toFixed(1) + " miles";
+		if (gpsDashboard.units == 2) 
+			return this.calcDist(event, gpsDashboard.initialLoc).toFixed(1) + " km";
+	}
+	return "&nbsp;";
+}
+
+/*
+ * Displays the lifetime distance traveled
+ */
+MainAssistant.prototype.lifeDist = function(event){
+	if (gpsDashboard.prevLoc)
+		gpsDashboard.lifeDist += this.calcDist(event, gpsDashboard.prevLoc);
+	if (gpsDashboard.units == 1)
+		return (gpsDashboard.lifeDist * 0.621371192).toFixed(1) + " miles";
+	if (gpsDashboard.units == 2)
+		return gpsDashboard.lifeDist.toFixed(1) + " km";
+}
+
+/*
+ * Returns elapsed time between event2 and event1
+ * in seconds
+ */
+MainAssistant.prototype.calcTime = function( event1, event2 ) {
+	return (event2.timestamp - event1.timestamp) / 1000;
+}
+
+/*
+ * Returns the distance between point1 and point2
+ * in kilometers
+ */
+MainAssistant.prototype.calcDist = function( point1, point2 ) {
+	if (point1.latitude == point2.latitude && 
+		point1.longitude == point2.longitude)
+		return 0;
+
+	dLat = point2.latitude - point1.latitude;
+	dLon = point2.longitude - point1.longitude;
+	mLat = ((point2.latitude + point1.latitude) / 2).toRad();
+	K1 = 111.13209 - 
+		 (0.56605 * Math.cos(2 * mLat)) + 
+		 (0.00120 * Math.cos(4 * mLat));
+	K2 = (111.41513 * Math.cos(mLat)) - 
+		 (0.09455 * Math.cos(3 * mLat)) + 
+		 (0.00012 * Math.cos(5 * mLat));
+	dist = Math.sqrt( Math.pow((K1 * dLat), 2) + Math.pow((K2 * dLon), 2));
+	return dist;
+}
+
+/*
+ * Calculates the speed based on the current and
+ * last fix (Not currently used)
+ */
+MainAssistant.prototype.calcSpeed = function( event ){
+	if (!gpsDashboard.prevLoc)
+		return "Calculated Speed: -";
+	if (gpsDashboard.units = 1)
+		return "Calculated Speed: " +
+			(this.calcDist(gpsDashboard.prevLoc, event) / 
+			 this.calcTime(gpsDashboard.prevLoc, event) * 3600 * .621371192).toFixed(1) + " mph";
+	if (gpsDashboard.units = 2)
+		return "Calculated Speed: " +
+			(this.calcDist(gpsDashboard.prevLoc, event) / 
+		 	 this.calcTime(gpsDashboard.prevLoc, event) * 3600).toFixed(1) + " kph";
+}
+
+MainAssistant.prototype.deactivate = function(event) {
+	this.controller.stageController.setWindowProperties({blockScreenTimeout: false});
+	this.trackingHandle.cancel(); 
+}
+
+/*
+ * Clean up the listeners, special window options,
+ * and the gps tracking fixes.
+ * Also stores the cookie
+ */
+MainAssistant.prototype.cleanup = function(event){
+	this.controller.stopListening(this.controller.get('addressButton'), Mojo.Event.tap, this.getAddressListener);
+	this.controller.stopListening(document, 'orientationchange', this.handleOrientation.bindAsEventListener(this));	
+	this.controller.stageController.setWindowProperties({
+		blockScreenTimeout: false
+	});
+	this.trackingHandle.cancel();
+	gpsDashboard.cookie.storeCookie();
+}
+
+/*
+ * Handles changes to the orientation
+ */
+MainAssistant.prototype.handleOrientation = function( event ) {
+	if (event.position == 4 || event.position == 5) {
+		this.controller.get('currentInfo').addClassName('landscape');
+		this.controller.get('tripInfo').addClassName('landscape');
+		this.controller.get('addressInfo').addClassName('landscape');
+		this.controller.get('initialDisplay').addClassName('landscape');
+		this.controller.get('accuracyNotice').addClassName('landscape');
+	}	
+	if (event.position == 2 || event.position == 3) {
+		this.controller.get('currentInfo').removeClassName('landscape');
+		this.controller.get('tripInfo').removeClassName('landscape');
+		this.controller.get('addressInfo').removeClassName('landscape');
+		this.controller.get('initialDisplay').removeClassName('landscape');
+		this.controller.get('accuracyNotice').removeClassName('landscape');
+	}
+}
+
+/*
+ * Handles the application pulldown menu
+ */
+MainAssistant.prototype.handleCommand = function (event) {
+	if (event.type == Mojo.Event.commandEnable &&
+	   (event.command == Mojo.Menu.helpCmd)) 
+	{	event.stopPropagation(); 
+	}
+
+	if (event.type == Mojo.Event.commandEnable &&
+	   (event.command == Mojo.Menu.prefsCmd)) 
+	{	event.stopPropagation(); 
+	}
+
+	if (event.type == Mojo.Event.command) {
+		switch (event.command) {
+			case Mojo.Menu.helpCmd:
+				Mojo.Controller.stageController.pushAppSupportInfoScene();
+				break;
+			case Mojo.Menu.prefsCmd:
+				Mojo.Controller.stageController.pushScene('preferences');
+				break;
+		}
+	}
+}
+
+/*
+ * Simple extention to the number class to convert 
+ * degrees to radians
+ */
+Number.prototype.toRad = function() {
   return this * Math.PI / 180;
 }
 
-// Gets reverse location when the button is pressed
+/*
+ * Gets reverse location when the button is pressed
+ */
 MainAssistant.prototype.getAddress = function(){
 	this.controller.serviceRequest('palm://com.palm.location', {
 		method: "getReverseLocation",
