@@ -1,10 +1,15 @@
-#announce {
+#initialDisplay {
 	text-align: center;
 	margin-top: 80px;
 }
-#announce.hidden {
+#initialDisplay.hidden {
 	opacity: 0;
 }
+
+#accuracyNotice {
+	margin-top: 200px;
+}
+
 #addressButton.landscape {
 	width: 53%;
 	float: left;

@@ -4,10 +4,11 @@
 gpsDashboard = { };
 gpsDashboard.units = 1;
 gpsDashboard.backlight = 1;
-gpsDashboard.avgSpeedPref = 1;
+gpsDashboard.avgSpeedPref = 2;
 gpsDashboard.tripometer = {time: 0, dist: 0};
 gpsDashboard.iteration = 0;
 gpsDashboard.lifeDist = 0;
+gpsDashboard.hidden = true;
 
 gpsDashboard.cookie = ({
 	initialize: function() {
@@ -49,7 +50,7 @@ MainAssistant.prototype.setup = function(){
 	this.controller.get('currentInfo').addClassName('hidden');
 	this.controller.get('tripInfo').addClassName('hidden');
 	this.controller.get('addressButton').addClassName('hidden');
-	
+
 	this.controller.setupWidget("spinner", this.spinnerAttr = {
 		spinnerSize: 'large'
 	}, this.model = {
@@ -104,38 +105,42 @@ MainAssistant.prototype.getAddress = function(){
 
 MainAssistant.prototype.handleServiceResponse = function(event){
 	gpsDashboard.iteration++;
-	if (gpsDashboard.iteration == 1) {
-		this.controller.get('announce').addClassName('hidden');
+	if (!gpsDashboard.initialLoc && event.horizAccuracy <= 10)
+		gpsDashboard.initialLoc = event;
+
+	if (event.horizAccuracy <=10 && gpsDashboard.hidden) {
+		gpsDashboard.hidden = false;
+		this.controller.get('initialDisplay').addClassName('hidden');
 		this.scrim.hide();
 		
 		this.controller.get('currentInfo').removeClassName('hidden');
 		this.controller.get('tripInfo').removeClassName('hidden');
 		this.controller.get('addressButton').removeClassName('hidden');
 	}
-	
-	if (!gpsDashboard.initialLoc && event.horizAccuracy <= 9)
-		gpsDashboard.initialLoc = event;
-		
-	if (event.errorCode == 0) {
+	else if (event.horizAccuracy > 10 && !gpsDashboard.hidden) {
+		gpsDashboard.hidden = true;
+		this.controller.get('initialDisplay').removeClassName('hidden');
+		this.scrim.show();
+
+		this.controller.get('currentInfo').addClassName('hidden');
+		this.controller.get('tripInfo').addClassName('hidden');
+		this.controller.get('addressButton').addClassName('hidden');
+		this.controller.get('address').addClassName('hidden');
+	}
+	this.controller.get('accuracyNotice').update("Satellite Strength too Low");
+	this.controller.get('horizAccuracy').update("Horizontal Error = " + event.horizAccuracy.toFixed(1) + " > 10");
+
+	if (event.errorCode == 0 && event.horizAccuracy <= 10) {
 		this.controller.get('heading').update(this.heading(event));
 		this.controller.get('speed').update(this.speed(event));
 		this.controller.get('altitude').update(this.altitude(event));
-		this.controller.get('accuracy').update(this.accuracy(event));
-		if (event.horizAccuracy <= 9) {
-			this.controller.get('avgSpeed').update(this.avgSpeed(event));
-			this.controller.get('distTraveled').update(this.distTraveled(event));
-			this.controller.get('distFromInit').update(this.distFromInit(event));
-			this.controller.get('lifeDist').update(this.lifeDist(event));
-			gpsDashboard.prevLoc = event;
-		}
-		else if (!gpsDashboard.prevLoc){
-			this.controller.get('avgSpeed').update("-");
-			this.controller.get('distTraveled').update("-");
-			this.controller.get('distFromInit').update("-");
-			this.controller.get('lifeDist').update("-");
-		}
+		this.controller.get('avgSpeed').update(this.avgSpeed(event));
+		this.controller.get('distTraveled').update(this.distTraveled(event));
+		this.controller.get('distFromInit').update(this.distFromInit(event));
+		this.controller.get('lifeDist').update(this.lifeDist(event));
+		gpsDashboard.prevLoc = event;
 	}
-	else 
+	else if (event.errorCode != 0)
 		this.controller.stageController.pushScene("gpsError", event.errorCode);
 
 }
@@ -179,13 +184,13 @@ MainAssistant.prototype.avgSpeed = function(event){
 		if (gpsDashboard.units == 1)
 			return (gpsDashboard.tripometer.dist /
 			gpsDashboard.tripometer.time *
-			60 * 60 * 621371192).toFixed(1) + " mph";
+			60 * 60 * .621371192).toFixed(1) + " mph";
 		if (gpsDashboard.units == 2)
 			return (gpsDashboard.tripometer.dist /
 			gpsDashboard.tripometer.time *
 			60 * 60).toFixed(1) + " kph";
 	}
-	else if (gpsDashboard.tripometer.time == 0)
+	else
 		return "-";
 }
 
@@ -361,16 +366,6 @@ MainAssistant.prototype.altitude = function(event){
 		return (event.altitude * 3.2808399).toFixed(1) + " feet";
 	if (gpsDashboard.units == 2)
 		return event.altitude.toFixed(1) + " meters";
-}
-
-MainAssistant.prototype.accuracy = function(event){
-	if (event.horizAccuracy > 999) 
-		return "Poor";
-	if (event.horizAccuracy > 99) 
-		return "Medium";
-	if (event.horizAccuracy > 9) 
-		return "Good";
-	return "Excellent";
 }
 
 Number.prototype.toRad = function() {  // convert degrees to radians
