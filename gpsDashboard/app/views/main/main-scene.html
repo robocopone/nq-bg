@@ -17,33 +17,35 @@
 <div id="currentInfo" class="palm-group">
 	<div class="palm-group-title">Current Information</div>
 
-	<div class="heading">Speed:</div>
-		<div id="speed" style="width: 40%; float: left; margin-left: 10px; margin-bottom: 5px;"></div>
-			<div id="heading" style="float: left; margin-left: 10px; margin-bottom: 5px;"></div>
-	<div class="heading">Altitude:</div>
-		<div id="altitude" class="data"></div>
+		<div class="heading">Speed:</div>
+			<div id="speed" class="data"></div>
+	
+		<div id="heading" class="data"></div>
+	
+		<div class="heading">Altitude:</div>
+			<div id="altitude" class="data"></div>
 </div>
 
 <div id="tripInfo" class="palm-group">
 	<div class="palm-group-title">Trip Information</div>
 	<div class="heading">Average Speed:</div>
-		<div id="avgSpeed" class="tripData"></div>
+		<div id="avgSpeed" class="data"></div>
 			<div x-mojo-element="Button" id="avgSpeedReset"></div>
 	<div class="heading">Dist. Traveled:</div>
-		<div id="distTraveled" class="tripData"></div>
+		<div id="distTraveled" class="data"></div>
 			<div x-mojo-element="Button" id="distReset"></div>
 	<div class="heading">Dist. from First Pos.:</div>
-		<div id="distFromInit" class="tripData"></div>
+		<div id="distFromInit" class="data"></div>
 			<div x-mojo-element="Button" id="initReset"></div>
 	<div class="heading">Lifetime Distance:</div>
-		<div id="lifeDist" class="tripData"></div>
+		<div id="lifeDist" class="data"></div>
 </div>
 
-<div x-mojo-element="Button" id="addressButton"></div>
-
-<div id="address" class="palm-group">
-	<div class="palm-group-title">Address</div>
-	<div id="address1"></div>
-	<div id="address2"></div>
+<div id="addressInfo">
+	<div x-mojo-element="Button" id="addressButton"></div>
+	<div id="address" class="palm-group">
+		<div class="palm-group-title">Address</div>
+		<div id="address1"></div>
+		<div id="address2"></div>
+	</div>
 </div>
-
