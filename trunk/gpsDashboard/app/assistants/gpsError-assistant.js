@@ -3,7 +3,6 @@ function GpsErrorAssistant(errorCode) {
 }
 
 GpsErrorAssistant.prototype.setup = function() {
-	this.constroller.get('message').update("bleh");
 	if (this.errCode == 1)
 		this.controller.get('message').update("Error: GPS Timed Out");
 	if (this.errCode == 2)
