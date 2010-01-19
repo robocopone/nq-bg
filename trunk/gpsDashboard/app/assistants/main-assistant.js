@@ -5,6 +5,8 @@ gpsDashboard = { };
 gpsDashboard.units = 1;							// Preferred unit of measure
 gpsDashboard.backlight = 1;						// Backlight preference
 gpsDashboard.avgSpeedPref = 2;					// Average speed calculation preference
+gpsDashboard.avgSpeed = {time: 0, dist: 0};		// Average speed info
+gpsDashboard.topSpeed = 0;						// Top speed info
 gpsDashboard.tripometer = {time: 0, dist: 0};	// Distance traveled data
 gpsDashboard.lifeDist = 0;						// Lifetime distance traveled
 gpsDashboard.hidden = true;						// Is the dashboard visable?
@@ -46,7 +48,7 @@ function MainAssistant() {
 MainAssistant.prototype.setup = function(){
 	gpsDashboard.cookie.initialize();
 	
-	if (this.controller.stageController.setWindowOrientation)
+	if (this.controller.stageController.setWindowOrientation) 
 		this.controller.stageController.setWindowOrientation("free");
 	this.controller.listen(document, 'orientationchange', this.handleOrientation.bindAsEventListener(this));
 	
@@ -55,7 +57,7 @@ MainAssistant.prototype.setup = function(){
 	this.controller.get('currentInfo').addClassName('hidden');
 	this.controller.get('tripInfo').addClassName('hidden');
 	this.controller.get('addressInfo').addClassName('hidden');
-
+	
 	// Scrim and activity spinner
 	this.controller.setupWidget("spinner", this.spinnerAttr = {
 		spinnerSize: 'large'
@@ -66,7 +68,7 @@ MainAssistant.prototype.setup = function(){
 		scrimClass: 'palm-scrim'
 	});
 	this.controller.get('scrim').appendChild(this.scrim).appendChild(this.controller.get('spinner'));
-
+	
 	// Address button widget
 	this.controller.setupWidget('addressButton', this.atts = {
 		type: Mojo.Widget.activityButton
@@ -75,8 +77,8 @@ MainAssistant.prototype.setup = function(){
 		buttonClass: 'affirmative',
 		disabled: false
 	});
-	this.getAddressListener = this.getAddress.bind(this);
-	this.controller.listen(this.controller.get('addressButton'),Mojo.Event.tap, this.getAddressListener);
+	this.controller.listen(this.controller.get('addressButton'), Mojo.Event.tap, this.getAddress.bind(this));
+	this.controller.listen(this.controller.get('tripInfo'),Mojo.Event.tap, this.resets.bind(this));
 }
 
 MainAssistant.prototype.activate = function(event) {
@@ -128,6 +130,7 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 		this.controller.get('heading').update(this.heading(event));
 		this.controller.get('altitude').update(this.altitude(event));
 		this.controller.get('avgSpeed').update(this.avgSpeed(event));
+		this.controller.get('topSpeed').update(this.topSpeed(event));
 		this.controller.get('distTraveled').update(this.distTraveled(event));
 		this.controller.get('distFromInit').update(this.distFromInit(event));
 		this.controller.get('lifeDist').update(this.lifeDist(event));
@@ -153,6 +156,22 @@ MainAssistant.prototype.speed = function(event) {
 	if (gpsDashboard.units == 2)
 		return (event.velocity * 3.6).toFixed(1) + " kph";
 }
+
+/*
+ * Top speed display
+ */
+
+MainAssistant.prototype.topSpeed = function (event) {
+	if (event.velocity > gpsDashboard.topSpeed)
+		gpsDashboard.topSpeed = event.velocity;
+	if (gpsDashboard.topSpeed == 0)
+		return "&nbsp;";
+	if (gpsDashboard.units == 1)
+		return (gpsDashboard.topSpeed * 2.23693629).toFixed(1) + " mph";
+	if (gpsDashboard.units == 2)
+		return (gpsDashboard.topSpeed * 3.6).toFixed(1) + " kph";
+}
+
 
 /*
  * Converts degrees to N/S/E/W
@@ -211,6 +230,11 @@ MainAssistant.prototype.altitude = function(event){
  * Trip average speed display
  */
 MainAssistant.prototype.avgSpeed = function(event){
+	return "000.0 mph";
+	if (gpsDashboard.prevLoc) {
+		gpsDashboard.avgSpeed.dist += this.calcDist(gpsDashboard.prevLoc, event);
+		gpsDashboard.avgSpeed.time += this.calcTime(gpsDashboard.prevLoc, event);
+	}
 	if (gpsDashboard.avgSpeedPref == 1 && gpsDashboard.initialLoc) {
 		if (this.calcTime(gpsDashboard.initialLoc, event) == 0)
 			return "&nbsp;";
@@ -226,14 +250,14 @@ MainAssistant.prototype.avgSpeed = function(event){
 	else if (gpsDashboard.avgSpeedPref == 1 && !gpsDashboard.initialLoc)
 		return "&nbsp;";
 
-	if (gpsDashboard.avgSpeedPref == 2 && gpsDashboard.tripometer.time != 0) {
+	if (gpsDashboard.avgSpeedPref == 2 && gpsDashboard.avgSpeed.time != 0) {
 		if (gpsDashboard.units == 1)
-			return (gpsDashboard.tripometer.dist /
-			gpsDashboard.tripometer.time *
+			return (gpsDashboard.avgSpeed.dist /
+			gpsDashboard.avgSpeed.time *
 			60 * 60 * .621371192).toFixed(1) + " mph";
 		if (gpsDashboard.units == 2)
-			return (gpsDashboard.tripometer.dist /
-			gpsDashboard.tripometer.time *
+			return (gpsDashboard.avgSpeed.dist /
+			gpsDashboard.avgSpeed.time *
 			60 * 60).toFixed(1) + " kph";
 	}
 	else
@@ -339,13 +363,59 @@ MainAssistant.prototype.deactivate = function(event) {
  * Also stores the cookie
  */
 MainAssistant.prototype.cleanup = function(event){
-	this.controller.stopListening(this.controller.get('addressButton'), Mojo.Event.tap, this.getAddressListener);
+	this.controller.stopListening(this.controller.get('addressButton'), Mojo.Event.tap, this.getAddress.bind(this));
 	this.controller.stopListening(document, 'orientationchange', this.handleOrientation.bindAsEventListener(this));	
+	this.controller.stopListening(this.controller.get('tripInfo'),Mojo.Event.tap, this.resets.bind(this));
+
 	this.controller.stageController.setWindowProperties({
 		blockScreenTimeout: false
 	});
 	this.trackingHandle.cancel();
 	gpsDashboard.cookie.storeCookie();
+}
+
+MainAssistant.prototype.resets = function(){
+	this.controller.popupSubmenu({
+		onChoose: this.resetHandler,
+		items: [{
+			label: 'Reset All',
+			command: 'reset-all',
+		}, {
+			label: 'Reset Top Speed',
+			command: 'reset-topSpeed'
+		}, {
+			label: 'Reset Average Speed',
+			command: 'reset-avgSpeed'
+		}, {
+			label: 'Reset Distance Traveled',
+			command: 'reset-distTraveled',
+		}, {
+			label: 'Reset Initial Position',
+			command: 'reset-initialPosition',
+		}]
+	});
+}
+
+/*
+ * Reset menu that pops up when trip info is tapped
+ */
+MainAssistant.prototype.resetHandler = function(command){
+	if (command == 'reset-all') {
+		gpsDashboard.tripometer = {time: 0, dist: 0};
+		gpsDashboard.avgSpeed = {time: 0, dist: 0};
+		gpsDashboard.initialLoc = undefined;
+		gpsDashboard.topSpeed = 0;
+	}
+	if (command == 'reset-topSpeed')
+		gpsDashboard.topSpeed = 0;
+	if (command == 'reset-avgSpeed' && gpsDashboard.avgSpeedPref == 1)
+		gpsDashboard.initialLoc = undefined;
+	if (command == 'reset-avgSpeed' && gpsDashboard.avgSpeedPref == 2)
+		gpsDashboard.avgSpeed = {time: 0, dist: 0};
+	if (command == 'reset-distTraveled')
+		gpsDashboard.tripometer = {time: 0, dist: 0};
+	if (command == 'reset-initialPosition')
+		gpsDashboard.initialLoc = undefined;
 }
 
 /*

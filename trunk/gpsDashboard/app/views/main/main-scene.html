@@ -15,7 +15,11 @@
 </div>
 
 <div id="currentInfo" class="palm-group">
-	<div class="palm-group-title">Current Information</div>
+	<div class="palm-group-title">   
+		<div id="currentTitle">Current Information</div>
+		<div id="currentSpeedHead">Top:</div>
+		<div id="topSpeed"></div> 
+	</div>
 
 		<div class="heading">Speed:</div>
 			<div id="speed" class="data"></div>
@@ -28,15 +32,12 @@
 
 <div id="tripInfo" class="palm-group">
 	<div class="palm-group-title">Trip Information</div>
-	<div class="heading">Average Speed:</div>
+	<div class="heading">Avgerage Speed</div>
 		<div id="avgSpeed" class="data"></div>
-			<div x-mojo-element="Button" id="avgSpeedReset"></div>
 	<div class="heading">Dist. Traveled:</div>
 		<div id="distTraveled" class="data"></div>
-			<div x-mojo-element="Button" id="distReset"></div>
 	<div class="heading">Dist. from First Pos.:</div>
 		<div id="distFromInit" class="data"></div>
-			<div x-mojo-element="Button" id="initReset"></div>
 	<div class="heading">Lifetime Distance:</div>
 		<div id="lifeDist" class="data"></div>
 </div>
