@@ -77,8 +77,8 @@ MainAssistant.prototype.setup = function(){
 		buttonClass: 'affirmative',
 		disabled: false
 	});
-	this.controller.listen(this.controller.get('addressButton'), Mojo.Event.tap, this.getAddress.bind(this));
-	this.controller.listen(this.controller.get('tripInfo'),Mojo.Event.tap, this.resets.bind(this));
+	this.controller.listen(this.controller.get('addressButton'), Mojo.Event.tap, this.getAddress.bindAsEventListener(this));
+	this.controller.listen(this.controller.get('tripInfo'),Mojo.Event.tap, this.resets.bindAsEventListener(this));
 }
 
 MainAssistant.prototype.activate = function(event) {
@@ -362,9 +362,9 @@ MainAssistant.prototype.deactivate = function(event) {
  * Also stores the cookie
  */
 MainAssistant.prototype.cleanup = function(event){
-	this.controller.stopListening(this.controller.get('addressButton'), Mojo.Event.tap, this.getAddress.bind(this));
-	this.controller.stopListening(document, 'orientationchange', this.handleOrientation.bindAsEventListener(this));	
-	this.controller.stopListening(this.controller.get('tripInfo'),Mojo.Event.tap, this.resets.bind(this));
+	this.controller.stopListening(this.controller.get('addressButton'), Mojo.Event.tap, this.getAddress.bindAsEventListener(this));
+	this.controller.stopListening(document, 'orientationchange', this.handleOrientation.bindAsEventListener(this));
+	this.controller.stopListening(this.controller.get('tripInfo'),Mojo.Event.tap, this.resets.bindAsEventListener(this));
 
 	this.controller.stageController.setWindowProperties({
 		blockScreenTimeout: false
