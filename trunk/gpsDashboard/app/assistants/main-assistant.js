@@ -230,7 +230,6 @@ MainAssistant.prototype.altitude = function(event){
  * Trip average speed display
  */
 MainAssistant.prototype.avgSpeed = function(event){
-	return "000.0 mph";
 	if (gpsDashboard.prevLoc) {
 		gpsDashboard.avgSpeed.dist += this.calcDist(gpsDashboard.prevLoc, event);
 		gpsDashboard.avgSpeed.time += this.calcTime(gpsDashboard.prevLoc, event);
