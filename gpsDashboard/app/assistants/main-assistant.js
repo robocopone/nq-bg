@@ -427,6 +427,12 @@ MainAssistant.prototype.handleReverseResponse = function( event ) {
 }
 
 MainAssistant.prototype.handleReverseResponseError = function(event){
+	this.controller.get('addressButton').mojo.deactivate();
 	this.controller.get('address').removeClassName('hidden');
-	this.controller.get('address1').update("Error: " + event.errorCode);
+	if (event.errorCode == 6)
+		this.controller.get('address1').update("Error: Permission Denied - You have not accepted the terms of use for GPS Services");
+	if (event.errorCode == 7)
+		this.controller.get('address1').update("Error: The application already has a pending message");
+	if (event.errorCode == 8)
+		this.controller.get('address1').update("Error: The application has been temporarily blacklisted");
 }
