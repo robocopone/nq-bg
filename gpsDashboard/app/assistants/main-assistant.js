@@ -48,7 +48,8 @@ function MainAssistant() {
 MainAssistant.prototype.setup = function(){
 	gpsDashboard.cookie.initialize();
 	
-	if (this.controller.stageController.setWindowOrientation) 
+	if (this.controller.stageController.setWindowOrientation &&
+		Mojo.Environment.DeviceInfo.screenHeight >= 480 ) 
 		this.controller.stageController.setWindowOrientation("free");
 	this.controller.listen(document, 'orientationchange', this.handleOrientation.bindAsEventListener(this));
 	
@@ -421,6 +422,9 @@ MainAssistant.prototype.resetHandler = function(command){
  * Handles changes to the orientation
  */
 MainAssistant.prototype.handleOrientation = function( event ) {
+	if (Mojo.Environment.DeviceInfo.screenHeight < 480)
+		return;
+
 	if (event.position == 4 || event.position == 5) {
 		this.controller.get('currentInfo').addClassName('landscape');
 		this.controller.get('tripInfo').addClassName('landscape');
