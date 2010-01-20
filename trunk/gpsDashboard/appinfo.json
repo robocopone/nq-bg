@@ -1,10 +1,10 @@
 {
 	"id": "net.bradleygraber.gpsdashboard",
-	"version": "1.2.1",
+	"version": "1.2.2",
 	"vendor": "Bradley Graber",
 	"type": "web",
 	"main": "index.html",
-	"title": "gpsDashboard",
+	"title": "gpsDashboard Free",
 	"icon": "icon.png",
 	"noDeprecatedStyles": "true",
 	"theme": "light",
