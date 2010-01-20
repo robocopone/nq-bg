@@ -1,3 +1,6 @@
+.palm-group {
+	height: 50px;
+}
 /*
  * Title bar for the Current info box
  */
@@ -57,7 +60,6 @@
  * Current info Display
  */
 #currentInfo {
-	margin-top: 55px;
 	height: 60px;
 }
 

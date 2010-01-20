@@ -5,10 +5,6 @@
         "source": "app/assistants/main-assistant.js"
     },
     {
-        "scenes": "support",
-        "source": "app/assistants/support-assistant.js"
-    },
-    {
         "scenes": "preferences",
         "source": "app/assistants/preferences-assistant.js"
     },
