@@ -15,5 +15,9 @@
     {
         "scenes": "gpsError",
         "source": "app/assistants/gpsError-assistant.js"
+    },
+    {
+        "scenes": "records",
+        "source": "app/assistants/records-assistant.js"
     }
 ]
