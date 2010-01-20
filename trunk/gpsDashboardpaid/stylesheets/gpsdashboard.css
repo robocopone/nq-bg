@@ -1,0 +1,127 @@
+/*
+ * Title bar for the Current info box
+ */
+#currentTitle {
+	float: left;
+}
+#currentSpeedHead {
+	float: left;
+	font-size: small;
+	width: 20%;
+	margin-right: 3px;
+	text-align: right;
+	margin-top: 1px;
+}
+#topSpeed {
+	font-size: small;
+	float: left;
+	width: 58px;
+}
+
+/*
+ * Elements within Trip & Current info boxes
+ */
+.heading {
+	font-weight: bold;
+	float: left;
+	margin-bottom: 5px;
+	margin-right: 5px;
+}
+.data {
+	margin-right: 5px;
+	margin-bottom: 5px;
+	float: left;
+}
+
+#speed {
+	width: 95px;
+}
+#avgSpeed {
+	width: 71px;
+}
+#heading {
+	text-align: center;
+	width: 53px;
+}
+#distTraveled {
+	width: 100px;
+}
+#distFromInit {
+	width: 81px;
+}
+#lifeDist {
+	width: 100px;
+}
+
+/*
+ * Current info Display
+ */
+#currentInfo {
+	margin-top: 50px;
+	height: 60px;
+}
+
+#currentInfo.landscape {
+	height: 30px;
+}
+
+#currentInfo.hidden {
+	opacity: 0;
+}
+
+/*
+ * Trip info Display
+ */
+#tripInfo{
+	letter-spacing: .1em;
+	height: 90px;
+	font-size: medium;
+}
+#tripInfo.landscape {
+	margin-right: 0;
+	width: 52%;
+	float: left;
+}
+#tripInfo.hidden {
+	opacity: 0;
+}
+
+/*
+ * Address info Display
+ */
+#addressInfo.landscape {
+	font-size: medium;
+	width: 39%;
+	float: left;
+}
+#addressInfo.hidden {
+	opacity: 0;
+}
+
+#address {
+	margin-top: 5px;	
+}
+
+#address.hidden {
+	opacity: 0;
+}
+
+/*
+ * Initial announcement & high error warning
+ */
+#initialDisplay {
+	text-align: center;
+	margin-top: 80px;
+}
+#initialDisplay.hidden {
+	opacity: 0;
+}
+#initialDisplay.landscape {
+	margin-top: 60px;
+}
+#accuracyNotice {
+	margin-top: 200px;
+}
+#accuracyNotice.landscape {
+	margin-top: 0px;
+}
