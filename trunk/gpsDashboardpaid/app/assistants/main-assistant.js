@@ -2,15 +2,26 @@
  *	gpsDashboard environment
  */
 gpsDashboard = { };
+gpsDashboard.hidden = true;						// Is the dashboard visable?
 gpsDashboard.units = 1;							// Preferred unit of measure
 gpsDashboard.backlight = 1;						// Backlight preference
+gpsDashboard.maxError = 10;						// Max error in meters preference
 gpsDashboard.avgSpeedPref = 2;					// Average speed calculation preference
 gpsDashboard.avgSpeed = {time: 0, dist: 0};		// Average speed info
 gpsDashboard.topSpeed = 0;						// Top speed info
+gpsDashboard.alltimeTopSpeed = { };				// All time top speed
+gpsDashboard.alltimeTopSpeed.data = {velocity: 0};
+gpsDashboard.alltimeHigh = { };					// All time top elevation
+gpsDashboard.alltimeHigh.data = {altitude: 0}
+gpsDashboard.alltimeLow = { }					// All time low elevation
+gpsDashboard.alltimeLow.data = {altitude: 15000}
 gpsDashboard.tripometer = {time: 0, dist: 0};	// Distance traveled data
 gpsDashboard.lifeDist = 0;						// Lifetime distance traveled
-gpsDashboard.hidden = true;						// Is the dashboard visable?
-gpsDashboard.maxError = 10;						// Max error in meters
+gpsDashboard.initialLoc = undefined;			// Inital Location
+gpsDashboard.prevLoc = undefined;				// Previous location
+gpsDashboard.addressSwitch = "normal";			// Allows the address returned by
+												// reverse location to be stored in
+												// the correct spot
 
 /*
  * Stores and recalls data stored between sessions
@@ -19,7 +30,17 @@ gpsDashboard.cookie = ({
 	initialize: function() {
 		this.cookieData = new Mojo.Model.Cookie("netBradleyGraberGPSDashboardData");
 		storedData = this.cookieData.get();
-		if (storedData){
+		if (storedData && storedData.version == "1.3.0"){
+			gpsDashboard.units = storedData.units;
+			gpsDashboard.backlight = storedData.backlight;
+			gpsDashboard.avgSpeedPref = storedData.avgSpeedPref;
+			gpsDashboard.lifeDist = storedData.lifeDist;
+			gpsDashboard.maxError = storedData.maxError;
+			gpsDashboard.alltimeTopSpeed = storedData.alltimeTopSpeed;
+			gpsDashboard.alltimeHigh = storedData.alltimeHigh;
+			gpsDashboard.alltimeLow = storedData.alltimeLow;
+		}
+		else if (storedData) {
 			gpsDashboard.units = storedData.units;
 			gpsDashboard.backlight = storedData.backlight;
 			gpsDashboard.avgSpeedPref = storedData.avgSpeedPref;
@@ -30,11 +51,15 @@ gpsDashboard.cookie = ({
 	},
 	storeCookie: function() {
 		this.cookieData.put({  
+			version: "1.3.0",
 			units: gpsDashboard.units,                                                
 			backlight: gpsDashboard.backlight,
 			lifeDist: gpsDashboard.lifeDist,
 			avgSpeedPref: gpsDashboard.avgSpeedPref,
-			maxError: gpsDashboard.maxError
+			maxError: gpsDashboard.maxError,
+			alltimeTopSpeed: gpsDashboard.alltimeTopSpeed,
+			alltimeHigh: gpsDashboard.alltimeHigh,
+			alltimeLow: gpsDashboard.alltimeLow
 		});		
 	}
 });
@@ -80,8 +105,22 @@ MainAssistant.prototype.setup = function(){
 	});
 	this.controller.listen(this.controller.get('addressButton'), Mojo.Event.tap, this.getAddress.bindAsEventListener(this));
 	this.controller.listen(this.controller.get('tripInfo'),Mojo.Event.tap, this.resets.bindAsEventListener(this));
+	this.controller.listen(this.controller.get('appHeader'),Mojo.Event.tap, this.nav.bindAsEventListener(this));
 }
-
+MainAssistant.prototype.nav = function () {
+	this.controller.popupSubmenu({
+		onChoose: this.navHandler,
+		placeNear: this.controller.get('appHeader'),
+		items: [{
+			label: 'Record Keeping',
+			command: 'recordKeeping',
+		}]
+	});
+}
+MainAssistant.prototype.navHandler = function(command) {
+	if (command == 'recordKeeping')
+		this.controller.stageController.pushScene('records');
+}
 MainAssistant.prototype.activate = function(event) {
 	if (gpsDashboard.backlight == 1)
 		this.controller.stageController.setWindowProperties({blockScreenTimeout: true});
@@ -135,11 +174,31 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 		this.controller.get('distTraveled').update(this.distTraveled(event));
 		this.controller.get('distFromInit').update(this.distFromInit(event));
 		this.controller.get('lifeDist').update(this.lifeDist(event));
+		this.recordCheck(event);
 		gpsDashboard.prevLoc = event;
 	}
 	else if (event.errorCode != 0)
 		this.controller.stageController.pushScene("gpsError", event.errorCode);
 
+}
+
+/*
+ * Checks to see if records have been broken
+ * and updates if they have
+ */
+MainAssistant.prototype.recordCheck = function (event) {
+	if (event.velocity > gpsDashboard.alltimeTopSpeed.data.velocity) {
+		gpsDashboard.alltimeTopSpeed.data = event;
+		gpsDashboard.alltimeTopSpeed.date = new Date();
+	}
+	else if (event.altitude > gpsDashboard.alltimeHigh.data.altitude) {
+		gpsDashboard.alltimeHigh.data = event;
+		gpsDashboard.alltimeHigh.date = new Date();
+	}
+	else if (event.altitude < gpsDashboard.alltimeLow.data.altitude) {
+		gpsDashboard.alltimeLow.data = event;
+		gpsDashboard.alltimeLow.date = new Date();
+	}
 }
 
 MainAssistant.prototype.handleServiceResponseError = function(event) {
@@ -366,6 +425,8 @@ MainAssistant.prototype.cleanup = function(event){
 	this.controller.stopListening(this.controller.get('addressButton'), Mojo.Event.tap, this.getAddress.bindAsEventListener(this));
 	this.controller.stopListening(document, 'orientationchange', this.handleOrientation.bindAsEventListener(this));
 	this.controller.stopListening(this.controller.get('tripInfo'),Mojo.Event.tap, this.resets.bindAsEventListener(this));
+	this.controller.stopListening(this.controller.get('appHeader'),Mojo.Event.tap, this.nav.bindAsEventListener(this));
+
 
 	this.controller.stageController.setWindowProperties({
 		blockScreenTimeout: false
@@ -377,6 +438,7 @@ MainAssistant.prototype.cleanup = function(event){
 MainAssistant.prototype.resets = function(){
 	this.controller.popupSubmenu({
 		onChoose: this.resetHandler,
+		placeNear: this.controller.get('tripInfo'),
 		items: [{
 			label: 'Reset All',
 			command: 'reset-all',
