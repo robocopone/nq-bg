@@ -12,9 +12,9 @@ gpsDashboard.topSpeed = 0;						// Top speed info
 gpsDashboard.alltimeTopSpeed = { };				// All time top speed
 gpsDashboard.alltimeTopSpeed.data = {velocity: 0};
 gpsDashboard.alltimeHigh = { };					// All time top elevation
-gpsDashboard.alltimeHigh.data = {altitude: 0}
-gpsDashboard.alltimeLow = { }					// All time low elevation
-gpsDashboard.alltimeLow.data = {altitude: 15000}
+gpsDashboard.alltimeHigh.data = {altitude: 0};
+gpsDashboard.alltimeLow = { };					// All time low elevation
+gpsDashboard.alltimeLow.data = {altitude: 15000};
 gpsDashboard.tripometer = {time: 0, dist: 0};	// Distance traveled data
 gpsDashboard.lifeDist = 0;						// Lifetime distance traveled
 gpsDashboard.initialLoc = undefined;			// Inital Location
@@ -189,15 +189,18 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 MainAssistant.prototype.recordCheck = function (event) {
 	if (event.velocity > gpsDashboard.alltimeTopSpeed.data.velocity) {
 		gpsDashboard.alltimeTopSpeed.data = event;
-		gpsDashboard.alltimeTopSpeed.date = new Date();
+		gpsDashboard.alltimeTopSpeed.date =
+			Mojo.Format.formatDate(new Date(), { date: 'medium' });
 	}
-	else if (event.altitude > gpsDashboard.alltimeHigh.data.altitude) {
+	if (event.altitude > gpsDashboard.alltimeHigh.data.altitude) {
 		gpsDashboard.alltimeHigh.data = event;
-		gpsDashboard.alltimeHigh.date = new Date();
+		gpsDashboard.alltimeHigh.date =
+			Mojo.Format.formatDate(new Date(), { date: 'medium' });
 	}
-	else if (event.altitude < gpsDashboard.alltimeLow.data.altitude) {
+	if (event.altitude < gpsDashboard.alltimeLow.data.altitude) {
 		gpsDashboard.alltimeLow.data = event;
-		gpsDashboard.alltimeLow.date = new Date();
+		gpsDashboard.alltimeLow.date =
+			Mojo.Format.formatDate(new Date(), { date: 'medium'});
 	}
 }
 
@@ -564,6 +567,7 @@ MainAssistant.prototype.handleReverseResponse = function( event ) {
 MainAssistant.prototype.handleReverseResponseError = function(event){
 	this.controller.get('addressButton').mojo.deactivate();
 	this.controller.get('address').removeClassName('hidden');
+	this.controller.get('address1').update(event.errorCode);
 	if (event.errorCode == 6)
 		this.controller.get('address1').update("Error: Permission Denied - You have not accepted the terms of use for GPS Services");
 	if (event.errorCode == 7)
