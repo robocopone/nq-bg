@@ -1,2 +1,4 @@
 Trip duration
 Pedestrian mode
+Shake for resets
+Indicate higher or lower than avg speed
