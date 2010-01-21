@@ -17,11 +17,21 @@
 	margin-top: 1px;
 }
 #topSpeed {
+	margin-top: 1px;
 	font-size: small;
 	float: left;
 	width: 58px;
 }
-
+/*
+ * Title bar for the Trip info box
+ */
+#tripTitle { float: left; }
+#tripDuration {
+	margin-left: 10px;
+	margin-top: 1px;
+	font-size: small;
+	float: left;
+}
 /*
  * Elements within Trip & Current info boxes
  */

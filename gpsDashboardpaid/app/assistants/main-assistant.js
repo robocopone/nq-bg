@@ -104,6 +104,7 @@ MainAssistant.prototype.setup = function(){
 		disabled: false
 	});
 	this.controller.listen(this.controller.get('addressButton'), Mojo.Event.tap, this.getAddress.bindAsEventListener(this));
+	this.controller.listen(this.controller.get('currentInfo'),Mojo.Event.tap, this.resets.bindAsEventListener(this));
 	this.controller.listen(this.controller.get('tripInfo'),Mojo.Event.tap, this.resets.bindAsEventListener(this));
 	this.controller.listen(this.controller.get('appHeader'),Mojo.Event.tap, this.nav.bindAsEventListener(this));
 }
@@ -171,6 +172,7 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 		this.controller.get('altitude').update(this.altitude(event));
 		this.controller.get('avgSpeed').update(this.avgSpeed(event));
 		this.controller.get('topSpeed').update(this.topSpeed(event));
+		this.controller.get('tripDuration').update(this.tripDuration());
 		this.controller.get('distTraveled').update(this.distTraveled(event));
 		this.controller.get('distFromInit').update(this.distFromInit(event));
 		this.controller.get('lifeDist').update(this.lifeDist(event));
@@ -288,7 +290,25 @@ MainAssistant.prototype.altitude = function(event){
 	if (gpsDashboard.units == 2)
 		return event.altitude.toFixed(1) + " m";
 }
-
+/*
+ * Trip duration return
+ */
+function pad(number, length) {
+    var str = '' + number;
+    while (str.length < length) {
+        str = '0' + str;
+    }
+    return str;
+}
+MainAssistant.prototype.tripDuration = function () {
+	a = gpsDashboard.tripometer.time;
+	var days = Math.floor(a / 86400);
+	var hours=Math.floor(a / 3600) - (days * 24); 
+	var minutes=Math.floor(a / 60) - (days * 1440) - (hours * 60); 
+	var seconds=Math.floor(a % 60); 
+	
+	return pad(days, 2) + ":" + pad(hours, 2) + ":" + pad(minutes,2) + ":" + pad(seconds, 2);
+}
 /*
  * Trip average speed display
  */
@@ -428,6 +448,7 @@ MainAssistant.prototype.cleanup = function(event){
 	this.controller.stopListening(this.controller.get('addressButton'), Mojo.Event.tap, this.getAddress.bindAsEventListener(this));
 	this.controller.stopListening(document, 'orientationchange', this.handleOrientation.bindAsEventListener(this));
 	this.controller.stopListening(this.controller.get('tripInfo'),Mojo.Event.tap, this.resets.bindAsEventListener(this));
+	this.controller.stopListening(this.controller.get('currentInfo'),Mojo.Event.tap, this.resets.bindAsEventListener(this));
 	this.controller.stopListening(this.controller.get('appHeader'),Mojo.Event.tap, this.nav.bindAsEventListener(this));
 
 
@@ -441,7 +462,7 @@ MainAssistant.prototype.cleanup = function(event){
 MainAssistant.prototype.resets = function(){
 	this.controller.popupSubmenu({
 		onChoose: this.resetHandler,
-		placeNear: this.controller.get('tripInfo'),
+		placeNear: this.controller.get('currentInfo'),
 		items: [{
 			label: 'Reset All',
 			command: 'reset-all',
