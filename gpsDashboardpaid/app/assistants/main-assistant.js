@@ -122,9 +122,6 @@ MainAssistant.prototype.nav = function () {
 		}]
 	});
 }
-MainAssistant.prototype.handleShake = function (event) {
-	gpsDashboard.topSpeed = 0;
-}
 MainAssistant.prototype.navHandler = function(command) {
 	if (command == 'recordKeeping')
 		this.controller.stageController.pushScene('records');
@@ -393,7 +390,6 @@ MainAssistant.prototype.distTraveled = function( event ) {
  * the initial position
  */
 MainAssistant.prototype.distFromInit = function( event ) {
-	return event.vertAccuracy.toFixed(1) + " v";
 	if (gpsDashboard.initialLoc) {
 		if (gpsDashboard.units == 1) 
 			return (this.calcDist(event, gpsDashboard.initialLoc) * 0.621371192).toFixed(1) + " miles";
@@ -407,7 +403,6 @@ MainAssistant.prototype.distFromInit = function( event ) {
  * Displays the lifetime distance traveled
  */
 MainAssistant.prototype.lifeDist = function(event){
-	return event.horizAccuracy.toFixed(1) + " h";
 	if (gpsDashboard.prevLoc)
 		gpsDashboard.lifeDist += this.calcDist(event, gpsDashboard.prevLoc);
 	if (gpsDashboard.units == 1)
@@ -530,6 +525,25 @@ MainAssistant.prototype.resetHandler = function(command){
 	if (command == 'reset-distTraveled')
 		gpsDashboard.tripometer = {time: 0, dist: 0};
 	if (command == 'reset-initialPosition')
+		gpsDashboard.initialLoc = undefined;
+}
+
+MainAssistant.prototype.handleShake = function (event) {
+	if (gpsDashboard.shakePref == 'all') {
+		gpsDashboard.tripometer = {time: 0, dist: 0};
+		gpsDashboard.avgSpeed = {time: 0, dist: 0};
+		gpsDashboard.initialLoc = undefined;
+		gpsDashboard.topSpeed = 0;
+	}
+	if (gpsDashboard.shakePref == 'topSpeed')
+		gpsDashboard.topSpeed = 0;
+	if (gpsDashboard.shakePref == 'avgSpeed' && gpsDashboard.avgSpeedPref == 1)
+		gpsDashboard.initialLoc = undefined;
+	if (gpsDashboard.shakePref == 'avgSpeed' && gpsDashboard.avgSpeedPref == 2)
+		gpsDashboard.avgSpeed = {time: 0, dist: 0};
+	if (gpsDashboard.shakePref == 'distTraveled')
+		gpsDashboard.tripometer = {time: 0, dist: 0};
+	if (gpsDashboard.shakePref == 'initPosition')
 		gpsDashboard.initialLoc = undefined;
 }
 

@@ -1,12 +1,11 @@
 1.3.0
 Pedestrian mode
-Pref to not do anything on shake
 Automatic resets preference
-Limit accuracy on alltime records
-add alltime resets
-check vertical accuracy
 
-*Shake for resets
+*add alltime resets
+*check vertical accuracy
+*Limit accuracy on alltime records
+*Shake for resets with pref
 *Indicate higher or lower than avg speed with pref
 *Records Scene
 *Trip duration

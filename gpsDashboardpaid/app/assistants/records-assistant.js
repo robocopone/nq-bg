@@ -16,10 +16,13 @@ RecordsAssistant.prototype.setup = function(){
 		this.controller.get('alltimeHigh').update(gpsDashboard.alltimeHigh.data.altitude + $L(" meters"));
 	if (gpsDashboard.units == 2 && gpsDashboard.alltimeHigh.data.altitude != 15000) 
 		this.controller.get('alltimeLow').update(gpsDashboard.alltimeLow.data.altitude + $L(" meters"));
-	
-	this.controller.get('alltimeTopSpeedDate').update(gpsDashboard.alltimeTopSpeed.date);
-	this.controller.get('alltimeHighDate').update(gpsDashboard.alltimeHigh.date);
-	this.controller.get('alltimeLowDate').update(gpsDashboard.alltimeLow.date);
+
+	if (gpsDashboard.alltimeTopSpeed.date)	
+		this.controller.get('alltimeTopSpeedDate').update(gpsDashboard.alltimeTopSpeed.date);
+	if (gpsDashboard.alltimeHigh.date)	
+		this.controller.get('alltimeHighDate').update(gpsDashboard.alltimeHigh.date);
+	if (gpsDashboard.alltimeLow.date)	
+		this.controller.get('alltimeLowDate').update(gpsDashboard.alltimeLow.date);
 
 	this.controller.listen(this.controller.get('alltimeTopGroup'), Mojo.Event.tap, this.alltimeTopGroup.bindAsEventListener(this));
 	this.controller.listen(this.controller.get('alltimeHighGroup'), Mojo.Event.tap, this.alltimeHighGroup.bindAsEventListener(this));
@@ -57,18 +60,21 @@ RecordsAssistant.prototype.doResets = function (choice) {
 	if (choice == 'topSpeed') {
 		gpsDashboard.alltimeTopSpeed.data.velocity = 0;
 		gpsDashboard.alltimeTopSpeed.data.latitude = undefined;
+		gpsDashboard.alltimeTopSpeed.date = undefined;
 		this.controller.get('alltimeTopSpeed').update("");
-		this.controller.get('alltimeTopGroup').update("");
+		this.controller.get('alltimeTopSpeedDate').update("");
 	}
 	if (choice == 'alltimeHigh') {
 		gpsDashboard.alltimeHigh.data.altitude = 0;
 		gpsDashboard.alltimeHigh.data.latitude = undefined;
+		gpsDashboard.alltimeHigh.date = undefined;
 		this.controller.get('alltimeHigh').update("");
 		this.controller.get('alltimeHighDate').update("");
 	}
 	if (choice == 'alltimeLow') {
 		gpsDashboard.alltimeLow.data.altitude = 15000;
 		gpsDashboard.alltimeLow.data.latitude = undefined;
+		gpsDashboard.alltimeLow.date = undefined;
 		this.controller.get('alltimeLow').update("");
 		this.controller.get('alltimeLowDate').update("");
 	}
