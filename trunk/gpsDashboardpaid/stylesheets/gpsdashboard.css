@@ -53,6 +53,8 @@
 	width: 53px;
 }
 #speed 			{ width: 95px; }
+#speed.red		{ color: red; }
+#speed.green	{ color: green; }
 #avgSpeed 		{ width: 71px; }
 #altitude 		{ width: 98px; }
 #distTraveled 	{ width: 100px; }

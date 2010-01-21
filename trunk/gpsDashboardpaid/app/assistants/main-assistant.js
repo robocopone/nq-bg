@@ -6,6 +6,8 @@ gpsDashboard.hidden = true;						// Is the dashboard visable?
 gpsDashboard.units = 1;							// Preferred unit of measure
 gpsDashboard.backlight = 1;						// Backlight preference
 gpsDashboard.maxError = 10;						// Max error in meters preference
+gpsDashboard.shakePref = 'topSpeed';			// Shake preference
+gpsDashboard.coloredSpeedPref = 'true';			// Colored speed preference
 gpsDashboard.avgSpeedPref = 2;					// Average speed calculation preference
 gpsDashboard.avgSpeed = {time: 0, dist: 0};		// Average speed info
 gpsDashboard.topSpeed = 0;						// Top speed info
@@ -19,9 +21,6 @@ gpsDashboard.tripometer = {time: 0, dist: 0};	// Distance traveled data
 gpsDashboard.lifeDist = 0;						// Lifetime distance traveled
 gpsDashboard.initialLoc = undefined;			// Inital Location
 gpsDashboard.prevLoc = undefined;				// Previous location
-gpsDashboard.addressSwitch = "normal";			// Allows the address returned by
-												// reverse location to be stored in
-												// the correct spot
 
 /*
  * Stores and recalls data stored between sessions
@@ -39,6 +38,8 @@ gpsDashboard.cookie = ({
 			gpsDashboard.alltimeTopSpeed = storedData.alltimeTopSpeed;
 			gpsDashboard.alltimeHigh = storedData.alltimeHigh;
 			gpsDashboard.alltimeLow = storedData.alltimeLow;
+			gpsDashboard.shakePref = storedData.shakePref;
+			gpsDashboard.coloredSpeedPref = storedData.coloredSpeedPref;
 		}
 		else if (storedData) {
 			gpsDashboard.units = storedData.units;
@@ -59,7 +60,9 @@ gpsDashboard.cookie = ({
 			maxError: gpsDashboard.maxError,
 			alltimeTopSpeed: gpsDashboard.alltimeTopSpeed,
 			alltimeHigh: gpsDashboard.alltimeHigh,
-			alltimeLow: gpsDashboard.alltimeLow
+			alltimeLow: gpsDashboard.alltimeLow,
+			shakePref: gpsDashboard.shakePref,
+			coloredSpeedPref: gpsDashboard.coloredSpeedPref
 		});		
 	}
 });
@@ -77,7 +80,8 @@ MainAssistant.prototype.setup = function(){
 		Mojo.Environment.DeviceInfo.screenHeight >= 480 ) 
 		this.controller.stageController.setWindowOrientation("free");
 	this.controller.listen(document, 'orientationchange', this.handleOrientation.bindAsEventListener(this));
-	
+	this.controller.listen(document, 'shakestart', this.handleShake.bindAsEventListener(this));
+		
 	// Hides the dashboard
 	this.controller.get('address').addClassName('hidden');
 	this.controller.get('currentInfo').addClassName('hidden');
@@ -117,6 +121,9 @@ MainAssistant.prototype.nav = function () {
 			command: 'recordKeeping',
 		}]
 	});
+}
+MainAssistant.prototype.handleShake = function (event) {
+	gpsDashboard.topSpeed = 0;
 }
 MainAssistant.prototype.navHandler = function(command) {
 	if (command == 'recordKeeping')
@@ -176,12 +183,13 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 		this.controller.get('distTraveled').update(this.distTraveled(event));
 		this.controller.get('distFromInit').update(this.distFromInit(event));
 		this.controller.get('lifeDist').update(this.lifeDist(event));
-		this.recordCheck(event);
 		gpsDashboard.prevLoc = event;
 	}
-	else if (event.errorCode != 0)
-		this.controller.stageController.pushScene("gpsError", event.errorCode);
+	if (event.errorCode == 0 && event.horizAccuracy <= 5 && event.vertAccuracy <= 10)
+		this.recordCheck(event);
 
+	if (event.errorCode != 0)
+		this.controller.stageController.pushScene("gpsError", event.errorCode);
 }
 
 /*
@@ -213,9 +221,26 @@ MainAssistant.prototype.handleServiceResponseError = function(event) {
 /*
  * Current speed display
  */
-MainAssistant.prototype.speed = function(event) {
-	if (event.velocity == 0)
+MainAssistant.prototype.speed = function(event){
+	if (event.velocity == 0) 
 		return "&nbsp;";
+	avg = gpsDashboard.avgSpeed.dist / gpsDashboard.avgSpeed.time * 1000;
+
+	if (gpsDashboard.coloredSpeedPref == 'true') {
+		if (avg < event.velocity) {
+			this.controller.get('speed').removeClassName('red');
+			this.controller.get('speed').addClassName('green');
+		}
+		if (avg >= event.velocity) {
+			this.controller.get('speed').removeClassName('green');
+			this.controller.get('speed').addClassName('red');
+		}
+	}
+	else {
+		this.controller.get('speed').removeClassName('red');
+		this.controller.get('speed').removeClassName('green');
+	}
+		
 	if (gpsDashboard.units == 1)
 		return (event.velocity * 2.23693629).toFixed(1) + " mph";
 	if (gpsDashboard.units == 2)
@@ -368,6 +393,7 @@ MainAssistant.prototype.distTraveled = function( event ) {
  * the initial position
  */
 MainAssistant.prototype.distFromInit = function( event ) {
+	return event.vertAccuracy.toFixed(1) + " v";
 	if (gpsDashboard.initialLoc) {
 		if (gpsDashboard.units == 1) 
 			return (this.calcDist(event, gpsDashboard.initialLoc) * 0.621371192).toFixed(1) + " miles";
@@ -381,6 +407,7 @@ MainAssistant.prototype.distFromInit = function( event ) {
  * Displays the lifetime distance traveled
  */
 MainAssistant.prototype.lifeDist = function(event){
+	return event.horizAccuracy.toFixed(1) + " h";
 	if (gpsDashboard.prevLoc)
 		gpsDashboard.lifeDist += this.calcDist(event, gpsDashboard.prevLoc);
 	if (gpsDashboard.units == 1)
