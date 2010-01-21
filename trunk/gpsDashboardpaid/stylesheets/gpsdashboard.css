@@ -27,10 +27,11 @@
  */
 #tripTitle { float: left; }
 #tripDuration {
-	margin-left: 10px;
+	text-align: right;
+	margin-right: 20px;
 	margin-top: 1px;
 	font-size: small;
-	float: left;
+	float: right;
 }
 /*
  * Elements within Trip & Current info boxes
