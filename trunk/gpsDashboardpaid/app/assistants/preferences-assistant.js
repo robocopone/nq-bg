@@ -57,6 +57,12 @@ PreferencesAssistant.prototype.setup = function(){
 	this.controller.setupWidget("shakePref", this.shakePrefAttributes = {
 		label: "When Shook",
 		choices: [{
+			label: "Reset All",
+			value: 'all'
+		}, {
+			label: "Reset None",
+			value: 'none'
+		}, {
 			label: "Reset Top Speed",
 			value: 'topSpeed'
 		}, {
