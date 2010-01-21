@@ -1,4 +1,12 @@
-Trip duration
+1.3.0
 Pedestrian mode
-Shake for resets
-Indicate higher or lower than avg speed
+Pref to not do anything on shake
+Automatic resets preference
+Limit accuracy on alltime records
+add alltime resets
+check vertical accuracy
+
+*Shake for resets
+*Indicate higher or lower than avg speed with pref
+*Records Scene
+*Trip duration
