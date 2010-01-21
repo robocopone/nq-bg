@@ -306,8 +306,10 @@ MainAssistant.prototype.tripDuration = function () {
 	var hours=Math.floor(a / 3600) - (days * 24); 
 	var minutes=Math.floor(a / 60) - (days * 1440) - (hours * 60); 
 	var seconds=Math.floor(a % 60); 
-	
-	return pad(days, 2) + ":" + pad(hours, 2) + ":" + pad(minutes,2) + ":" + pad(seconds, 2);
+
+	if (days > 0)
+		return pad(days, 2) + ":" + pad(hours, 2) + ":" + pad(minutes,2)+ ":" + pad(seconds, 2);
+	return pad(hours, 2) + ":" + pad(minutes,2) + ":" + pad(seconds, 2);
 }
 /*
  * Trip average speed display
