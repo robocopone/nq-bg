@@ -1,6 +1,8 @@
 1.3.0
 Pedestrian mode
 Automatic resets preference
+Help
+Divs as graphical representations
 
 *add alltime resets
 *check vertical accuracy
