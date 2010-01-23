@@ -2,8 +2,43 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-		<title>Untitled Document</title>
+		<title>gpsDashboard Home</title>
+		<link href="gpsDashboard.css" rel="stylesheet" type="text/css" />
 	</head>
 	<body>
+		<h2><center>gpsDashboard</center></h2>
+		<div id="features" class="menu"><a href="#features">Features</a></div>
+		<div id="faq" class="menu"><a href="#faq">FAQ</a></div>
+		<div id="email" class="menu"><a href="mailto:bradgraber@gmail.com?subject=gpsDashboard Inquiry">Email Me</a><br />I welcome any questions, suggestions, or criticisms!</div>
+		<div id="description">
+			gpsDashboard is an app that delivers miscellaneous information gathered with the Palm Pre's GPS service.<br />
+			<a name="features"><h2>Features</h2></a>
+			<ul>
+				<li>Operates in Airplane Mode</li>
+				<li>Current Speed, Direction, and Altitude readout</li>
+				<li>Top speed tracking.  Can be reset by tapping on the current information box, or by shaking the device.  Shaking reset can be configured for any other reset from within preferences.</li>
+				<li>Colored speed indicates whether you are traveling faster or slower than average speed.  This can be turned off in preferences</li>
+				<li>Trip Information Tracking.  All values can be reset by tapping on the trip information box.</li>
+				<ul>
+					<li>Average Speed</li>
+					<li>Distance Traveled</li>
+					<li>Distance traveled from the inital point.  The initial point is recorded when the app is first loaded, and the minium error tolerance is satisfied.</li>
+					<li>Lifetime Distance</li>
+				</ul>
+				<li>A reverse location feature that will display your current address.</li>
+				<li>All-time record tracking with locations.  This may be accessed by tapping on the title bar.</li>
+			</ul>
+			<a name="faq"><h2>Frequently Asked Questions</h2></a>
+			<p>
+				<b>I get an error saying I haven't accepted the Terms of Service</b>
+				<ul>Go to Location Services, and goto the preferences menu.  From there tap "Locate Me Using" and tap "Google Services".  It will then ask you to accept the terms of service.</ul>
+				<b>Whats the deal with the accuracy</b>
+				<ul>By default trip information will not be tracked unless the accuracy is correct within ten meters.  This can be changed in preferences.</ul>
+				<b>All-Time records don't seem to be updating</b>
+				<ul>All-Time records are hard coded to require a minimum of 10 meter accuracy.  If the signal is not strong enough, these records will not be updated.</ul>
+				<b>The 'Get Address' button doesn't work</b>
+				<ul>This is an issue with the reverse location service in webos that I have no control over.  Unfortunatly the only way I've found to fix it is to restart the phone.</ul>
+			</p>
+		</div>
 	</body>
 </html>

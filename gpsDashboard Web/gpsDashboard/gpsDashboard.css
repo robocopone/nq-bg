@@ -1,0 +1,14 @@
+body {
+	font: Helvetica;
+	margin-left: 5%;
+	margin-right: 5%;
+}
+.menu {
+	text-align: center;
+	margin-top: 10px;
+}
+
+#description {
+	margin-top: 20px;
+}
+
