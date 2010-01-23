@@ -161,7 +161,8 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 		this.controller.get('lowAccuracy').removeClassName('hidden');
 	}
 	this.controller.get('horizAccuracy').update("Horizontal Error = " + event.horizAccuracy.toFixed(1) + "m > " + gpsDashboard.maxError + "m");
-
+	this.strengthBar(event);
+	
 	this.controller.get('speed').update(this.speed(event));
 	this.controller.get('heading').update(this.heading(event));
 	this.controller.get('altitude').update(this.altitude(event));
@@ -173,30 +174,55 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 		this.controller.get('distFromInit').update(this.distFromInit(event));
 		this.controller.get('lifeDist').update(this.lifeDist(event));
 		gpsDashboard.prevLoc = event;
-	}
-	if (event.errorCode == 0 && event.horizAccuracy <= 5 && event.vertAccuracy <= 10)
 		this.recordCheck(event);
+	}
 
 	if (event.errorCode != 0)
 		this.controller.stageController.pushScene("gpsError", event.errorCode);
 }
 
 /*
+ * Updates the signal strength indicator
+ */
+MainAssistant.prototype.strengthBar = function (event) {
+	this.controller.get('one').removeClassName('lit');
+	this.controller.get('two').removeClassName('lit');
+	this.controller.get('three').removeClassName('lit');
+	this.controller.get('four').removeClassName('lit');
+	this.controller.get('five').removeClassName('lit');
+	
+	if (event.horizAccuracy <= 1500)
+		this.controller.get('one').addClassName('lit');
+	if (event.horizAccuracy <= 500)
+		this.controller.get('two').addClassName('lit');
+	if (event.horizAccuracy <= 100)
+		this.controller.get('three').addClassName('lit');
+	if (event.horizAccuracy <= gpsDashboard.maxError)
+		this.controller.get('four').addClassName('lit');
+	if (event.horizAccuracy <= 5)
+		this.controller.get('five').addClassName('lit');
+}
+
+
+/*
  * Checks to see if records have been broken
  * and updates if they have
  */
 MainAssistant.prototype.recordCheck = function (event) {
-	if (event.velocity > gpsDashboard.alltimeTopSpeed.data.velocity) {
+	if (event.velocity > gpsDashboard.alltimeTopSpeed.data.velocity &&
+		event.horizAccuracy <= 5) {
 		gpsDashboard.alltimeTopSpeed.data = event;
 		gpsDashboard.alltimeTopSpeed.date =
 			Mojo.Format.formatDate(new Date(), { date: 'medium' });
 	}
-	if (event.altitude > gpsDashboard.alltimeHigh.data.altitude) {
+	if (event.altitude > gpsDashboard.alltimeHigh.data.altitude &&
+		event.vertAccuracy <= 10 ) {
 		gpsDashboard.alltimeHigh.data = event;
 		gpsDashboard.alltimeHigh.date =
 			Mojo.Format.formatDate(new Date(), { date: 'medium' });
 	}
-	if (event.altitude < gpsDashboard.alltimeLow.data.altitude) {
+	if (event.altitude < gpsDashboard.alltimeLow.data.altitude &&
+		event.vertAccuracy <= 10 ) {
 		gpsDashboard.alltimeLow.data = event;
 		gpsDashboard.alltimeLow.date =
 			Mojo.Format.formatDate(new Date(), { date: 'medium'});
