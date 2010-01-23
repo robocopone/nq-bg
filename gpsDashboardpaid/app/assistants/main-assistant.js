@@ -138,6 +138,8 @@ MainAssistant.prototype.activate = function(event) {
 }
 
 MainAssistant.prototype.handleServiceResponse = function(event){
+	this.controller.get('clock').update(Mojo.Format.formatDate(new Date(), { time: 'medium' }));
+
 	if (this.controller.get('currentInfo').hasClassName('hidden')) {
 		this.controller.get('initialDisplay').addClassName('hidden');
 		this.scrim.hide();
@@ -577,12 +579,14 @@ MainAssistant.prototype.handleOrientation = function( event ) {
 		this.controller.get('tripInfo').addClassName('landscape');
 		this.controller.get('addressInfo').addClassName('landscape');
 		this.controller.get('initialDisplay').addClassName('landscape');
+		this.controller.get('clock').removeClassName('hidden');
 	}	
 	if (event.position == 2 || event.position == 3) {
 		this.controller.get('currentInfo').removeClassName('landscape');
 		this.controller.get('tripInfo').removeClassName('landscape');
 		this.controller.get('addressInfo').removeClassName('landscape');
 		this.controller.get('initialDisplay').removeClassName('landscape');
+		this.controller.get('clock').addClassName('hidden');
 	}
 }
 
