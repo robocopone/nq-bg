@@ -8,8 +8,10 @@ gpsDashboard.backlight = 1;						// Backlight preference
 gpsDashboard.maxError = 10;						// Max error in meters preference
 gpsDashboard.shakePref = 'topSpeed';			// Shake preference
 gpsDashboard.coloredSpeedPref = 'true';			// Colored speed preference
+gpsDashboard.startupPref = 'ask';				// Startup reset preference
 gpsDashboard.avgSpeedPref = 2;					// Average speed calculation preference
 gpsDashboard.avgSpeed = {time: 0, dist: 0};		// Average speed info
+gpsDashboard.tripometer = {time: 0, dist: 0};	// Distance traveled data
 gpsDashboard.topSpeed = 0;						// Top speed info
 gpsDashboard.alltimeTopSpeed = { };				// All time top speed
 gpsDashboard.alltimeTopSpeed.data = {velocity: 0};
@@ -17,7 +19,6 @@ gpsDashboard.alltimeHigh = { };					// All time top elevation
 gpsDashboard.alltimeHigh.data = {altitude: 0};
 gpsDashboard.alltimeLow = { };					// All time low elevation
 gpsDashboard.alltimeLow.data = {altitude: 15000};
-gpsDashboard.tripometer = {time: 0, dist: 0};	// Distance traveled data
 gpsDashboard.lifeDist = 0;						// Lifetime distance traveled
 gpsDashboard.initialLoc = undefined;			// Inital Location
 gpsDashboard.prevLoc = undefined;				// Previous location
@@ -40,6 +41,10 @@ gpsDashboard.cookie = ({
 			gpsDashboard.alltimeLow = storedData.alltimeLow;
 			gpsDashboard.shakePref = storedData.shakePref;
 			gpsDashboard.coloredSpeedPref = storedData.coloredSpeedPref;
+			gpsDashboard.tripometer = storedData.tripometer;
+			gpsDashboard.avgSpeed = storedData.avgSpeed;
+			gpsDashboard.initialLoc = storedData.initalLoc;
+			gpsDashboard.startupPref = storedData.startupPref;
 		}
 		else if (storedData) {
 			gpsDashboard.units = storedData.units;
@@ -62,7 +67,11 @@ gpsDashboard.cookie = ({
 			alltimeHigh: gpsDashboard.alltimeHigh,
 			alltimeLow: gpsDashboard.alltimeLow,
 			shakePref: gpsDashboard.shakePref,
-			coloredSpeedPref: gpsDashboard.coloredSpeedPref
+			coloredSpeedPref: gpsDashboard.coloredSpeedPref,
+			initalLoc: gpsDashboard.initialLoc,
+			tripometer: gpsDashboard.tripometer,
+			avgSpeed: gpsDashboard.avgSpeed,
+			startupPref: gpsDashboard.startupPref
 		});		
 	}
 });
@@ -137,7 +146,15 @@ MainAssistant.prototype.activate = function(event) {
 	);
 }
 
+
 MainAssistant.prototype.handleServiceResponse = function(event){
+	if (gpsDashboard.startupPref == 'ask' &&
+		this.controller.get('currentInfo').hasClassName('hidden'))
+		this.askToReset();
+	if (gpsDashboard.startupPref == 'always' &&
+		this.controller.get('currentInfo').hasClassName('hidden'))
+		this.reset('yes');
+
 	this.controller.get('clock').update(Mojo.Format.formatDate(new Date(), { time: 'medium' }));
 
 	if (this.controller.get('currentInfo').hasClassName('hidden')) {
@@ -658,4 +675,36 @@ MainAssistant.prototype.handleReverseResponseError = function(event){
 		this.controller.get('address1').update("Error: The application already has a pending message");
 	if (event.errorCode == 8)
 		this.controller.get('address1').update("Error: The application has been temporarily blacklisted");
+}
+
+/*
+ * Prompts to reset trip information
+ */
+MainAssistant.prototype.askToReset = function () {
+	this.controller.showAlertDialog({
+		onChoose: this.doReset,
+		title: $L("Reset"),
+		message: $L("Reset Trip Information?"),
+		choices: [{
+			label: $L('Yes'),
+			value: 'yes',
+			type: 'affirmative'
+		}, {
+			label: $L('No'),
+			value: 'no',
+			type: 'negative'
+		}, ]
+	});	
+}
+
+/*
+ * Resets trip information
+ */
+MainAssistant.prototype.doReset = function(choice) {
+	if (choice == 'yes') {
+		gpsDashboard.initialLoc = undefined;
+		gpsDashboard.prevLoc = undefined;
+		gpsDashboard.avgSpeed = {time: 0, dist: 0};
+		gpsDashboard.tripometer = {time: 0, dist: 0};
+	}
 }
