@@ -139,7 +139,6 @@ MainAssistant.prototype.activate = function(event) {
 
 MainAssistant.prototype.handleServiceResponse = function(event){
 	if (this.controller.get('currentInfo').hasClassName('hidden')) {
-		gpsDashboard.hidden = false;
 		this.controller.get('initialDisplay').addClassName('hidden');
 		this.scrim.hide();
 		
@@ -153,20 +152,23 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 	
 	if (event.horizAccuracy <= gpsDashboard.maxError && gpsDashboard.hidden) {
 		gpsDashboard.hidden = false;
+		this.controller.get('tripInfoData').removeClassName('hidden');
+		this.controller.get('lowAccuracy').addClassName('hidden');
 	}
 	else if (event.horizAccuracy > gpsDashboard.maxError && !gpsDashboard.hidden) {
 		gpsDashboard.hidden = true;
+		this.controller.get('tripInfoData').addClassName('hidden');
+		this.controller.get('lowAccuracy').removeClassName('hidden');
 	}
-	this.controller.get('accuracyNotice').update("Satellite Strength too Low");
 	this.controller.get('horizAccuracy').update("Horizontal Error = " + event.horizAccuracy.toFixed(1) + "m > " + gpsDashboard.maxError + "m");
 
+	this.controller.get('speed').update(this.speed(event));
+	this.controller.get('heading').update(this.heading(event));
+	this.controller.get('altitude').update(this.altitude(event));
+	this.controller.get('tripDuration').update(this.tripDuration());
 	if (event.errorCode == 0 && event.horizAccuracy <= gpsDashboard.maxError) {
-		this.controller.get('speed').update(this.speed(event));
-		this.controller.get('heading').update(this.heading(event));
-		this.controller.get('altitude').update(this.altitude(event));
 		this.controller.get('avgSpeed').update(this.avgSpeed(event));
 		this.controller.get('topSpeed').update(this.topSpeed(event));
-		this.controller.get('tripDuration').update(this.tripDuration());
 		this.controller.get('distTraveled').update(this.distTraveled(event));
 		this.controller.get('distFromInit').update(this.distFromInit(event));
 		this.controller.get('lifeDist').update(this.lifeDist(event));
@@ -549,14 +551,12 @@ MainAssistant.prototype.handleOrientation = function( event ) {
 		this.controller.get('tripInfo').addClassName('landscape');
 		this.controller.get('addressInfo').addClassName('landscape');
 		this.controller.get('initialDisplay').addClassName('landscape');
-		this.controller.get('accuracyNotice').addClassName('landscape');
 	}	
 	if (event.position == 2 || event.position == 3) {
 		this.controller.get('currentInfo').removeClassName('landscape');
 		this.controller.get('tripInfo').removeClassName('landscape');
 		this.controller.get('addressInfo').removeClassName('landscape');
 		this.controller.get('initialDisplay').removeClassName('landscape');
-		this.controller.get('accuracyNotice').removeClassName('landscape');
 	}
 }
 
