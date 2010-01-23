@@ -2,6 +2,26 @@ function PreferencesAssistant() {
 }
 
 PreferencesAssistant.prototype.setup = function(){
+	//On startup pref
+	this.controller.setupWidget("startupPref", this.startupPrefAttributes = {
+		label: "On Startup",
+		choices: [{
+			label: "Always Reset Trip Information",
+			value: 'always'
+		}, {
+			label: "Never Reset Trip Information",
+			value: 'never'
+		}, {
+			label: "Ask Each Time",
+			value: 'ask'
+		}, ],
+	}, this.startupPrefModel = {
+		value: gpsDashboard.startupPref,
+		disabled: false
+	});
+	//On Startup Pref
+	this.controller.listen("startupPref", Mojo.Event.propertyChange, this.startupPref.bindAsEventListener(this));
+
 	//Units Selector Widget
 	this.controller.setupWidget("unitsSelector", this.unitsSelectorAttributes = {
 		label: "Units",
@@ -125,6 +145,10 @@ PreferencesAssistant.prototype.setup = function(){
 	//Max Error Selector Handler
 	this.controller.listen("maxErrorPrefSelector", Mojo.Event.propertyChange, this.maxErrorSelector.bindAsEventListener(this));
 
+}
+PreferencesAssistant.prototype.startupPref = function (event) {
+	gpsDashboard.startupPref = this.startupPrefModel.value;
+	gpsDashboard.cookie.storeCookie();
 }
 PreferencesAssistant.prototype.coloredSpeedPref = function (event) {
 	gpsDashboard.coloredSpeedPref = this.coloredSpeedPrefModel.value;
