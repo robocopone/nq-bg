@@ -76,8 +76,7 @@ gpsDashboard.cookie = ({
 	}
 });
 
-function MainAssistant() {
-}
+function MainAssistant() {}
 
 /*
  * 	Main Scene Setup
@@ -114,21 +113,13 @@ MainAssistant.prototype.setup = function(){
 	this.controller.listen(this.controller.get('currentInfo'),Mojo.Event.tap, this.resets.bindAsEventListener(this));
 	this.controller.listen(this.controller.get('tripInfo'),Mojo.Event.tap, this.resets.bindAsEventListener(this));
 	this.controller.listen(this.controller.get('appHeader'),Mojo.Event.tap, this.nav.bindAsEventListener(this));
+
+	if (gpsDashboard.startupPref == 'ask')
+		this.askToReset();
+	if (gpsDashboard.startupPref == 'always')
+		this.reset('yes');
 }
-MainAssistant.prototype.nav = function () {
-	this.controller.popupSubmenu({
-		onChoose: this.navHandler,
-		placeNear: this.controller.get('appHeader'),
-		items: [{
-			label: 'Record Keeping',
-			command: 'recordKeeping',
-		}]
-	});
-}
-MainAssistant.prototype.navHandler = function(command) {
-	if (command == 'recordKeeping')
-		this.controller.stageController.pushScene('records');
-}
+
 MainAssistant.prototype.activate = function(event) {
 	if (gpsDashboard.backlight == 1)
 		this.controller.stageController.setWindowProperties({blockScreenTimeout: true});
@@ -146,21 +137,13 @@ MainAssistant.prototype.activate = function(event) {
 	);
 }
 
-
 MainAssistant.prototype.handleServiceResponse = function(event){
-	if (gpsDashboard.startupPref == 'ask' &&
-		this.controller.get('currentInfo').hasClassName('hidden'))
-		this.askToReset();
-	if (gpsDashboard.startupPref == 'always' &&
-		this.controller.get('currentInfo').hasClassName('hidden'))
-		this.reset('yes');
-
 	this.controller.get('clock').update(Mojo.Format.formatDate(new Date(), { time: 'medium' }));
 
+	// Remove initial display and show normal display
 	if (this.controller.get('currentInfo').hasClassName('hidden')) {
 		this.controller.get('initialDisplay').addClassName('hidden');
 		this.scrim.hide();
-		
 		this.controller.get('currentInfo').removeClassName('hidden');
 		this.controller.get('tripInfo').removeClassName('hidden');
 		this.controller.get('addressInfo').removeClassName('hidden');
@@ -200,6 +183,10 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 		this.controller.stageController.pushScene("gpsError", event.errorCode);
 }
 
+MainAssistant.prototype.handleServiceResponseError = function(event) {
+	this.controller.stageController.pushScene("gpsError", event.errorCode);
+}
+
 /*
  * Updates the signal strength indicator
  */
@@ -221,7 +208,6 @@ MainAssistant.prototype.strengthBar = function (event) {
 	if (event.horizAccuracy <= 5)
 		this.controller.get('five').addClassName('lit');
 }
-
 
 /*
  * Checks to see if records have been broken
@@ -246,10 +232,6 @@ MainAssistant.prototype.recordCheck = function (event) {
 		gpsDashboard.alltimeLow.date =
 			Mojo.Format.formatDate(new Date(), { date: 'medium'});
 	}
-}
-
-MainAssistant.prototype.handleServiceResponseError = function(event) {
-	this.controller.stageController.pushScene("gpsError", event.errorCode);
 }
 
 /*
@@ -295,7 +277,6 @@ MainAssistant.prototype.topSpeed = function (event) {
 	if (gpsDashboard.units == 2)
 		return (gpsDashboard.topSpeed * 3.6).toFixed(1) + " kph";
 }
-
 
 /*
  * Converts degrees to N/S/E/W
@@ -349,6 +330,7 @@ MainAssistant.prototype.altitude = function(event){
 	if (gpsDashboard.units == 2)
 		return event.altitude.toFixed(1) + " m";
 }
+
 /*
  * Trip duration return
  */
@@ -370,6 +352,7 @@ MainAssistant.prototype.tripDuration = function () {
 		return pad(days, 2) + ":" + pad(hours, 2) + ":" + pad(minutes,2)+ ":" + pad(seconds, 2);
 	return pad(hours, 2) + ":" + pad(minutes,2) + ":" + pad(seconds, 2);
 }
+
 /*
  * Trip average speed display
  */
@@ -496,8 +479,8 @@ MainAssistant.prototype.calcSpeed = function( event ){
 }
 
 MainAssistant.prototype.deactivate = function(event) {
-	this.controller.stageController.setWindowProperties({blockScreenTimeout: false});
 	this.trackingHandle.cancel(); 
+	this.controller.stageController.setWindowProperties({blockScreenTimeout: false});
 }
 
 /*
@@ -506,18 +489,18 @@ MainAssistant.prototype.deactivate = function(event) {
  * Also stores the cookie
  */
 MainAssistant.prototype.cleanup = function(event){
-	this.controller.stopListening(this.controller.get('addressButton'), Mojo.Event.tap, this.getAddress.bindAsEventListener(this));
-	this.controller.stopListening(document, 'orientationchange', this.handleOrientation.bindAsEventListener(this));
-	this.controller.stopListening(this.controller.get('tripInfo'),Mojo.Event.tap, this.resets.bindAsEventListener(this));
-	this.controller.stopListening(this.controller.get('currentInfo'),Mojo.Event.tap, this.resets.bindAsEventListener(this));
-	this.controller.stopListening(this.controller.get('appHeader'),Mojo.Event.tap, this.nav.bindAsEventListener(this));
-
-
 	this.controller.stageController.setWindowProperties({
 		blockScreenTimeout: false
 	});
 	this.trackingHandle.cancel();
 	gpsDashboard.cookie.storeCookie();
+
+	this.controller.stopListening(this.controller.get('addressButton'), Mojo.Event.tap, this.getAddress.bindAsEventListener(this));
+	this.controller.stopListening(document, 'orientationchange', this.handleOrientation.bindAsEventListener(this));
+	this.controller.stopListening(this.controller.get('tripInfo'),Mojo.Event.tap, this.resets.bindAsEventListener(this));
+	this.controller.stopListening(this.controller.get('currentInfo'),Mojo.Event.tap, this.resets.bindAsEventListener(this));
+	this.controller.stopListening(this.controller.get('appHeader'),Mojo.Event.tap, this.nav.bindAsEventListener(this));
+	this.controller.stopListening(document, 'shakestart', this.handleShake.bindAsEventListener(this));
 }
 
 MainAssistant.prototype.resets = function(){
@@ -707,4 +690,22 @@ MainAssistant.prototype.doReset = function(choice) {
 		gpsDashboard.avgSpeed = {time: 0, dist: 0};
 		gpsDashboard.tripometer = {time: 0, dist: 0};
 	}
+}
+
+/*
+ * Popup menu for record keeping
+ */
+MainAssistant.prototype.nav = function () {
+	this.controller.popupSubmenu({
+		onChoose: this.navHandler,
+		placeNear: this.controller.get('appHeader'),
+		items: [{
+			label: 'Record Keeping',
+			command: 'recordKeeping',
+		}]
+	});
+}
+MainAssistant.prototype.navHandler = function(command) {
+	if (command == 'recordKeeping')
+		this.controller.stageController.pushScene('records');
 }
