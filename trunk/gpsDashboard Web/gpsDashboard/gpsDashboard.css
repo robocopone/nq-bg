@@ -3,6 +3,9 @@ body {
 	margin-left: 5%;
 	margin-right: 5%;
 }
+h2 {
+	color: blue;
+}
 .menu {
 	text-align: center;
 	margin-top: 10px;
