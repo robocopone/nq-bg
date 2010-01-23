@@ -1,3 +1,41 @@
+#appHeader {
+	z-index: 1;
+}
+.strength {
+	position: absolute;
+	width: 5px;
+	z-index: 2;
+	background-color: grey;	
+}
+.lit { background-color: #e0e0e0; }
+
+#one {
+	top: 33px;
+	right: 54px;
+	height: 3px;
+}
+#two {
+	top: 28px;
+	right: 48px;
+	height: 8px;
+}
+#three {
+	top: 23px;
+	right: 42px;
+	height: 13px;
+}
+#four {
+	top: 18px;
+	right: 36px;
+	height: 18px;
+}
+#five {
+	top: 13px;
+	right: 30px;
+	height: 23px;
+}
+
+
 .hidden { opacity: 0 }
 /*
  * Settings for the Records section
