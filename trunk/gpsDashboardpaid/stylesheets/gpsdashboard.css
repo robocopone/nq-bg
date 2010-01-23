@@ -1,3 +1,4 @@
+.hidden { opacity: 0 }
 /*
  * Settings for the Records section
  */
@@ -66,7 +67,6 @@
  */
 #currentInfo 			{ height: 60px; }
 #currentInfo.landscape 	{ height: 30px; }
-#currentInfo.hidden 	{ opacity: 0; }
 
 /*
  * Trip info Display
@@ -81,7 +81,6 @@
 	width: 52%;
 	float: left;
 }
-#tripInfo.hidden { opacity: 0; }
 
 /*
  * Address info Display
@@ -91,10 +90,7 @@
 	width: 39%;
 	float: left;
 }
-#addressInfo.hidden { opacity: 0; }
-
 #address 		{ margin-top: 5px; }
-#address.hidden	{ opacity: 0; }
 
 /*
  * Initial announcement & high error warning
@@ -103,7 +99,6 @@
 	text-align: center;
 	margin-top: 30px;
 }
-#initialDisplay.hidden		{ opacity: 0; }
 #initialDisplay.landscape	{ margin-top: 10px;}
 
 #accuracyNotice { margin-top: 200px; }
