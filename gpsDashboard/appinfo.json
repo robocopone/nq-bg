@@ -1,6 +1,6 @@
 {
 	"id": "net.bradleygraber.gpsdashboard",
-	"version": "1.2.2",
+	"version": "1.2.3",
 	"vendor": "Bradley Graber",
 	"type": "web",
 	"main": "index.html",
@@ -10,7 +10,7 @@
 	"theme": "light",
 	"copyright": "Copyright 2010 Bradley Graber",
 	"support": 
-	{	"url": "http://www.facebook.com/bradley.graber",
+	{	"url": "http://www.bradleygraber.net/gpsDashboard",
 		"phone": "812-488-2068"
 	}
 }
