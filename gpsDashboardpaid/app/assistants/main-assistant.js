@@ -82,12 +82,6 @@ MainAssistant.prototype.setup = function(){
 	this.controller.listen(document, 'orientationchange', this.handleOrientation.bindAsEventListener(this));
 	this.controller.listen(document, 'shakestart', this.handleShake.bindAsEventListener(this));
 		
-	// Hides the dashboard
-	this.controller.get('address').addClassName('hidden');
-	this.controller.get('currentInfo').addClassName('hidden');
-	this.controller.get('tripInfo').addClassName('hidden');
-	this.controller.get('addressInfo').addClassName('hidden');
-	
 	// Scrim and activity spinner
 	this.controller.setupWidget("spinner", this.spinnerAttr = {
 		spinnerSize: 'large'
