@@ -10,8 +10,8 @@
 #clock {
 	z-index: 2;
 	position: absolute;
-	top: 12px;
-	left: 35px;
+	top: 1px;
+	left: 15px;
 	color: #e0e0e0;
 }
 /*
@@ -27,27 +27,27 @@
 
 #one {
 	top: 33px;
-	right: 54px;
+	right: 34px;
 	height: 3px;
 }
 #two {
 	top: 28px;
-	right: 48px;
+	right: 28px;
 	height: 8px;
 }
 #three {
 	top: 23px;
-	right: 42px;
+	right: 22px;
 	height: 13px;
 }
 #four {
 	top: 18px;
-	right: 36px;
+	right: 16px;
 	height: 18px;
 }
 #five {
 	top: 13px;
-	right: 30px;
+	right: 10px;
 	height: 23px;
 }
 
