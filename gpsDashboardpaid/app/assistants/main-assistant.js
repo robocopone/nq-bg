@@ -117,7 +117,7 @@ MainAssistant.prototype.setup = function(){
 	if (gpsDashboard.startupPref == 'ask')
 		this.askToReset();
 	if (gpsDashboard.startupPref == 'always')
-		this.reset('yes');
+		this.doReset('yes');
 }
 
 MainAssistant.prototype.activate = function(event) {
