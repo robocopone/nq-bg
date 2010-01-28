@@ -154,3 +154,101 @@
 	margin-top: 30px;
 }
 #initialDisplay.landscape	{ margin-top: 10px;}
+
+/*
+ * Speedometer
+ */
+.hash {
+	z-index: 2;
+	background-color: black;
+	width: 20px;
+	height: 5px;
+	position: absolute;
+	left: 0px;
+	top: 80px;
+	right: 0px;
+}
+.short {
+	width: 10px;
+	height: 2px;
+}
+#zero {
+	margin-left: 50px;
+	margin-top: 110px;
+}
+#zeroFive {
+	margin-left: 50.9px;
+	margin-top: 95.6px;
+	-webkit-transform: rotate(7.5deg);
+}
+#fifteen {
+	margin-left: 53.7px;
+	margin-top: 81.5px;
+	-webkit-transform: rotate(15deg);
+}
+#fifteenFive {
+	margin-left: 58.4px;
+	margin-top: 67.9px;
+	-webkit-transform: rotate(22.5deg);
+}
+#thirty {
+	margin-left: 64.7px;
+	margin-top: 55px;
+	-webkit-transform: rotate(30deg);
+}
+#thirtyFive {
+	margin-left: 72.7px;
+	margin-top: 43px;
+	-webkit-transform: rotate(37.5deg);
+}
+#fourtyfive {
+	margin-left: 82.2px;
+	margin-top: 32.2px;
+	-webkit-transform: rotate(45deg);
+}
+#fourtyfiveFive {
+	margin-left: 93px;
+	margin-top: 22.7px;
+	-webkit-transform: rotate(52.5deg);
+}
+#sixty {
+	margin-left: 105px;
+	margin-top: 14.7px;
+	-webkit-transform: rotate(60deg);
+}
+#sixtyFive {
+	margin-left: 117.9px;
+	margin-top: 8.37px;
+	-webkit-transform: rotate(67.5deg);
+}
+#seventyfive {
+	margin-left: 131.5px;
+	margin-top: 3.75px;
+	-webkit-transform: rotate(75deg);
+}
+#seventyfiveFive {
+	margin-left: 145.6px;
+	margin-top: .94px;
+	-webkit-transform: rotate(82.5deg);
+}
+#ninety {
+	margin-left: 160px;
+	margin-top: 0px;
+	-webkit-transform: rotate(90deg);
+}
+
+#ninetyFive {
+	margin-left: 174.4px;
+	margin-top: .94px;
+	-webkit-transform: rotate(97.5deg);
+}
+#oneohfive {
+	margin-left: 188.5px;
+	margin-top: 3.75px;
+	-webkit-transform: rotate(105deg);
+}
+#oneohfiveFive {
+	margin-left: 202.1px;
+	margin-top: 8.37px;
+	-webkit-transform: rotate(112.5deg);
+}
