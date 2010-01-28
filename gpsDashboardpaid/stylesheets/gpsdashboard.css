@@ -158,97 +158,94 @@
 /*
  * Speedometer
  */
+#speedometer.landscape { margin-left: 90px }
+
+.speedCenter {
+	position: absolute;
+	left: 150px;
+	top: 120px;
+}
 .hash {
 	z-index: 2;
 	background-color: black;
 	width: 20px;
 	height: 5px;
+}
+#speedometerSpeed {
+	width: 132px;
 	position: absolute;
-	left: 0px;
-	top: 80px;
-	right: 0px;
+	left: 90px;
+	top: 100px;
+	font-size: xx-large;
+	text-align: center;
 }
-.short {
-	width: 10px;
-	height: 2px;
+#speedometerHeading {
+	font-size: large;
+	width: 50px;
+	text-align: center;
+	position: absolute;
+	left: 133px;
+	top: 70px;
 }
-#zero {
-	margin-left: 50px;
-	margin-top: 110px;
-}
-#zeroFive {
-	margin-left: 50.9px;
-	margin-top: 95.6px;
-	-webkit-transform: rotate(7.5deg);
-}
-#fifteen {
-	margin-left: 53.7px;
-	margin-top: 81.5px;
-	-webkit-transform: rotate(15deg);
-}
-#fifteenFive {
-	margin-left: 58.4px;
-	margin-top: 67.9px;
-	-webkit-transform: rotate(22.5deg);
-}
-#thirty {
-	margin-left: 64.7px;
-	margin-top: 55px;
-	-webkit-transform: rotate(30deg);
-}
-#thirtyFive {
-	margin-left: 72.7px;
-	margin-top: 43px;
-	-webkit-transform: rotate(37.5deg);
-}
-#fourtyfive {
-	margin-left: 82.2px;
-	margin-top: 32.2px;
-	-webkit-transform: rotate(45deg);
-}
-#fourtyfiveFive {
-	margin-left: 93px;
-	margin-top: 22.7px;
-	-webkit-transform: rotate(52.5deg);
-}
-#sixty {
-	margin-left: 105px;
-	margin-top: 14.7px;
-	-webkit-transform: rotate(60deg);
-}
-#sixtyFive {
-	margin-left: 117.9px;
-	margin-top: 8.37px;
-	-webkit-transform: rotate(67.5deg);
-}
-#seventyfive {
-	margin-left: 131.5px;
-	margin-top: 3.75px;
-	-webkit-transform: rotate(75deg);
-}
-#seventyfiveFive {
-	margin-left: 145.6px;
-	margin-top: .94px;
-	-webkit-transform: rotate(82.5deg);
-}
-#ninety {
-	margin-left: 160px;
-	margin-top: 0px;
-	-webkit-transform: rotate(90deg);
+#speedometerTripometer {
+	font-size: large;
+	width: 120px;
+	text-align: center;
+	position: absolute;
+	left: 95px;
+	top: 180px;
 }
 
-#ninetyFive {
-	margin-left: 174.4px;
-	margin-top: .94px;
-	-webkit-transform: rotate(97.5deg);
-}
-#oneohfive {
-	margin-left: 188.5px;
-	margin-top: 3.75px;
-	-webkit-transform: rotate(105deg);
-}
-#oneohfiveFive {
-	margin-left: 202.1px;
-	margin-top: 8.37px;
-	-webkit-transform: rotate(112.5deg);
-}
+#speedometer { -webkit-transform: scale(1.3); }
+
+#label0 {			-webkit-transform: rotate(-30deg) translate(-80px,-8px) rotate(30deg);}
+#label10 {			-webkit-transform: rotate(-15deg) translate(-85px,-10px) rotate(15deg);}
+#label20 {			-webkit-transform: rotate(0deg) translate(-88px,-10px) rotate(0deg);}
+#label30 {			-webkit-transform: rotate(15deg) translate(-91px,-10px) rotate(-15deg);}
+#label40 {			-webkit-transform: rotate(30deg) translate(-93px,-8px) rotate(-30deg);}
+#label50 {			-webkit-transform: rotate(45deg) translate(-95px,-5px) rotate(-45deg);}
+#label60 {			-webkit-transform: rotate(60deg) translate(-100px,-3px) rotate(-60deg);}
+#label70 {			-webkit-transform: rotate(75deg) translate(-100px,-2px) rotate(-75deg);}
+#label80 {			-webkit-transform: rotate(90deg) translate(-100px,0px) rotate(-90deg);}
+#label90 {			-webkit-transform: rotate(105deg) translate(-100px,3px) rotate(-105deg);}
+#label100 {			-webkit-transform: rotate(120deg) translate(-98px,7px) rotate(-120deg);}
+#label110 {			-webkit-transform: rotate(135deg) translate(-93px,10px) rotate(-135deg);}
+#label120 {			-webkit-transform: rotate(150deg) translate(-85px,13px) rotate(-150deg);}
+#label130 {			-webkit-transform: rotate(165deg) translate(-80px,13px) rotate(-165deg);}
+#label140 {			-webkit-transform: rotate(180deg) translate(-77px,11px) rotate(-180deg);}
+#label150 {			-webkit-transform: rotate(195deg) translate(-75px,9px) rotate(-195deg);}
+#label160 {			-webkit-transform: rotate(210deg) translate(-73px,5px) rotate(-210deg);}
+
+#negThirty {		-webkit-transform: rotate(-30deg) translate(-110px,0) scale(1);		}
+#negFifteenFive {	-webkit-transform: rotate(-22.5deg) translate(-110px,0) scale(.5);	}
+#negFifteen {		-webkit-transform: rotate(-15deg) translate(-110px,0) scale(1);		}
+#negFive {			-webkit-transform: rotate(-7.5deg) translate(-110px,0) scale(.5);	}	
+#zero {				-webkit-transform: rotate(0deg) translate(-110px,0) scale(1);		}
+#zeroFive {			-webkit-transform: rotate(7.5deg) translate(-110px,0) scale(.5);	}
+#fifteen {			-webkit-transform: rotate(15deg) translate(-110px,0) scale(1);		}
+#fifteenFive {		-webkit-transform: rotate(22.5deg) translate(-110px,0) scale(.5);	}
+#thirty {			-webkit-transform: rotate(30deg) translate(-110px,0) scale(1);		}
+#thirtyFive {		-webkit-transform: rotate(37.5deg) translate(-110px,0) scale(.5);	}
+#fourtyfive {		-webkit-transform: rotate(45deg) translate(-110px,0) scale(1);		}
+#fourtyfiveFive{	-webkit-transform: rotate(52.5deg) translate(-110px,0) scale(.5);	}
+#sixty {			-webkit-transform: rotate(60deg) translate(-110px,0) scale(1);		}
+#sixtyFive {		-webkit-transform: rotate(67.5deg) translate(-110px,0) scale(.5);	}
+#seventyfive {		-webkit-transform: rotate(75deg) translate(-110px,0) scale(1);		}
+#seventyfiveFive{	-webkit-transform: rotate(82.5deg) translate(-110px,0) scale(.5);	}
+#ninety {			-webkit-transform: rotate(90deg) translate(-110px,0) scale(1);		}
+#ninetyFive {		-webkit-transform: rotate(97.5deg) translate(-110px,0) scale(.5);	}
+#oneohfive {		-webkit-transform: rotate(105deg) translate(-110px,0) scale(1);		}
+#oneohfiveFive {	-webkit-transform: rotate(112.5deg) translate(-110px,0) scale(.5);	}
+#onetwenty {		-webkit-transform: rotate(120deg) translate(-110px,0) scale(1);		}
+#onetwentyFive {	-webkit-transform: rotate(127.5deg) translate(-110px,0) scale(.5);	}
+#onethirtyfive {	-webkit-transform: rotate(135deg) translate(-110px,0) scale(1);		}
+#onethirtyfiveFive {-webkit-transform: rotate(142.5deg) translate(-110px,0) scale(.5);	}
+#onefifty {			-webkit-transform: rotate(150deg) translate(-110px,0) scale(1);		}
+#onefiftyFive {		-webkit-transform: rotate(157.5deg) translate(-110px,0) scale(.5);	}
+#onesixtyfive {		-webkit-transform: rotate(165deg) translate(-110px,0) scale(1);		}
+#onesixtyfiveFive {	-webkit-transform: rotate(172.5deg) translate(-110px,0) scale(.5);	}
+#oneeighty {		-webkit-transform: rotate(180deg) translate(-110px,0) scale(1);		}
+#oneeightyFive {	-webkit-transform: rotate(187.5deg) translate(-110px,0) scale(.5);	}
+#onefifteen {		-webkit-transform: rotate(195deg) translate(-110px,0) scale(1);		}
+#onefifteenFive {	-webkit-transform: rotate(202.5deg) translate(-110px,0) scale(.5);	}
+#onethirty {		-webkit-transform: rotate(210deg) translate(-110px,0) scale(1);		}
