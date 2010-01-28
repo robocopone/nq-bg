@@ -22,6 +22,7 @@ gpsDashboard.alltimeLow.data = {altitude: 15000};
 gpsDashboard.lifeDist = 0;						// Lifetime distance traveled
 gpsDashboard.initialLoc = undefined;			// Inital Location
 gpsDashboard.prevLoc = undefined;				// Previous location
+gpsDashboard.altLayout = false;					// Toggle alt Layout
 
 /*
  * Stores and recalls data stored between sessions
@@ -162,11 +163,26 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 		this.controller.get('tripInfoData').addClassName('hidden');
 		this.controller.get('lowAccuracy').removeClassName('hidden');
 	}
+	if (gpsDashboard.altLayout) {
+		this.controller.get('currentInfo').addClassName('hidden');
+		this.controller.get('tripInfo').addClassName('hidden');
+		this.controller.get('speedometer').removeClassName('hidden');
+		this.controller.get('addressInfo').addClassName('hidden');
+	}
+	else {
+		this.controller.get('currentInfo').removeClassName('hidden');
+		this.controller.get('tripInfo').removeClassName('hidden');
+		this.controller.get('addressInfo').removeClassName('hidden');
+		this.controller.get('speedometer').addClassName('hidden');
+	}
+			
 	this.controller.get('horizAccuracy').update("Horizontal Error = " + event.horizAccuracy.toFixed(1) + "m > " + gpsDashboard.maxError + "m");
 	this.strengthBar(event);
 	
 	this.controller.get('speed').update(this.speed(event));
+	this.controller.get('speedometerSpeed').update(this.speed(event));
 	this.controller.get('heading').update(this.heading(event));
+	this.controller.get('speedometerHeading').update(this.heading(event));
 	this.controller.get('altitude').update(this.altitude(event));
 	this.controller.get('tripDuration').update(this.tripDuration());
 	if (event.errorCode == 0 && event.horizAccuracy <= gpsDashboard.maxError) {
@@ -580,6 +596,7 @@ MainAssistant.prototype.handleOrientation = function( event ) {
 		this.controller.get('addressInfo').addClassName('landscape');
 		this.controller.get('initialDisplay').addClassName('landscape');
 		this.controller.get('clock').removeClassName('hidden');
+		this.controller.get('speedometer').addClassName('landscape');
 	}	
 	if (event.position == 2 || event.position == 3) {
 		this.controller.get('currentInfo').removeClassName('landscape');
@@ -587,6 +604,7 @@ MainAssistant.prototype.handleOrientation = function( event ) {
 		this.controller.get('addressInfo').removeClassName('landscape');
 		this.controller.get('initialDisplay').removeClassName('landscape');
 		this.controller.get('clock').addClassName('hidden');
+		this.controller.get('speedometer').removeClassName('landscape');
 	}
 }
 
@@ -700,6 +718,9 @@ MainAssistant.prototype.nav = function () {
 		onChoose: this.navHandler,
 		placeNear: this.controller.get('appHeader'),
 		items: [{
+			label: 'Toggle Display',
+			command: 'toggle'
+		},{
 			label: 'Record Keeping',
 			command: 'recordKeeping',
 		}]
@@ -708,4 +729,6 @@ MainAssistant.prototype.nav = function () {
 MainAssistant.prototype.navHandler = function(command) {
 	if (command == 'recordKeeping')
 		this.controller.stageController.pushScene('records');
+	if (command == 'toggle')
+		gpsDashboard.altLayout = !gpsDashboard.altLayout;
 }
