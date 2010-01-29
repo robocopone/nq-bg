@@ -22,7 +22,7 @@ gpsDashboard.alltimeLow.data = {altitude: 15000};
 gpsDashboard.lifeDist = 0;						// Lifetime distance traveled
 gpsDashboard.initialLoc = undefined;			// Inital Location
 gpsDashboard.prevLoc = undefined;				// Previous location
-gpsDashboard.altLayout = false;					// Toggle alt Layout
+gpsDashboard.speedLimit = 55;
 
 /*
  * Stores and recalls data stored between sessions
@@ -86,11 +86,11 @@ MainAssistant.prototype.setup = function(){
 	gpsDashboard.cookie.initialize();
 	
 	if (this.controller.stageController.setWindowOrientation &&
-		Mojo.Environment.DeviceInfo.screenHeight >= 480 ) 
+	Mojo.Environment.DeviceInfo.screenHeight >= 480) 
 		this.controller.stageController.setWindowOrientation("free");
 	this.controller.listen(document, 'orientationchange', this.handleOrientation.bindAsEventListener(this));
 	this.controller.listen(document, 'shakestart', this.handleShake.bindAsEventListener(this));
-		
+	
 	// Scrim and activity spinner
 	this.controller.setupWidget("spinner", this.spinnerAttr = {
 		spinnerSize: 'large'
@@ -110,10 +110,23 @@ MainAssistant.prototype.setup = function(){
 		buttonClass: 'affirmative',
 		disabled: false
 	});
+	
+	this.controller.setupWidget('speedLimit', {
+		label: 'Speed Limit',
+		modelProperty: 'value',
+		min: 5,
+		max: 300,
+		Interval: 5
+	}, this.model = {
+		value: gpsDashboard.speedLimit
+	});
+
 	this.controller.listen(this.controller.get('addressButton'), Mojo.Event.tap, this.getAddress.bindAsEventListener(this));
 	this.controller.listen(this.controller.get('currentInfo'),Mojo.Event.tap, this.resets.bindAsEventListener(this));
 	this.controller.listen(this.controller.get('tripInfo'),Mojo.Event.tap, this.resets.bindAsEventListener(this));
 	this.controller.listen(this.controller.get('appHeader'),Mojo.Event.tap, this.nav.bindAsEventListener(this));
+	this.controller.listen(this.controller.get('speedLimit'),Mojo.Event.propertyChange, this.speedLimit.bindAsEventListener(this));
+
 
 	if (gpsDashboard.startupPref == 'ask')
 		this.askToReset();
@@ -142,7 +155,8 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 	this.controller.get('clock').update(Mojo.Format.formatDate(new Date(), { time: 'medium' }));
 
 	// Remove initial display and show normal display
-	if (this.controller.get('currentInfo').hasClassName('hidden')) {
+	if (this.controller.get('currentInfo').hasClassName('hidden') &&
+		!(this.controller.get('initialDisplay')).hasClassName('hidden')) {
 		this.controller.get('initialDisplay').addClassName('hidden');
 		this.scrim.hide();
 		this.controller.get('currentInfo').removeClassName('hidden');
@@ -163,18 +177,6 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 		this.controller.get('tripInfoData').addClassName('hidden');
 		this.controller.get('lowAccuracy').removeClassName('hidden');
 	}
-	if (gpsDashboard.altLayout) {
-		this.controller.get('currentInfo').addClassName('hidden');
-		this.controller.get('tripInfo').addClassName('hidden');
-		this.controller.get('speedometer').removeClassName('hidden');
-		this.controller.get('addressInfo').addClassName('hidden');
-	}
-	else {
-		this.controller.get('currentInfo').removeClassName('hidden');
-		this.controller.get('tripInfo').removeClassName('hidden');
-		this.controller.get('addressInfo').removeClassName('hidden');
-		this.controller.get('speedometer').addClassName('hidden');
-	}
 			
 	this.controller.get('horizAccuracy').update("Horizontal Error = " + event.horizAccuracy.toFixed(1) + "m > " + gpsDashboard.maxError + "m");
 	this.strengthBar(event);
@@ -183,6 +185,7 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 	this.controller.get('speedometerSpeed').update(this.speed(event));
 	this.controller.get('heading').update(this.heading(event));
 	this.controller.get('speedometerHeading').update(this.heading(event));
+	this.setSpeedometer(event);
 	this.controller.get('altitude').update(this.altitude(event));
 	this.controller.get('tripDuration').update(this.tripDuration());
 	if (event.errorCode == 0 && event.horizAccuracy <= gpsDashboard.maxError) {
@@ -517,6 +520,8 @@ MainAssistant.prototype.cleanup = function(event){
 	this.controller.stopListening(this.controller.get('currentInfo'),Mojo.Event.tap, this.resets.bindAsEventListener(this));
 	this.controller.stopListening(this.controller.get('appHeader'),Mojo.Event.tap, this.nav.bindAsEventListener(this));
 	this.controller.stopListening(document, 'shakestart', this.handleShake.bindAsEventListener(this));
+	this.controller.stopListening(this.controller.get('speedLimit'),Mojo.Event.propertyChange, this.speedLimit.bindAsEventListener(this));
+
 }
 
 MainAssistant.prototype.resets = function(){
@@ -729,6 +734,55 @@ MainAssistant.prototype.nav = function () {
 MainAssistant.prototype.navHandler = function(command) {
 	if (command == 'recordKeeping')
 		this.controller.stageController.pushScene('records');
-	if (command == 'toggle')
-		gpsDashboard.altLayout = !gpsDashboard.altLayout;
+	if (command == 'toggle') {
+		if (this.controller.get('speedometer').hasClassName('hidden')) {
+			this.controller.get('currentInfo').addClassName('hidden');
+			this.controller.get('tripInfo').addClassName('hidden');
+			this.controller.get('addressInfo').addClassName('hidden');
+			this.controller.get('speedometer').removeClassName('hidden');
+			this.controller.get('speedLimit').removeClassName('hidden');
+		}
+		else {
+			this.controller.get('currentInfo').removeClassName('hidden');
+			this.controller.get('tripInfo').removeClassName('hidden');
+			this.controller.get('addressInfo').removeClassName('hidden');
+			this.controller.get('speedometer').addClassName('hidden');
+			this.controller.get('speedLimit').addClassName('hidden');
+		}
+	}
+}
+
+MainAssistant.prototype.speedLimit = function (event) {
+	gpsDashboard.speedLimit = event.value;
+}
+/*
+ * Lights up the speedometer
+ */
+MainAssistant.prototype.setSpeedometer = function(event) {
+	for (x = 0; x <= 160; x += 5) {
+		hashElement = 'hash' + x;
+		labelElement = 'label' + x;
+		this.controller.get(hashElement).removeClassName('redBack');
+		this.controller.get(hashElement).removeClassName('greenBack');
+		this.controller.get(hashElement).removeClassName('yellowBack');
+		if (gpsDashboard.units == 1 && x % 10 == 0)
+			this.controller.get(labelElement).update(x);
+		if (gpsDashboard.units == 2 && x % 10 == 0)
+			this.controller.get(labelElement).update(x * 2);
+	}
+	
+	if (gpsDashboard.units == 1)
+		bound = event.velocity * 2.23693629;
+	if (gpsDashboard.units == 2)
+		bound = event.velocity * 3.6;
+
+	for (x = 0; x <= bound; x+=5) {
+		element = 'hash' + x;
+		if (x < gpsDashboard.speedLimit - 5)
+			this.controller.get(element).addClassName('greenBack');
+		else if (x <= gpsDashboard.speedLimit + 5)
+			this.controller.get(element).addClassName('yellowBack');
+		else
+			this.controller.get(element).addClassName('redBack');
+	}
 }

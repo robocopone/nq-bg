@@ -171,6 +171,13 @@
 	width: 20px;
 	height: 5px;
 }
+.redBack { background-color: red; }
+.yellowBack { background-color: yellow; }
+.greenBack { background-color: green; }
+
+.label {
+	font-size: 80%;
+}
 #speedometerSpeed {
 	width: 132px;
 	position: absolute;
@@ -186,6 +193,11 @@
 	position: absolute;
 	left: 133px;
 	top: 70px;
+}
+#speedLimit {
+	position: absolute;
+	left: 65px;
+	top: 280px;
 }
 #speedometerTripometer {
 	font-size: large;
@@ -210,42 +222,42 @@
 #label90 {			-webkit-transform: rotate(105deg) translate(-100px,3px) rotate(-105deg);}
 #label100 {			-webkit-transform: rotate(120deg) translate(-98px,7px) rotate(-120deg);}
 #label110 {			-webkit-transform: rotate(135deg) translate(-93px,10px) rotate(-135deg);}
-#label120 {			-webkit-transform: rotate(150deg) translate(-85px,13px) rotate(-150deg);}
-#label130 {			-webkit-transform: rotate(165deg) translate(-80px,13px) rotate(-165deg);}
-#label140 {			-webkit-transform: rotate(180deg) translate(-77px,11px) rotate(-180deg);}
-#label150 {			-webkit-transform: rotate(195deg) translate(-75px,9px) rotate(-195deg);}
-#label160 {			-webkit-transform: rotate(210deg) translate(-73px,5px) rotate(-210deg);}
+#label120 {			-webkit-transform: rotate(150deg) translate(-88px,13px) rotate(-150deg);}
+#label130 {			-webkit-transform: rotate(165deg) translate(-85px,13px) rotate(-165deg);}
+#label140 {			-webkit-transform: rotate(180deg) translate(-82px,11px) rotate(-180deg);}
+#label150 {			-webkit-transform: rotate(195deg) translate(-80px,9px) rotate(-195deg);}
+#label160 {			-webkit-transform: rotate(210deg) translate(-78px,5px) rotate(-210deg);}
 
-#negThirty {		-webkit-transform: rotate(-30deg) translate(-110px,0) scale(1);		}
-#negFifteenFive {	-webkit-transform: rotate(-22.5deg) translate(-110px,0) scale(.5);	}
-#negFifteen {		-webkit-transform: rotate(-15deg) translate(-110px,0) scale(1);		}
-#negFive {			-webkit-transform: rotate(-7.5deg) translate(-110px,0) scale(.5);	}	
-#zero {				-webkit-transform: rotate(0deg) translate(-110px,0) scale(1);		}
-#zeroFive {			-webkit-transform: rotate(7.5deg) translate(-110px,0) scale(.5);	}
-#fifteen {			-webkit-transform: rotate(15deg) translate(-110px,0) scale(1);		}
-#fifteenFive {		-webkit-transform: rotate(22.5deg) translate(-110px,0) scale(.5);	}
-#thirty {			-webkit-transform: rotate(30deg) translate(-110px,0) scale(1);		}
-#thirtyFive {		-webkit-transform: rotate(37.5deg) translate(-110px,0) scale(.5);	}
-#fourtyfive {		-webkit-transform: rotate(45deg) translate(-110px,0) scale(1);		}
-#fourtyfiveFive{	-webkit-transform: rotate(52.5deg) translate(-110px,0) scale(.5);	}
-#sixty {			-webkit-transform: rotate(60deg) translate(-110px,0) scale(1);		}
-#sixtyFive {		-webkit-transform: rotate(67.5deg) translate(-110px,0) scale(.5);	}
-#seventyfive {		-webkit-transform: rotate(75deg) translate(-110px,0) scale(1);		}
-#seventyfiveFive{	-webkit-transform: rotate(82.5deg) translate(-110px,0) scale(.5);	}
-#ninety {			-webkit-transform: rotate(90deg) translate(-110px,0) scale(1);		}
-#ninetyFive {		-webkit-transform: rotate(97.5deg) translate(-110px,0) scale(.5);	}
-#oneohfive {		-webkit-transform: rotate(105deg) translate(-110px,0) scale(1);		}
-#oneohfiveFive {	-webkit-transform: rotate(112.5deg) translate(-110px,0) scale(.5);	}
-#onetwenty {		-webkit-transform: rotate(120deg) translate(-110px,0) scale(1);		}
-#onetwentyFive {	-webkit-transform: rotate(127.5deg) translate(-110px,0) scale(.5);	}
-#onethirtyfive {	-webkit-transform: rotate(135deg) translate(-110px,0) scale(1);		}
-#onethirtyfiveFive {-webkit-transform: rotate(142.5deg) translate(-110px,0) scale(.5);	}
-#onefifty {			-webkit-transform: rotate(150deg) translate(-110px,0) scale(1);		}
-#onefiftyFive {		-webkit-transform: rotate(157.5deg) translate(-110px,0) scale(.5);	}
-#onesixtyfive {		-webkit-transform: rotate(165deg) translate(-110px,0) scale(1);		}
-#onesixtyfiveFive {	-webkit-transform: rotate(172.5deg) translate(-110px,0) scale(.5);	}
-#oneeighty {		-webkit-transform: rotate(180deg) translate(-110px,0) scale(1);		}
-#oneeightyFive {	-webkit-transform: rotate(187.5deg) translate(-110px,0) scale(.5);	}
-#onefifteen {		-webkit-transform: rotate(195deg) translate(-110px,0) scale(1);		}
-#onefifteenFive {	-webkit-transform: rotate(202.5deg) translate(-110px,0) scale(.5);	}
-#onethirty {		-webkit-transform: rotate(210deg) translate(-110px,0) scale(1);		}
+#hash0 {	-webkit-transform: rotate(-30deg) translate(-110px,0) scale(1);		}
+#hash5 {	-webkit-transform: rotate(-22.5deg) translate(-110px,0) scale(.5);	}
+#hash10 {	-webkit-transform: rotate(-15deg) translate(-110px,0) scale(1);		}
+#hash15 {	-webkit-transform: rotate(-7.5deg) translate(-110px,0) scale(.5);	}	
+#hash20 {	-webkit-transform: rotate(0deg) translate(-110px,0) scale(1);		}
+#hash25 {	-webkit-transform: rotate(7.5deg) translate(-110px,0) scale(.5);	}
+#hash30 {	-webkit-transform: rotate(15deg) translate(-110px,0) scale(1);		}
+#hash35 {	-webkit-transform: rotate(22.5deg) translate(-110px,0) scale(.5);	}
+#hash40 {	-webkit-transform: rotate(30deg) translate(-110px,0) scale(1);		}
+#hash45 {	-webkit-transform: rotate(37.5deg) translate(-110px,0) scale(.5);	}
+#hash50 {	-webkit-transform: rotate(45deg) translate(-110px,0) scale(1);		}
+#hash55 {	-webkit-transform: rotate(52.5deg) translate(-110px,0) scale(.5);	}
+#hash60 {	-webkit-transform: rotate(60deg) translate(-110px,0) scale(1);		}
+#hash65 {	-webkit-transform: rotate(67.5deg) translate(-110px,0) scale(.5);	}
+#hash70 {	-webkit-transform: rotate(75deg) translate(-110px,0) scale(1);		}
+#hash75 {	-webkit-transform: rotate(82.5deg) translate(-110px,0) scale(.5);	}
+#hash80 {	-webkit-transform: rotate(90deg) translate(-110px,0) scale(1);		}
+#hash85 {	-webkit-transform: rotate(97.5deg) translate(-110px,0) scale(.5);	}
+#hash90 {	-webkit-transform: rotate(105deg) translate(-110px,0) scale(1);		}
+#hash95 {	-webkit-transform: rotate(112.5deg) translate(-110px,0) scale(.5);	}
+#hash100 {	-webkit-transform: rotate(120deg) translate(-110px,0) scale(1);		}
+#hash105 {	-webkit-transform: rotate(127.5deg) translate(-110px,0) scale(.5);	}
+#hash110 {	-webkit-transform: rotate(135deg) translate(-110px,0) scale(1);		}
+#hash115 {	-webkit-transform: rotate(142.5deg) translate(-110px,0) scale(.5);	}
+#hash120 {	-webkit-transform: rotate(150deg) translate(-110px,0) scale(1);		}
+#hash125 {	-webkit-transform: rotate(157.5deg) translate(-110px,0) scale(.5);	}
+#hash130 {	-webkit-transform: rotate(165deg) translate(-110px,0) scale(1);		}
+#hash135 {	-webkit-transform: rotate(172.5deg) translate(-110px,0) scale(.5);	}
+#hash140 {	-webkit-transform: rotate(180deg) translate(-110px,0) scale(1);		}
+#hash145 {	-webkit-transform: rotate(187.5deg) translate(-110px,0) scale(.5);	}
+#hash150 {	-webkit-transform: rotate(195deg) translate(-110px,0) scale(1);		}
+#hash155 {	-webkit-transform: rotate(202.5deg) translate(-110px,0) scale(.5);	}
+#hash160 {	-webkit-transform: rotate(210deg) translate(-110px,0) scale(1);		}
