@@ -167,10 +167,11 @@
 }
 .hash {
 	z-index: 2;
-	background-color: black;
 	width: 20px;
 	height: 5px;
 }
+
+.blackBack { background-color: black; }
 .redBack { background-color: red; }
 .yellowBack { background-color: yellow; }
 .greenBack { background-color: green; }
@@ -197,6 +198,11 @@
 #speedLimit {
 	position: absolute;
 	left: 65px;
+	top: 280px;
+}
+#speedLimit.landscape {
+	position: absolute;
+	left: 145px;
 	top: 280px;
 }
 #speedometerTripometer {
