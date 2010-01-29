@@ -31,12 +31,14 @@ gpsDashboard.cookie = ({
 	initialize: function() {
 		this.cookieData = new Mojo.Model.Cookie("netBradleyGraberGPSDashboardData");
 		storedData = this.cookieData.get();
-		if (storedData && storedData.version == "1.3.0"){
+		if (storedData){
 			gpsDashboard.units = storedData.units;
 			gpsDashboard.backlight = storedData.backlight;
 			gpsDashboard.avgSpeedPref = storedData.avgSpeedPref;
 			gpsDashboard.lifeDist = storedData.lifeDist;
 			gpsDashboard.maxError = storedData.maxError;
+		}
+		if (storedData && storedData.version >= "1.3.0") {
 			gpsDashboard.alltimeTopSpeed = storedData.alltimeTopSpeed;
 			gpsDashboard.alltimeHigh = storedData.alltimeHigh;
 			gpsDashboard.alltimeLow = storedData.alltimeLow;
@@ -47,18 +49,14 @@ gpsDashboard.cookie = ({
 			gpsDashboard.initialLoc = storedData.initalLoc;
 			gpsDashboard.startupPref = storedData.startupPref;
 		}
-		else if (storedData) {
-			gpsDashboard.units = storedData.units;
-			gpsDashboard.backlight = storedData.backlight;
-			gpsDashboard.avgSpeedPref = storedData.avgSpeedPref;
-			gpsDashboard.lifeDist = storedData.lifeDist;
-			gpsDashboard.maxError = storedData.maxError;
+		if (storedData && storedData.version == "1.3.5") {
+			gpsDashboard.speedLimit = storedData.speedLimit
 		}
 		this.storeCookie();
 	},
 	storeCookie: function() {
 		this.cookieData.put({  
-			version: "1.3.0",
+			version: "1.3.5",
 			units: gpsDashboard.units,                                                
 			backlight: gpsDashboard.backlight,
 			lifeDist: gpsDashboard.lifeDist,
@@ -72,8 +70,9 @@ gpsDashboard.cookie = ({
 			initalLoc: gpsDashboard.initialLoc,
 			tripometer: gpsDashboard.tripometer,
 			avgSpeed: gpsDashboard.avgSpeed,
-			startupPref: gpsDashboard.startupPref
-		});		
+			startupPref: gpsDashboard.startupPref,
+			speedLimit: gpsDashboard.speedLimit
+		})		
 	}
 });
 
@@ -114,8 +113,8 @@ MainAssistant.prototype.setup = function(){
 	this.controller.setupWidget('speedLimit', {
 		label: 'Speed Limit',
 		modelProperty: 'value',
-		min: 5,
-		max: 300,
+		min: 15,
+		max: 160,
 		Interval: 5
 	}, this.model = {
 		value: gpsDashboard.speedLimit
@@ -602,6 +601,7 @@ MainAssistant.prototype.handleOrientation = function( event ) {
 		this.controller.get('initialDisplay').addClassName('landscape');
 		this.controller.get('clock').removeClassName('hidden');
 		this.controller.get('speedometer').addClassName('landscape');
+		this.controller.get('speedLimit').addClassName('landscape');
 	}	
 	if (event.position == 2 || event.position == 3) {
 		this.controller.get('currentInfo').removeClassName('landscape');
@@ -610,6 +610,7 @@ MainAssistant.prototype.handleOrientation = function( event ) {
 		this.controller.get('initialDisplay').removeClassName('landscape');
 		this.controller.get('clock').addClassName('hidden');
 		this.controller.get('speedometer').removeClassName('landscape');
+		this.controller.get('speedLimit').removeClassName('landscape');
 	}
 }
 
@@ -765,10 +766,7 @@ MainAssistant.prototype.setSpeedometer = function(event) {
 		this.controller.get(hashElement).removeClassName('redBack');
 		this.controller.get(hashElement).removeClassName('greenBack');
 		this.controller.get(hashElement).removeClassName('yellowBack');
-		if (gpsDashboard.units == 1 && x % 10 == 0)
-			this.controller.get(labelElement).update(x);
-		if (gpsDashboard.units == 2 && x % 10 == 0)
-			this.controller.get(labelElement).update(x * 2);
+		this.controller.get(hashElement).addClassName('blackBack');
 	}
 	
 	if (gpsDashboard.units == 1)
@@ -776,13 +774,19 @@ MainAssistant.prototype.setSpeedometer = function(event) {
 	if (gpsDashboard.units == 2)
 		bound = event.velocity * 3.6;
 
-	for (x = 0; x <= bound; x+=5) {
-		element = 'hash' + x;
-		if (x < gpsDashboard.speedLimit - 5)
+	for (x = 0; x <= bound; x+= 5) {
+		element = 'hash' + (x);
+		if (x < gpsDashboard.speedLimit - (5)) {
+			this.controller.get(element).removeClassName('blackBack');
 			this.controller.get(element).addClassName('greenBack');
-		else if (x <= gpsDashboard.speedLimit + 5)
+		}
+		else if (x <= gpsDashboard.speedLimit + (5)) {
+			this.controller.get(element).removeClassName('blackBack');
 			this.controller.get(element).addClassName('yellowBack');
-		else
+		}
+		else {
+			this.controller.get(element).removeClassName('blackBack');
 			this.controller.get(element).addClassName('redBack');
+		}
 	}
 }
