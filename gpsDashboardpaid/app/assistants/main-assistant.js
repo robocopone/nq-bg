@@ -109,6 +109,14 @@ MainAssistant.prototype.setup = function(){
 		buttonClass: 'affirmative',
 		disabled: false
 	});
+
+	// Address button widget
+	this.controller.setupWidget('reverse', this.atts = {
+	}, this.model = {
+		buttonLabel: 'Reverse (Heads-Up Mode)',
+		buttonClass: 'normal',
+		disabled: false
+	});
 	
 	this.controller.setupWidget('speedLimit', {
 		label: 'Speed Limit',
@@ -121,6 +129,7 @@ MainAssistant.prototype.setup = function(){
 	});
 
 	this.controller.listen(this.controller.get('addressButton'), Mojo.Event.tap, this.getAddress.bindAsEventListener(this));
+	this.controller.listen(this.controller.get('reverse'), Mojo.Event.tap, this.reverse.bindAsEventListener(this));
 	this.controller.listen(this.controller.get('currentInfo'),Mojo.Event.tap, this.resets.bindAsEventListener(this));
 	this.controller.listen(this.controller.get('tripInfo'),Mojo.Event.tap, this.resets.bindAsEventListener(this));
 	this.controller.listen(this.controller.get('appHeader'),Mojo.Event.tap, this.nav.bindAsEventListener(this));
@@ -179,7 +188,6 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 			
 	this.controller.get('horizAccuracy').update("Horizontal Error = " + event.horizAccuracy.toFixed(1) + "m > " + gpsDashboard.maxError + "m");
 	this.strengthBar(event);
-	
 	this.controller.get('speed').update(this.speed(event));
 	this.controller.get('speedometerSpeed').update(this.speed(event));
 	this.controller.get('heading').update(this.heading(event));
@@ -513,6 +521,7 @@ MainAssistant.prototype.cleanup = function(event){
 	this.trackingHandle.cancel();
 	gpsDashboard.cookie.storeCookie();
 
+	this.controller.stopListening(this.controller.get('reverse'), Mojo.Event.tap, this.reverse.bindAsEventListener(this));
 	this.controller.stopListening(this.controller.get('addressButton'), Mojo.Event.tap, this.getAddress.bindAsEventListener(this));
 	this.controller.stopListening(document, 'orientationchange', this.handleOrientation.bindAsEventListener(this));
 	this.controller.stopListening(this.controller.get('tripInfo'),Mojo.Event.tap, this.resets.bindAsEventListener(this));
@@ -521,6 +530,12 @@ MainAssistant.prototype.cleanup = function(event){
 	this.controller.stopListening(document, 'shakestart', this.handleShake.bindAsEventListener(this));
 	this.controller.stopListening(this.controller.get('speedLimit'),Mojo.Event.propertyChange, this.speedLimit.bindAsEventListener(this));
 
+}
+MainAssistant.prototype.reverse = function () {
+	if (this.controller.get('speedometer').hasClassName('reverse'))
+		this.controller.get('speedometer').removeClassName('reverse');
+	else 
+		this.controller.get('speedometer').addClassName('reverse');
 }
 
 MainAssistant.prototype.resets = function(){
@@ -742,6 +757,7 @@ MainAssistant.prototype.navHandler = function(command) {
 			this.controller.get('addressInfo').addClassName('hidden');
 			this.controller.get('speedometer').removeClassName('hidden');
 			this.controller.get('speedLimit').removeClassName('hidden');
+			this.controller.get('reverse').removeClassName('hidden');
 		}
 		else {
 			this.controller.get('currentInfo').removeClassName('hidden');
@@ -749,6 +765,7 @@ MainAssistant.prototype.navHandler = function(command) {
 			this.controller.get('addressInfo').removeClassName('hidden');
 			this.controller.get('speedometer').addClassName('hidden');
 			this.controller.get('speedLimit').addClassName('hidden');
+			this.controller.get('reverse').addClassName('hidden');
 		}
 	}
 }
