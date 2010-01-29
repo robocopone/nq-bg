@@ -345,9 +345,9 @@ MainAssistant.prototype.altitude = function(event){
 	if (event.vertAccuracy == 0)
 		return "&nbsp;";
 	if (gpsDashboard.units == 1)
-		return (event.altitude * 3.2808399).toFixed(1) + " feet";
+		return (event.altitude * 3.2808399).toFixed(0) + " feet";
 	if (gpsDashboard.units == 2)
-		return event.altitude.toFixed(1) + " m";
+		return event.altitude.toFixed(0) + " m";
 }
 
 /*
