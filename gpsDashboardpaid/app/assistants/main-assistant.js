@@ -792,12 +792,12 @@ MainAssistant.prototype.setSpeedometer = function(event) {
 		bound = event.velocity * 3.6;
 
 	for (x = 0; x <= bound; x+= 5) {
-		element = 'hash' + (x);
-		if (x < gpsDashboard.speedLimit - (5)) {
+		element = 'hash' + x;
+		if (bound < gpsDashboard.speedLimit - 5) {
 			this.controller.get(element).removeClassName('blackBack');
 			this.controller.get(element).addClassName('greenBack');
 		}
-		else if (x <= gpsDashboard.speedLimit + (5)) {
+		else if (bound <= gpsDashboard.speedLimit + 5) {
 			this.controller.get(element).removeClassName('blackBack');
 			this.controller.get(element).addClassName('yellowBack');
 		}
