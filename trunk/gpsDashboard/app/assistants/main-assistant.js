@@ -102,34 +102,34 @@ MainAssistant.prototype.activate = function(event) {
 MainAssistant.prototype.handleServiceResponse = function(event){
 	if (!gpsDashboard.initialLoc && event.horizAccuracy <= gpsDashboard.maxError) 
 		gpsDashboard.initialLoc = event;
-	
-	if (event.horizAccuracy <= gpsDashboard.maxError && gpsDashboard.hidden) {
-		gpsDashboard.hidden = false;
+
+	// Remove initial display and show normal display
+	if (this.controller.get('currentInfo').hasClassName('hidden') &&
+		!(this.controller.get('initialDisplay')).hasClassName('hidden')) {
 		this.controller.get('initialDisplay').addClassName('hidden');
 		this.scrim.hide();
-		
 		this.controller.get('currentInfo').removeClassName('hidden');
 		this.controller.get('tripInfo').removeClassName('hidden');
 		this.controller.get('addressInfo').removeClassName('hidden');
 	}
-	else 
-		if (event.horizAccuracy > gpsDashboard.maxError && !gpsDashboard.hidden) {
-			gpsDashboard.hidden = true;
-			this.controller.get('initialDisplay').removeClassName('hidden');
-			this.scrim.show();
-			
-			this.controller.get('currentInfo').addClassName('hidden');
-			this.controller.get('tripInfo').addClassName('hidden');
-			this.controller.get('addressInfo').addClassName('hidden');
-			this.controller.get('address').addClassName('hidden');
-		}
-	this.controller.get('accuracyNotice').update("Satellite Strength too Low");
+	if (event.horizAccuracy <= gpsDashboard.maxError && gpsDashboard.hidden) {
+		gpsDashboard.hidden = false;
+		this.controller.get('tripInfoData').removeClassName('hidden');
+		this.controller.get('lowAccuracy').addClassName('hidden');
+	}
+	else if (event.horizAccuracy > gpsDashboard.maxError && !gpsDashboard.hidden) {
+		gpsDashboard.hidden = true;
+		this.controller.get('tripInfoData').addClassName('hidden');
+		this.controller.get('lowAccuracy').removeClassName('hidden');
+	}
+	
 	this.controller.get('horizAccuracy').update("Horizontal Error = " + event.horizAccuracy.toFixed(1) + "m > " + gpsDashboard.maxError + "m");
 
+	this.controller.get('speed').update(this.speed(event));
+	this.controller.get('heading').update(this.heading(event));
+	this.controller.get('altitude').update(this.altitude(event));
+
 	if (event.errorCode == 0 && event.horizAccuracy <= gpsDashboard.maxError) {
-		this.controller.get('speed').update(this.speed(event));
-		this.controller.get('heading').update(this.heading(event));
-		this.controller.get('altitude').update(this.altitude(event));
 		this.controller.get('avgSpeed').update(this.avgSpeed(event));
 		this.controller.get('topSpeed').update(this.topSpeed(event));
 		this.controller.get('distTraveled').update(this.distTraveled(event));
@@ -137,6 +137,7 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 		this.controller.get('lifeDist').update(this.lifeDist(event));
 		gpsDashboard.prevLoc = event;
 	}
+
 	else if (event.errorCode != 0)
 		this.controller.stageController.pushScene("gpsError", event.errorCode);
 
