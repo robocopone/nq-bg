@@ -10,8 +10,6 @@
 
 <div id="initialDisplay">
 	<div id="announce">Getting GPS information...</div>
-	<div id="accuracyNotice"></div>
-	<div id="horizAccuracy"></div>
 </div>
 
 <div id="currentInfo" class="palm-group">
@@ -32,14 +30,21 @@
 
 <div id="tripInfo" class="palm-group">
 	<div class="palm-group-title">Trip Information</div>
-	<div class="heading">Avgerage Speed</div>
-		<div id="avgSpeed" class="data"></div>
-	<div class="heading">Dist. Traveled:</div>
-		<div id="distTraveled" class="data"></div>
-	<div class="heading">Dist. from First Pos.:</div>
-		<div id="distFromInit" class="data"></div>
-	<div class="heading">Lifetime Distance:</div>
-		<div id="lifeDist" class="data"></div>
+   <div id="lowAccuracy">
+            <div>Satellite strength is too low to gather accurate trip information.</div>
+            <div>Be sure your phone has a clear view of the sky, or adjust Max Error in prefs.</div>
+            <div id="horizAccuracy"></div>
+    </div>
+	<div id="tripInfoData" class="hidden">
+		<div class="heading">Avgerage Speed</div>
+			<div id="avgSpeed" class="data"></div>
+		<div class="heading">Dist. Traveled:</div>
+			<div id="distTraveled" class="data"></div>
+		<div class="heading">Dist. from First Pos.:</div>
+			<div id="distFromInit" class="data"></div>
+		<div class="heading">Lifetime Distance:</div>
+			<div id="lifeDist" class="data"></div>
+	</div>
 </div>
 
 <div id="addressInfo">
