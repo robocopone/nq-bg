@@ -185,7 +185,6 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 		this.controller.get('tripInfoData').addClassName('hidden');
 		this.controller.get('lowAccuracy').removeClassName('hidden');
 	}
-			
 	this.controller.get('horizAccuracy').update("Horizontal Error = " + event.horizAccuracy.toFixed(1) + "m > " + gpsDashboard.maxError + "m");
 	this.strengthBar(event);
 	this.controller.get('speed').update(this.speed(event));
@@ -617,6 +616,7 @@ MainAssistant.prototype.handleOrientation = function( event ) {
 		this.controller.get('clock').removeClassName('hidden');
 		this.controller.get('speedometer').addClassName('landscape');
 		this.controller.get('speedLimit').addClassName('landscape');
+		this.controller.get('reverse').addClassName('landscape');
 	}	
 	if (event.position == 2 || event.position == 3) {
 		this.controller.get('currentInfo').removeClassName('landscape');
@@ -626,6 +626,7 @@ MainAssistant.prototype.handleOrientation = function( event ) {
 		this.controller.get('clock').addClassName('hidden');
 		this.controller.get('speedometer').removeClassName('landscape');
 		this.controller.get('speedLimit').removeClassName('landscape');
+		this.controller.get('reverse').removeClassName('landscape');
 	}
 }
 
