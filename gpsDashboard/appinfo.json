@@ -1,6 +1,6 @@
 {
 	"id": "net.bradleygraber.gpsdashboard",
-	"version": "1.2.5",
+	"version": "1.2.4",
 	"vendor": "Bradley Graber",
 	"type": "web",
 	"main": "index.html",
