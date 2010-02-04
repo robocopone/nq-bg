@@ -16,5 +16,9 @@
     {
         "scenes": "records",
         "source": "app/assistants/records-assistant.js"
+    },
+    {
+        "scenes": "dashboardScene",
+        "source": "app/assistants/dashboardScene-assistant.js"
     }
 ]

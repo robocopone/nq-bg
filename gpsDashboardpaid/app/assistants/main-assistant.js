@@ -23,6 +23,7 @@ gpsDashboard.lifeDist = 0;						// Lifetime distance traveled
 gpsDashboard.initialLoc = undefined;			// Inital Location
 gpsDashboard.prevLoc = undefined;				// Previous location
 gpsDashboard.speedLimit = 55;
+gpsDashboard.speed = "10";
 
 /*
  * Stores and recalls data stored between sessions
@@ -134,12 +135,14 @@ MainAssistant.prototype.setup = function(){
 	this.controller.listen(this.controller.get('tripInfo'),Mojo.Event.tap, this.resets.bindAsEventListener(this));
 	this.controller.listen(this.controller.get('appHeader'),Mojo.Event.tap, this.nav.bindAsEventListener(this));
 	this.controller.listen(this.controller.get('speedLimit'),Mojo.Event.propertyChange, this.speedLimit.bindAsEventListener(this));
+	this.controller.listen(this.controller.stageController.document, Mojo.Event.stageDeactivate, this.handleMinimized.bindAsEventListener(this));
 
 
 	if (gpsDashboard.startupPref == 'ask')
 		this.askToReset();
 	if (gpsDashboard.startupPref == 'always')
 		this.doReset('yes');
+
 }
 
 MainAssistant.prototype.activate = function(event) {
@@ -160,6 +163,8 @@ MainAssistant.prototype.activate = function(event) {
 }
 
 MainAssistant.prototype.handleServiceResponse = function(event){
+	gpsDashboard.speed++;
+	event.velocity = gpsDashboard.speed;
 	this.controller.get('clock').update(Mojo.Format.formatDate(new Date(), { time: 'medium' }));
 
 	// Remove initial display and show normal display
@@ -188,6 +193,11 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 	this.controller.get('horizAccuracy').update("Horizontal Error = " + event.horizAccuracy.toFixed(1) + "m > " + gpsDashboard.maxError + "m");
 	this.strengthBar(event);
 	this.controller.get('speed').update(this.speed(event));
+
+	if (gpsDashboard.stage) {
+		scenes = gpsDashboard.stage.getScenes();
+		scenes[0].get('dashSpeed').update(this.speed(event));
+	}
 	this.controller.get('speedometerSpeed').update(this.speed(event));
 	this.controller.get('heading').update(this.heading(event));
 	this.controller.get('speedometerHeading').update(this.heading(event));
@@ -503,6 +513,21 @@ MainAssistant.prototype.calcSpeed = function( event ){
 		 	 this.calcTime(gpsDashboard.prevLoc, event) * 3600).toFixed(1) + " kph";
 }
 
+MainAssistant.prototype.handleMinimized = function (event) {
+    var appController = Mojo.Controller.getAppController();
+    var stageName = "dashboardStage";
+
+    var f = function(stageController){
+		gpsDashboard.stage = stageController;
+		stageController.pushScene('dashboardScene');
+	}
+
+    appController.createStageWithCallback({
+		name: stageName,
+	 	lightweight: true
+	}, f, 'dashboard');
+}
+
 MainAssistant.prototype.deactivate = function(event) {
 	this.trackingHandle.cancel(); 
 	this.controller.stageController.setWindowProperties({blockScreenTimeout: false});
@@ -528,6 +553,7 @@ MainAssistant.prototype.cleanup = function(event){
 	this.controller.stopListening(this.controller.get('appHeader'),Mojo.Event.tap, this.nav.bindAsEventListener(this));
 	this.controller.stopListening(document, 'shakestart', this.handleShake.bindAsEventListener(this));
 	this.controller.stopListening(this.controller.get('speedLimit'),Mojo.Event.propertyChange, this.speedLimit.bindAsEventListener(this));
+	this.controller.stopListening(this.controller.stageController.document, Mojo.Event.stageDeactivate, this.handleMinimized.bindAsEventListener(this));
 
 }
 MainAssistant.prototype.reverse = function () {
