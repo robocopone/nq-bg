@@ -7,7 +7,7 @@
 	"title": "gpsDashboard+",
 	"icon": "icon.png",
 	"noDeprecatedStyles": "true",
-	"theme": "light",
+	"theme": "dark",
 	"copyright": "Copyright 2010 Bradley Graber",
 	"support": 
 	{	"url": "http://www.bradleygraber.net/gpsDashboard",
