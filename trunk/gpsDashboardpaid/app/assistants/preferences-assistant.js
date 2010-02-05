@@ -2,6 +2,49 @@ function PreferencesAssistant() {
 }
 
 PreferencesAssistant.prototype.setup = function(){
+
+	this.controller.setupWidget("dashAvgSpeed", this.attributes = {
+	}, this.model = {
+		value: gpsDashboard.dashAvgSpeed,
+		disabled: false
+	});
+
+	this.controller.setupWidget("dashTopSpeed", this.attributes = {
+	}, this.model = {
+		value: gpsDashboard.dashTopSpeed,
+		disabled: false
+	});
+
+	this.controller.setupWidget("dashDistTraveled", this.attributes = {
+	}, this.model = {
+		value: gpsDashboard.dashDistTraveled,
+		disabled: false
+	});
+
+	this.controller.setupWidget("dashDistFromInit", this.attributes = {
+	}, this.model = {
+		value: gpsDashboard.dashDistFromInit,
+		disabled: false
+	});
+
+	this.controller.setupWidget("dashLifeDist", this.attributes = {
+	}, this.model = {
+		value: gpsDashboard.dashLifeDist,
+		disabled: false
+	});
+
+	this.controller.setupWidget("dashTripDuration", this.attributes = {
+	}, this.model = {
+		value: gpsDashboard.dashTripDuration,
+		disabled: false
+	});
+	this.controller.listen("dashAvgSpeed", Mojo.Event.propertyChange, this.dashAvgSpeed.bindAsEventListener(this));
+	this.controller.listen("dashTopSpeed", Mojo.Event.propertyChange, this.dashTopSpeed.bindAsEventListener(this));
+	this.controller.listen("dashDistTraveled", Mojo.Event.propertyChange, this.dashDistTraveled.bindAsEventListener(this));
+	this.controller.listen("dashDistFromInit", Mojo.Event.propertyChange, this.dashDistFromInit.bindAsEventListener(this));
+	this.controller.listen("dashLifeDist", Mojo.Event.propertyChange, this.dashLifeDist.bindAsEventListener(this));
+	this.controller.listen("dashTripDuration", Mojo.Event.propertyChange, this.dashTripDuration.bindAsEventListener(this));
+
 	//On startup pref
 	this.controller.setupWidget("startupPref", this.startupPrefAttributes = {
 		label: "On Startup",
@@ -146,6 +189,32 @@ PreferencesAssistant.prototype.setup = function(){
 	this.controller.listen("maxErrorPrefSelector", Mojo.Event.propertyChange, this.maxErrorSelector.bindAsEventListener(this));
 
 }
+
+PreferencesAssistant.prototype.dashAvgSpeed = function (event) {
+	gpsDashboard.dashAvgSpeed = event.value;
+	gpsDashboard.cookie.storeCookie();
+}
+PreferencesAssistant.prototype.dashTopSpeed = function (event) {
+	gpsDashboard.dashTopSpeed = event.value;
+	gpsDashboard.cookie.storeCookie();
+}
+PreferencesAssistant.prototype.dashDistTraveled = function (event) {
+	gpsDashboard.dashDistTraveled = event.value;
+	gpsDashboard.cookie.storeCookie();
+}
+PreferencesAssistant.prototype.dashDistFromInit = function (event) {
+	gpsDashboard.dashDistFromInit = event.value;
+	gpsDashboard.cookie.storeCookie();
+}
+PreferencesAssistant.prototype.dashLifeDist = function (event) {
+	gpsDashboard.dashLifeDist = event.value;
+	gpsDashboard.cookie.storeCookie();
+}
+PreferencesAssistant.prototype.dashTripDuration = function (event) {
+	gpsDashboard.dashTripDuration = event.value;
+	gpsDashboard.cookie.storeCookie();
+}
+
 PreferencesAssistant.prototype.startupPref = function (event) {
 	gpsDashboard.startupPref = this.startupPrefModel.value;
 	gpsDashboard.cookie.storeCookie();
@@ -189,4 +258,11 @@ PreferencesAssistant.prototype.cleanup = function(event){
 	this.controller.stopListening("shakePref", Mojo.Event.propertyChange, this.shakePref.bindAsEventListener(this));
 	this.controller.stopListening("maxErrorPrefSelector", Mojo.Event.propertyChange, this.maxErrorSelector.bindAsEventListener(this));
 	this.controller.stopListening("coloredSpeedPref", Mojo.Event.propertyChange, this.coloredSpeedPref.bindAsEventListener(this));
+	this.controller.stopListening("dashAvgSpeed", Mojo.Event.propertyChange, this.dashAvgSpeed.bindAsEventListener(this));
+	this.controller.stopListening("dashTopSpeed", Mojo.Event.propertyChange, this.dashTopSpeed.bindAsEventListener(this));
+	this.controller.stopListening("dashDistTraveled", Mojo.Event.propertyChange, this.dashDistTraveled.bindAsEventListener(this));
+	this.controller.stopListening("dashDistFromInit", Mojo.Event.propertyChange, this.dashDistFromInit.bindAsEventListener(this));
+	this.controller.stopListening("dashLifeDist", Mojo.Event.propertyChange, this.dashLifeDist.bindAsEventListener(this));
+	this.controller.stopListening("dashTripDuration", Mojo.Event.propertyChange, this.dashTripDuration.bindAsEventListener(this));
+	
 }

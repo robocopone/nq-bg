@@ -23,7 +23,13 @@ gpsDashboard.lifeDist = 0;						// Lifetime distance traveled
 gpsDashboard.initialLoc = undefined;			// Inital Location
 gpsDashboard.prevLoc = undefined;				// Previous location
 gpsDashboard.speedLimit = 55;
-gpsDashboard.speed = "10";
+
+gpsDashboard.dashAvgSpeed = true;
+gpsDashboard.dashTopSpeed = false;
+gpsDashboard.dashDistTraveled = true;
+gpsDashboard.dashDistFromInit = false;
+gpsDashboard.dashLifeDist = false;
+gpsDashboard.dashTripDuration = true;
 
 /*
  * Stores and recalls data stored between sessions
@@ -50,14 +56,22 @@ gpsDashboard.cookie = ({
 			gpsDashboard.initialLoc = storedData.initalLoc;
 			gpsDashboard.startupPref = storedData.startupPref;
 		}
-		if (storedData && storedData.version == "1.3.5") {
+		if (storedData && storedData.version >= "1.3.5") {
 			gpsDashboard.speedLimit = storedData.speedLimit
+		}
+		if (storedData && storedData.version == "1.3.6") {
+			gpsDashboard.dashAvgSpeed = storedData.dashAvgSpeed;
+			gpsDashboard.dashTopSpeed = storedData.dashTopSpeed;
+			gpsDashboard.dashDistTraveled = storedData.dashDistTraveled;
+			gpsDashboard.dashDistFromInit = storedData.dashDistFromInit;
+			gpsDashboard.dashLifeDist = storedData.dashLifeDist;
+			gpsDashboard.dashTripDuration = storedData.dashTripDuration;
 		}
 		this.storeCookie();
 	},
 	storeCookie: function() {
 		this.cookieData.put({  
-			version: "1.3.5",
+			version: "1.3.6",
 			units: gpsDashboard.units,                                                
 			backlight: gpsDashboard.backlight,
 			lifeDist: gpsDashboard.lifeDist,
@@ -72,7 +86,13 @@ gpsDashboard.cookie = ({
 			tripometer: gpsDashboard.tripometer,
 			avgSpeed: gpsDashboard.avgSpeed,
 			startupPref: gpsDashboard.startupPref,
-			speedLimit: gpsDashboard.speedLimit
+			speedLimit: gpsDashboard.speedLimit,
+			dashAvgSpeed: gpsDashboard.dashAvgSpeed,
+			dashTopSpeed: gpsDashboard.dashTopSpeed,
+			dashDistTraveled: gpsDashboard.dashDistTraveled,
+			dashDistFromInit: gpsDashboard.dashDistFromInit,
+			dashLifeDist: gpsDashboard.dashLifeDist,
+			dashTripDuration: gpsDashboard.dashTripDuration
 		})		
 	}
 });
@@ -136,6 +156,7 @@ MainAssistant.prototype.setup = function(){
 	this.controller.listen(this.controller.get('appHeader'),Mojo.Event.tap, this.nav.bindAsEventListener(this));
 	this.controller.listen(this.controller.get('speedLimit'),Mojo.Event.propertyChange, this.speedLimit.bindAsEventListener(this));
 	this.controller.listen(this.controller.stageController.document, Mojo.Event.stageDeactivate, this.handleMinimized.bindAsEventListener(this));
+	this.controller.listen(this.controller.stageController.document, Mojo.Event.stageActivate, this.handleActivated.bindAsEventListener(this));
 
 
 	if (gpsDashboard.startupPref == 'ask')
@@ -163,8 +184,6 @@ MainAssistant.prototype.activate = function(event) {
 }
 
 MainAssistant.prototype.handleServiceResponse = function(event){
-	gpsDashboard.speed++;
-	event.velocity = gpsDashboard.speed;
 	this.controller.get('clock').update(Mojo.Format.formatDate(new Date(), { time: 'medium' }));
 
 	// Remove initial display and show normal display
@@ -197,7 +216,22 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 	if (gpsDashboard.stage) {
 		scenes = gpsDashboard.stage.getScenes();
 		scenes[0].get('dashSpeed').update(this.speed(event));
+		scenes[0].get('dashHeading').update(this.heading(event));
+		scenes[0].get('dashAltitude').update(this.altitude(event));
+		if (gpsDashboard.dashAvgSpeed)
+			scenes[0].get('dashAvgSpeed').update(this.avgSpeed(event));
+		if (gpsDashboard.dashTopSpeed)
+			scenes[0].get('dashTopSpeed').update(this.topSpeed(event));
+		if (gpsDashboard.dashDistTraveled)
+			scenes[0].get('dashDistTraveled').update(this.distTraveled(event));
+		if (gpsDashboard.dashDistFromInit)
+			scenes[0].get('dashDistFromInit').update(this.distFromInit(event));
+		if (gpsDashboard.dashLifeDist)
+			scenes[0].get('dashLifeDist').update(this.lifeDist(event));
+		if (gpsDashboard.dashTripDuration)
+			scenes[0].get('dashTripDuration').update(this.tripDuration(event));
 	}
+
 	this.controller.get('speedometerSpeed').update(this.speed(event));
 	this.controller.get('heading').update(this.heading(event));
 	this.controller.get('speedometerHeading').update(this.heading(event));
@@ -433,7 +467,7 @@ MainAssistant.prototype.distTraveled = function( event ) {
 		gpsDashboard.tripometer.dist += this.calcDist(gpsDashboard.prevLoc, event);
 		gpsDashboard.tripometer.time += this.calcTime(gpsDashboard.prevLoc, event);
 		if (gpsDashboard.units == 1) 
-			return (gpsDashboard.tripometer.dist * 0.621371192).toFixed(1) + " miles";
+			return (gpsDashboard.tripometer.dist * 0.621371192).toFixed(1) + " mi";
 		if (gpsDashboard.units == 2) 
 			return gpsDashboard.tripometer.dist.toFixed(1) + " km";
 	}
@@ -447,7 +481,7 @@ MainAssistant.prototype.distTraveled = function( event ) {
 MainAssistant.prototype.distFromInit = function( event ) {
 	if (gpsDashboard.initialLoc) {
 		if (gpsDashboard.units == 1) 
-			return (this.calcDist(event, gpsDashboard.initialLoc) * 0.621371192).toFixed(1) + " miles";
+			return (this.calcDist(event, gpsDashboard.initialLoc) * 0.621371192).toFixed(1) + " mi";
 		if (gpsDashboard.units == 2) 
 			return this.calcDist(event, gpsDashboard.initialLoc).toFixed(1) + " km";
 	}
@@ -461,7 +495,7 @@ MainAssistant.prototype.lifeDist = function(event){
 	if (gpsDashboard.prevLoc)
 		gpsDashboard.lifeDist += this.calcDist(event, gpsDashboard.prevLoc);
 	if (gpsDashboard.units == 1)
-		return (gpsDashboard.lifeDist * 0.621371192).toFixed(1) + " miles";
+		return (gpsDashboard.lifeDist * 0.621371192).toFixed(1) + " mi";
 	if (gpsDashboard.units == 2)
 		return gpsDashboard.lifeDist.toFixed(1) + " km";
 }
@@ -513,6 +547,11 @@ MainAssistant.prototype.calcSpeed = function( event ){
 		 	 this.calcTime(gpsDashboard.prevLoc, event) * 3600).toFixed(1) + " kph";
 }
 
+MainAssistant.prototype.handleActivated = function(event){
+    var appController = Mojo.Controller.getAppController();
+	appController.closeStage('dashboardStage');
+}
+
 MainAssistant.prototype.handleMinimized = function (event) {
     var appController = Mojo.Controller.getAppController();
     var stageName = "dashboardStage";
@@ -554,7 +593,7 @@ MainAssistant.prototype.cleanup = function(event){
 	this.controller.stopListening(document, 'shakestart', this.handleShake.bindAsEventListener(this));
 	this.controller.stopListening(this.controller.get('speedLimit'),Mojo.Event.propertyChange, this.speedLimit.bindAsEventListener(this));
 	this.controller.stopListening(this.controller.stageController.document, Mojo.Event.stageDeactivate, this.handleMinimized.bindAsEventListener(this));
-
+	this.controller.stopListening(this.controller.stageController.document, Mojo.Event.stageActivate, this.handleActivated.bindAsEventListener(this));
 }
 MainAssistant.prototype.reverse = function () {
 	if (this.controller.get('speedometer').hasClassName('reverse'))
