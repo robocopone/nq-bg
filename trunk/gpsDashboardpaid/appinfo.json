@@ -10,6 +10,9 @@
 	"copyright": "Copyright 2010 Bradley Graber",
 	"support": 
 	{	"url": "http://www.bradleygraber.net/gpsDashboard",
+		"email": { "address": "bradgraber@gmail.com",
+					"subject": "Inquiry"
+				 },
 		"phone": "812-488-2068"
 	}
 }
