@@ -291,3 +291,7 @@
 	float: left;
 	width: 55px;
 }
+#dashboard {
+	height: 320;
+	width: 480;
+}
