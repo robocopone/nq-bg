@@ -30,6 +30,7 @@ gpsDashboard.dashDistTraveled = true;
 gpsDashboard.dashDistFromInit = false;
 gpsDashboard.dashLifeDist = false;
 gpsDashboard.dashTripDuration = true;
+gpsDashboard.theme = 'light';
 
 /*
  * Stores and recalls data stored between sessions
@@ -66,6 +67,7 @@ gpsDashboard.cookie = ({
 			gpsDashboard.dashDistFromInit = storedData.dashDistFromInit;
 			gpsDashboard.dashLifeDist = storedData.dashLifeDist;
 			gpsDashboard.dashTripDuration = storedData.dashTripDuration;
+			gpsDashboard.theme = storedData.theme;
 		}
 		this.storeCookie();
 	},
@@ -92,7 +94,8 @@ gpsDashboard.cookie = ({
 			dashDistTraveled: gpsDashboard.dashDistTraveled,
 			dashDistFromInit: gpsDashboard.dashDistFromInit,
 			dashLifeDist: gpsDashboard.dashLifeDist,
-			dashTripDuration: gpsDashboard.dashTripDuration
+			dashTripDuration: gpsDashboard.dashTripDuration,
+			theme: gpsDashboard.theme
 		})		
 	}
 });
@@ -164,11 +167,24 @@ MainAssistant.prototype.setup = function(){
 	if (gpsDashboard.startupPref == 'always')
 		this.doReset('yes');
 
+	if (gpsDashboard.theme == "dark") {
+		$$('body')[0].addClassName('palm-dark');
+		$$('body')[0].removeClassName('palm-default');
+	}
 }
 
 MainAssistant.prototype.activate = function(event) {
 	if (gpsDashboard.backlight == 1)
 		this.controller.stageController.setWindowProperties({blockScreenTimeout: true});
+
+	if (gpsDashboard.theme == 'dark') {
+		$$('body')[0].addClassName('palm-dark');
+		$$('body')[0].removeClassName('palm-default');
+	}
+	if (gpsDashboard.theme == 'light') {
+		$$('body')[0].removeClassName('palm-dark');
+		$$('body')[0].addClassName('palm-default');
+	}
 
 	// GPS Information gathering
 	this.trackingHandle = this.controller.serviceRequest
