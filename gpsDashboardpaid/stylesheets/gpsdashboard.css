@@ -278,3 +278,16 @@
 #hash150 {	-webkit-transform: rotate(195deg) translate(-110px,0) scale(1);		}
 #hash155 {	-webkit-transform: rotate(202.5deg) translate(-110px,0) scale(.5);	}
 #hash160 {	-webkit-transform: rotate(210deg) translate(-110px,0) scale(1);		}
+
+.dashboardInfo {
+	margin-left: 5px;
+	text-align: center;
+	float: left;
+	width: 100px;
+}
+.dashboardHeading {
+	margin-left: 5px;
+	text-align: center;
+	float: left;
+	width: 55px;
+}
