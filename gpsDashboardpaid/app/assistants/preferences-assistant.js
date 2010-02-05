@@ -46,7 +46,7 @@ PreferencesAssistant.prototype.setup = function(){
 	this.controller.listen("dashTripDuration", Mojo.Event.propertyChange, this.dashTripDuration.bindAsEventListener(this));
 
 	//On startup pref
-	this.controller.setupWidget("startupPref", this.startupPrefAttributes = {
+	this.controller.setupWidget("startupPref", this.attr = {
 		label: "On Startup",
 		choices: [{
 			label: "Always Reset Trip Information",
@@ -58,15 +58,28 @@ PreferencesAssistant.prototype.setup = function(){
 			label: "Ask Each Time",
 			value: 'ask'
 		}, ],
-	}, this.startupPrefModel = {
+	}, this.model = {
 		value: gpsDashboard.startupPref,
 		disabled: false
 	});
-	//On Startup Pref
-	this.controller.listen("startupPref", Mojo.Event.propertyChange, this.startupPref.bindAsEventListener(this));
 
+	//Theme Selector Widget
+	this.controller.setupWidget("themeSelector", this.attr = {
+		label: "Theme",
+		choices: [{
+			label: "Light",
+			value: 'light'
+		}, {
+			label: "Dark",
+			value: 'dark'
+		}, ],
+	}, this.model = {
+		value: gpsDashboard.theme,
+		disabled: false
+	});
+	
 	//Units Selector Widget
-	this.controller.setupWidget("unitsSelector", this.unitsSelectorAttributes = {
+	this.controller.setupWidget("unitsSelector", this.attr = {
 		label: "Units",
 		choices: [{
 			label: "Miles/Feet",
@@ -75,15 +88,14 @@ PreferencesAssistant.prototype.setup = function(){
 			label: "Kilometers/Meters",
 			value: 2
 		}, ],
-	}, this.unitsSelectorModel = {
+	}, this.model = {
 		value: gpsDashboard.units,
 		disabled: false
 	});
-	//Units Selector Handler
-	this.controller.listen("unitsSelector", Mojo.Event.propertyChange, this.changeUnitsSelector.bindAsEventListener(this));
+
 	
 	//Backlight Selector Widget
-	this.controller.setupWidget("backlightSelector", this.backlightSelectorAttributes = {
+	this.controller.setupWidget("backlightSelector", this.attr = {
 		label: "Backlight",
 		choices: [{
 			label: "Always On",
@@ -92,15 +104,13 @@ PreferencesAssistant.prototype.setup = function(){
 			label: "Device Settings",
 			value: 2
 		}, ],
-	}, this.backlightSelectorModel = {
+	}, this.model = {
 		value: gpsDashboard.backlight,
 		disabled: false
 	});
-	//Backlight Selector Handler
-	this.controller.listen("backlightSelector", Mojo.Event.propertyChange, this.changeBacklightSelector.bindAsEventListener(this));
 
 	//Avg Speed Widget
-	this.controller.setupWidget("avgSpeedPref", this.avgSpeedAttributes = {
+	this.controller.setupWidget("avgSpeedPref", this.attr = {
 		label: "Avg. Speed",
 		choices: [{
 			label: "Use Dist. from Initial",
@@ -109,15 +119,13 @@ PreferencesAssistant.prototype.setup = function(){
 			label: "Use Dist Traveled",
 			value: 2
 		}, ],
-	}, this.avgSpeedModel = {
+	}, this.model = {
 		value: gpsDashboard.avgSpeedPref,
 		disabled: false
 	});
-	//Avg Speed Selector Handler
-	this.controller.listen("avgSpeedPref", Mojo.Event.propertyChange, this.changeAvgSpeed.bindAsEventListener(this));
 
 	//Shake pref widget
-	this.controller.setupWidget("shakePref", this.shakePrefAttributes = {
+	this.controller.setupWidget("shakePref", this.attr = {
 		label: "When Shook",
 		choices: [{
 			label: "Reset All",
@@ -138,15 +146,13 @@ PreferencesAssistant.prototype.setup = function(){
 			label: "Reset Initial Position",
 			value: 'initPosition'
 		}, ],
-	}, this.shakePrefModel = {
+	}, this.model = {
 		value: gpsDashboard.shakePref,
 		disabled: false
 	});
-	//Shake pref Handler
-	this.controller.listen("shakePref", Mojo.Event.propertyChange, this.shakePref.bindAsEventListener(this));
 
 	//coloredSpeedPref Selector Widget
-	this.controller.setupWidget("coloredSpeedPref", this.coloredSpeedPrefAttributes = {
+	this.controller.setupWidget("coloredSpeedPref", this.attr = {
 		label: "Colored Speed",
 		choices: [{
 			label: "Based on Avg Speed",
@@ -155,15 +161,13 @@ PreferencesAssistant.prototype.setup = function(){
 			label: "Off",
 			value: 'false'
 		},],
-	}, this.coloredSpeedPrefModel = {
+	}, this.model = {
 		value: gpsDashboard.coloredSpeedPref,
 		disabled: false
 	});
-	//coloredSpeedPref Selector Handler
-	this.controller.listen("coloredSpeedPref", Mojo.Event.propertyChange, this.coloredSpeedPref.bindAsEventListener(this));
 
 	//Max Error Selector Widget
-	this.controller.setupWidget("maxErrorPrefSelector", this.maxErrorAttributes = {
+	this.controller.setupWidget("maxErrorPrefSelector", this.attr = {
 		label: "Max Error",
 		choices: [{
 			label: "5 meters",
@@ -181,13 +185,18 @@ PreferencesAssistant.prototype.setup = function(){
 			label: "30 meters",
 			value: 30
 		},],
-	}, this.maxErrorModel = {
+	}, this.model = {
 		value: gpsDashboard.maxError,
 		disabled: false
 	});
-	//Max Error Selector Handler
+	this.controller.listen("startupPref", Mojo.Event.propertyChange, this.startupPref.bindAsEventListener(this));
+	this.controller.listen("themeSelector", Mojo.Event.propertyChange, this.changeThemeSelector.bindAsEventListener(this));
+	this.controller.listen("unitsSelector", Mojo.Event.propertyChange, this.changeUnitsSelector.bindAsEventListener(this));
+	this.controller.listen("backlightSelector", Mojo.Event.propertyChange, this.changeBacklightSelector.bindAsEventListener(this));
+	this.controller.listen("avgSpeedPref", Mojo.Event.propertyChange, this.changeAvgSpeed.bindAsEventListener(this));
+	this.controller.listen("shakePref", Mojo.Event.propertyChange, this.shakePref.bindAsEventListener(this));
+	this.controller.listen("coloredSpeedPref", Mojo.Event.propertyChange, this.coloredSpeedPref.bindAsEventListener(this));
 	this.controller.listen("maxErrorPrefSelector", Mojo.Event.propertyChange, this.maxErrorSelector.bindAsEventListener(this));
-
 }
 
 PreferencesAssistant.prototype.dashAvgSpeed = function (event) {
@@ -214,55 +223,65 @@ PreferencesAssistant.prototype.dashTripDuration = function (event) {
 	gpsDashboard.dashTripDuration = event.value;
 	gpsDashboard.cookie.storeCookie();
 }
-
 PreferencesAssistant.prototype.startupPref = function (event) {
-	gpsDashboard.startupPref = this.startupPrefModel.value;
+	gpsDashboard.startupPref = event.value;
 	gpsDashboard.cookie.storeCookie();
 }
+PreferencesAssistant.prototype.changeThemeSelector = function (event) {
+	gpsDashboard.theme = event.value;
+	gpsDashboard.cookie.storeCookie();
+	if (gpsDashboard.theme == 'dark') {
+		$$('body')[0].addClassName('palm-dark');
+		$$('body')[0].removeClassName('palm-default');
+	}
+	if (gpsDashboard.theme == 'light') {
+		$$('body')[0].removeClassName('palm-dark');
+		$$('body')[0].addClassName('palm-default');
+	}
+}
 PreferencesAssistant.prototype.coloredSpeedPref = function (event) {
-	gpsDashboard.coloredSpeedPref = this.coloredSpeedPrefModel.value;
+	gpsDashboard.coloredSpeedPref = event.value;
 	gpsDashboard.cookie.storeCookie();
 }
 PreferencesAssistant.prototype.shakePref = function (event) {
-	gpsDashboard.shakePref = this.shakePrefModel.value;
+	gpsDashboard.shakePref = event.value;
 	gpsDashboard.cookie.storeCookie();
 }
 PreferencesAssistant.prototype.maxErrorSelector = function (event) {
-	gpsDashboard.maxError = this.maxErrorModel.value;
+	gpsDashboard.maxError = event.value;
 	gpsDashboard.cookie.storeCookie();
 }
 PreferencesAssistant.prototype.changeAvgSpeed = function (event) {
-	gpsDashboard.avgSpeedPref = this.avgSpeedModel.value;
+	gpsDashboard.avgSpeedPref = event.value;
 	gpsDashboard.cookie.storeCookie();
 }
 PreferencesAssistant.prototype.changeUnitsSelector = function(event) {
-	gpsDashboard.units = this.unitsSelectorModel.value;
+	gpsDashboard.units = event.value;
 	gpsDashboard.cookie.storeCookie();
 }
-
 PreferencesAssistant.prototype.changeBacklightSelector = function(event){
-	gpsDashboard.backlight = this.backlightSelectorModel.value;
+	gpsDashboard.backlight = event.value;
 	gpsDashboard.cookie.storeCookie();
 }
-
 PreferencesAssistant.prototype.activate = function(event) {
 }
 
 PreferencesAssistant.prototype.deactivate = function(event) {
 }
-
 PreferencesAssistant.prototype.cleanup = function(event){
+	this.controller.stopListening("startupPref", Mojo.Event.propertyChange, this.startupPref.bindAsEventListener(this));
+	this.controller.stopListening("themeSelector", Mojo.Event.propertyChange, this.changeThemeSelector.bindAsEventListener(this));
 	this.controller.stopListening("unitsSelector", Mojo.Event.propertyChange, this.changeUnitsSelector.bindAsEventListener(this));
 	this.controller.stopListening("backlightSelector", Mojo.Event.propertyChange, this.changeBacklightSelector.bindAsEventListener(this));
 	this.controller.stopListening("avgSpeedPref", Mojo.Event.propertyChange, this.changeAvgSpeed.bindAsEventListener(this));
 	this.controller.stopListening("shakePref", Mojo.Event.propertyChange, this.shakePref.bindAsEventListener(this));
-	this.controller.stopListening("maxErrorPrefSelector", Mojo.Event.propertyChange, this.maxErrorSelector.bindAsEventListener(this));
 	this.controller.stopListening("coloredSpeedPref", Mojo.Event.propertyChange, this.coloredSpeedPref.bindAsEventListener(this));
+	this.controller.stopListening("maxErrorPrefSelector", Mojo.Event.propertyChange, this.maxErrorSelector.bindAsEventListener(this));
+
 	this.controller.stopListening("dashAvgSpeed", Mojo.Event.propertyChange, this.dashAvgSpeed.bindAsEventListener(this));
 	this.controller.stopListening("dashTopSpeed", Mojo.Event.propertyChange, this.dashTopSpeed.bindAsEventListener(this));
 	this.controller.stopListening("dashDistTraveled", Mojo.Event.propertyChange, this.dashDistTraveled.bindAsEventListener(this));
 	this.controller.stopListening("dashDistFromInit", Mojo.Event.propertyChange, this.dashDistFromInit.bindAsEventListener(this));
 	this.controller.stopListening("dashLifeDist", Mojo.Event.propertyChange, this.dashLifeDist.bindAsEventListener(this));
 	this.controller.stopListening("dashTripDuration", Mojo.Event.propertyChange, this.dashTripDuration.bindAsEventListener(this));
-	
 }
