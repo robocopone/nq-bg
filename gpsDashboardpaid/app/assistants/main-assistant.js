@@ -109,7 +109,7 @@ MainAssistant.prototype.setup = function(){
 	gpsDashboard.cookie.initialize();
 	
 	if (this.controller.stageController.setWindowOrientation &&
-	Mojo.Environment.DeviceInfo.screenHeight >= 480) 
+		Mojo.Environment.DeviceInfo.screenHeight >= 480) 
 		this.controller.stageController.setWindowOrientation("free");
 	this.controller.listen(document, 'orientationchange', this.handleOrientation.bindAsEventListener(this));
 	this.controller.listen(document, 'shakestart', this.handleShake.bindAsEventListener(this));
@@ -200,6 +200,7 @@ MainAssistant.prototype.activate = function(event) {
 }
 
 MainAssistant.prototype.handleServiceResponse = function(event){
+
 	this.controller.get('clock').update(Mojo.Format.formatDate(new Date(), { time: 'medium' }));
 
 	// Remove initial display and show normal display
@@ -248,6 +249,10 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 			scenes[0].get('dashTripDuration').update(this.tripDuration(event));
 	}
 
+	this.controller.stageController.deactivate();
+	appController = Mojo.Controller.getAppController();
+	stageController = appController.getActiveStageController();
+	
 	this.controller.get('speedometerSpeed').update(this.speed(event));
 	this.controller.get('heading').update(this.heading(event));
 	this.controller.get('speedometerHeading').update(this.heading(event));
@@ -564,21 +569,17 @@ MainAssistant.prototype.calcSpeed = function( event ){
 }
 
 MainAssistant.prototype.handleActivated = function(event){
-    var appController = Mojo.Controller.getAppController();
-	appController.closeStage('dashboardStage');
+	Mojo.Controller.getAppController().closeStage('dashboardStage');
 }
 
 MainAssistant.prototype.handleMinimized = function (event) {
-    var appController = Mojo.Controller.getAppController();
-    var stageName = "dashboardStage";
-
     var f = function(stageController){
 		gpsDashboard.stage = stageController;
 		stageController.pushScene('dashboardScene');
 	}
 
-    appController.createStageWithCallback({
-		name: stageName,
+    Mojo.Controller.getAppController().createStageWithCallback({
+		name: "dashboardStage",
 	 	lightweight: true
 	}, f, 'dashboard');
 }
