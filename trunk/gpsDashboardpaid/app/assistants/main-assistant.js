@@ -227,7 +227,6 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 	}
 	this.controller.get('horizAccuracy').update("Horizontal Error = " + event.horizAccuracy.toFixed(1) + "m > " + gpsDashboard.maxError + "m");
 	this.strengthBar(event);
-	this.controller.get('speed').update(this.speed(event));
 
 	if (gpsDashboard.stage) {
 		scenes = gpsDashboard.stage.getScenes();
@@ -248,12 +247,13 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 			scenes[0].get('dashTripDuration').update(this.tripDuration(event));
 	}
 
+	this.controller.get('speed').update(this.speed(event));
+	this.controller.get('tripDuration').update(this.tripDuration());
 	this.controller.get('speedometerSpeed').update(this.speed(event));
 	this.controller.get('heading').update(this.heading(event));
 	this.controller.get('speedometerHeading').update(this.heading(event));
 	this.setSpeedometer(event);
 	this.controller.get('altitude').update(this.altitude(event));
-	this.controller.get('tripDuration').update(this.tripDuration());
 	if (event.errorCode == 0 && event.horizAccuracy <= gpsDashboard.maxError) {
 		this.controller.get('avgSpeed').update(this.avgSpeed(event));
 		this.controller.get('topSpeed').update(this.topSpeed(event));
@@ -565,6 +565,7 @@ MainAssistant.prototype.calcSpeed = function( event ){
 
 MainAssistant.prototype.handleActivated = function(event){
 	Mojo.Controller.getAppController().closeStage('dashboardStage');
+	gpsDashboard.stage = undefined;
 }
 
 MainAssistant.prototype.handleMinimized = function (event) {
