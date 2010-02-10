@@ -247,6 +247,8 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 			scenes[0].get('dashTripDuration').update(this.tripDuration(event));
 	}
 
+	this.controller.get('accel').update(this.accel(event));
+	
 	this.controller.get('speed').update(this.speed(event));
 	this.controller.get('tripDuration').update(this.tripDuration());
 	this.controller.get('speedometerSpeed').update(this.speed(event));
@@ -272,6 +274,29 @@ MainAssistant.prototype.handleServiceResponseError = function(event) {
 	this.controller.stageController.pushScene("gpsError", event.errorCode);
 }
 
+/*
+ * Calculates the speed based on the current and
+ * last fix (Not currently used)
+ */
+MainAssistant.prototype.calcSpeed = function( event ){
+	if (!gpsDashboard.prevLoc)
+		return 0;
+	if (gpsDashboard.units = 1)
+		return (this.calcDist(gpsDashboard.prevLoc, event) / 
+			 this.calcTime(gpsDashboard.prevLoc, event) * 3600 * .621371192).toFixed(1);
+	if (gpsDashboard.units = 2)
+		return (this.calcDist(gpsDashboard.prevLoc, event) / 
+		 	 this.calcTime(gpsDashboard.prevLoc, event) * 3600).toFixed(1);
+}
+MainAssistant.prototype.accel = function(event) {
+	currentSpeed = this.calcSpeed(event);
+	accel = "&nbsp;";
+	if (gpsDashboard.prevSpeed)
+		accel = ((currentSpeed - gpsDashboard.prevSpeed) * 1.4666667 /
+		this.calcTime(gpsDashboard.prevLoc, event)).toFixed(1) + " fps";
+	gpsDashboard.prevSpeed = currentSpeed;
+	return accel;
+}
 /*
  * Updates the signal strength indicator
  */
@@ -544,23 +569,6 @@ MainAssistant.prototype.calcDist = function( point1, point2 ) {
 		 (0.00012 * Math.cos(5 * mLat));
 	dist = Math.sqrt( Math.pow((K1 * dLat), 2) + Math.pow((K2 * dLon), 2));
 	return dist;
-}
-
-/*
- * Calculates the speed based on the current and
- * last fix (Not currently used)
- */
-MainAssistant.prototype.calcSpeed = function( event ){
-	if (!gpsDashboard.prevLoc)
-		return "Calculated Speed: -";
-	if (gpsDashboard.units = 1)
-		return "Calculated Speed: " +
-			(this.calcDist(gpsDashboard.prevLoc, event) / 
-			 this.calcTime(gpsDashboard.prevLoc, event) * 3600 * .621371192).toFixed(1) + " mph";
-	if (gpsDashboard.units = 2)
-		return "Calculated Speed: " +
-			(this.calcDist(gpsDashboard.prevLoc, event) / 
-		 	 this.calcTime(gpsDashboard.prevLoc, event) * 3600).toFixed(1) + " kph";
 }
 
 MainAssistant.prototype.handleActivated = function(event){
