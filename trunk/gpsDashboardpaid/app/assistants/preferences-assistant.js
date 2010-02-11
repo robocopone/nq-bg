@@ -3,38 +3,38 @@ function PreferencesAssistant() {
 
 PreferencesAssistant.prototype.setup = function(){
 
-	this.controller.setupWidget("dashAvgSpeed", this.attributes = {
-	}, this.model = {
+	this.controller.setupWidget("dashAvgSpeed", attributes = {
+	}, model = {
 		value: gpsDashboard.dashAvgSpeed,
 		disabled: false
 	});
 
-	this.controller.setupWidget("dashTopSpeed", this.attributes = {
-	}, this.model = {
+	this.controller.setupWidget("dashTopSpeed", attributes = {
+	}, model = {
 		value: gpsDashboard.dashTopSpeed,
 		disabled: false
 	});
 
-	this.controller.setupWidget("dashDistTraveled", this.attributes = {
-	}, this.model = {
+	this.controller.setupWidget("dashDistTraveled", attributes = {
+	}, model = {
 		value: gpsDashboard.dashDistTraveled,
 		disabled: false
 	});
 
-	this.controller.setupWidget("dashDistFromInit", this.attributes = {
-	}, this.model = {
+	this.controller.setupWidget("dashDistFromInit", attributes = {
+	}, model = {
 		value: gpsDashboard.dashDistFromInit,
 		disabled: false
 	});
 
-	this.controller.setupWidget("dashLifeDist", this.attributes = {
-	}, this.model = {
+	this.controller.setupWidget("dashLifeDist", attributes = {
+	}, model = {
 		value: gpsDashboard.dashLifeDist,
 		disabled: false
 	});
 
-	this.controller.setupWidget("dashTripDuration", this.attributes = {
-	}, this.model = {
+	this.controller.setupWidget("dashTripDuration", attributes = {
+	}, model = {
 		value: gpsDashboard.dashTripDuration,
 		disabled: false
 	});
@@ -46,7 +46,7 @@ PreferencesAssistant.prototype.setup = function(){
 	this.controller.listen("dashTripDuration", Mojo.Event.propertyChange, this.dashTripDuration.bindAsEventListener(this));
 
 	//On startup pref
-	this.controller.setupWidget("startupPref", this.attr = {
+	this.controller.setupWidget("startupPref", attr = {
 		label: "On Startup",
 		choices: [{
 			label: "Always Reset Trip Information",
@@ -58,13 +58,13 @@ PreferencesAssistant.prototype.setup = function(){
 			label: "Ask Each Time",
 			value: 'ask'
 		}, ],
-	}, this.model = {
+	}, model = {
 		value: gpsDashboard.startupPref,
 		disabled: false
 	});
 
 	//Theme Selector Widget
-	this.controller.setupWidget("themeSelector", this.attr = {
+	this.controller.setupWidget("themeSelector", attr = {
 		label: "Theme",
 		choices: [{
 			label: "Light",
@@ -73,13 +73,13 @@ PreferencesAssistant.prototype.setup = function(){
 			label: "Dark",
 			value: 'dark'
 		}, ],
-	}, this.model = {
+	}, model = {
 		value: gpsDashboard.theme,
 		disabled: false
 	});
 	
 	//Units Selector Widget
-	this.controller.setupWidget("unitsSelector", this.attr = {
+	this.controller.setupWidget("unitsSelector", attr = {
 		label: "Units",
 		choices: [{
 			label: "Miles/Feet",
@@ -88,14 +88,14 @@ PreferencesAssistant.prototype.setup = function(){
 			label: "Kilometers/Meters",
 			value: 2
 		}, ],
-	}, this.model = {
+	}, model = {
 		value: gpsDashboard.units,
 		disabled: false
 	});
 
 	
 	//Backlight Selector Widget
-	this.controller.setupWidget("backlightSelector", this.attr = {
+	this.controller.setupWidget("backlightSelector", attr = {
 		label: "Backlight",
 		choices: [{
 			label: "Always On",
@@ -104,13 +104,13 @@ PreferencesAssistant.prototype.setup = function(){
 			label: "Device Settings",
 			value: 2
 		}, ],
-	}, this.model = {
+	}, model = {
 		value: gpsDashboard.backlight,
 		disabled: false
 	});
 
 	//Avg Speed Widget
-	this.controller.setupWidget("avgSpeedPref", this.attr = {
+	this.controller.setupWidget("avgSpeedPref", attr = {
 		label: "Avg. Speed",
 		choices: [{
 			label: "Use Dist. from Initial",
@@ -119,13 +119,28 @@ PreferencesAssistant.prototype.setup = function(){
 			label: "Use Dist Traveled",
 			value: 2
 		}, ],
-	}, this.model = {
+	}, model = {
 		value: gpsDashboard.avgSpeedPref,
+		disabled: false
+	});
+	
+	//headingPref Widget
+	this.controller.setupWidget("headingPref", attr = {
+		label: "Heading",
+		choices: [{
+			label: "N/S/E/W",
+			value: 1
+		}, {
+			label: "Numeric Values",
+			value: 2
+		}, ],
+	}, model = {
+		value: gpsDashboard.headingPref,
 		disabled: false
 	});
 
 	//Shake pref widget
-	this.controller.setupWidget("shakePref", this.attr = {
+	this.controller.setupWidget("shakePref", attr = {
 		label: "When Shook",
 		choices: [{
 			label: "Reset All",
@@ -146,13 +161,13 @@ PreferencesAssistant.prototype.setup = function(){
 			label: "Reset Initial Position",
 			value: 'initPosition'
 		}, ],
-	}, this.model = {
+	}, model = {
 		value: gpsDashboard.shakePref,
 		disabled: false
 	});
 
 	//coloredSpeedPref Selector Widget
-	this.controller.setupWidget("coloredSpeedPref", this.attr = {
+	this.controller.setupWidget("coloredSpeedPref", attr = {
 		label: "Colored Speed",
 		choices: [{
 			label: "Based on Avg Speed",
@@ -161,13 +176,13 @@ PreferencesAssistant.prototype.setup = function(){
 			label: "Off",
 			value: 'false'
 		},],
-	}, this.model = {
+	}, model = {
 		value: gpsDashboard.coloredSpeedPref,
 		disabled: false
 	});
 
 	//Max Error Selector Widget
-	this.controller.setupWidget("maxErrorPrefSelector", this.attr = {
+	this.controller.setupWidget("maxErrorPrefSelector", attr = {
 		label: "Max Error",
 		choices: [{
 			label: "5 meters",
@@ -185,10 +200,12 @@ PreferencesAssistant.prototype.setup = function(){
 			label: "30 meters",
 			value: 30
 		},],
-	}, this.model = {
+	}, model = {
 		value: gpsDashboard.maxError,
 		disabled: false
 	});
+
+	this.controller.listen("headingPref", Mojo.Event.propertyChange, this.headingPref.bindAsEventListener(this));
 	this.controller.listen("startupPref", Mojo.Event.propertyChange, this.startupPref.bindAsEventListener(this));
 	this.controller.listen("themeSelector", Mojo.Event.propertyChange, this.changeThemeSelector.bindAsEventListener(this));
 	this.controller.listen("unitsSelector", Mojo.Event.propertyChange, this.changeUnitsSelector.bindAsEventListener(this));
@@ -199,6 +216,10 @@ PreferencesAssistant.prototype.setup = function(){
 	this.controller.listen("maxErrorPrefSelector", Mojo.Event.propertyChange, this.maxErrorSelector.bindAsEventListener(this));
 }
 
+PreferencesAssistant.prototype.headingPref = function (event) {
+	gpsDashboard.headingPref = event.value;
+	gpsDashboard.cookie.storeCookie();
+}
 PreferencesAssistant.prototype.dashAvgSpeed = function (event) {
 	gpsDashboard.dashAvgSpeed = event.value;
 	gpsDashboard.cookie.storeCookie();
@@ -278,6 +299,7 @@ PreferencesAssistant.prototype.cleanup = function(event){
 	this.controller.stopListening("coloredSpeedPref", Mojo.Event.propertyChange, this.coloredSpeedPref.bindAsEventListener(this));
 	this.controller.stopListening("maxErrorPrefSelector", Mojo.Event.propertyChange, this.maxErrorSelector.bindAsEventListener(this));
 
+	this.controller.stopListening("headingPref", Mojo.Event.propertyChange, this.headingPref.bindAsEventListener(this));
 	this.controller.stopListening("dashAvgSpeed", Mojo.Event.propertyChange, this.dashAvgSpeed.bindAsEventListener(this));
 	this.controller.stopListening("dashTopSpeed", Mojo.Event.propertyChange, this.dashTopSpeed.bindAsEventListener(this));
 	this.controller.stopListening("dashDistTraveled", Mojo.Event.propertyChange, this.dashDistTraveled.bindAsEventListener(this));
