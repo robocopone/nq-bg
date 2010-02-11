@@ -10,6 +10,7 @@ gpsDashboard.shakePref = 'topSpeed';			// Shake preference
 gpsDashboard.coloredSpeedPref = 'true';			// Colored speed preference
 gpsDashboard.startupPref = 'ask';				// Startup reset preference
 gpsDashboard.avgSpeedPref = 2;					// Average speed calculation preference
+gpsDashboard.headingPref = 1;					// Heading preference
 gpsDashboard.avgSpeed = {time: 0, dist: 0};		// Average speed info
 gpsDashboard.tripometer = {time: 0, dist: 0};	// Distance traveled data
 gpsDashboard.topSpeed = 0;						// Top speed info
@@ -60,7 +61,7 @@ gpsDashboard.cookie = ({
 		if (storedData && storedData.version >= "1.3.5") {
 			gpsDashboard.speedLimit = storedData.speedLimit
 		}
-		if (storedData && storedData.version == "1.3.6") {
+		if (storedData && storedData.version >= "1.3.6") {
 			gpsDashboard.dashAvgSpeed = storedData.dashAvgSpeed;
 			gpsDashboard.dashTopSpeed = storedData.dashTopSpeed;
 			gpsDashboard.dashDistTraveled = storedData.dashDistTraveled;
@@ -69,11 +70,15 @@ gpsDashboard.cookie = ({
 			gpsDashboard.dashTripDuration = storedData.dashTripDuration;
 			gpsDashboard.theme = storedData.theme;
 		}
+		if (storedData && storedData.version == "1.3.7") {
+			gpsDashboard.headingPref = storedData.headingPref;
+		}
 		this.storeCookie();
 	},
 	storeCookie: function() {
 		this.cookieData.put({  
-			version: "1.3.6",
+			version: "1.3.7",
+			headingPref: gpsDashboard.headingPref,
 			units: gpsDashboard.units,                                                
 			backlight: gpsDashboard.backlight,
 			lifeDist: gpsDashboard.lifeDist,
@@ -392,6 +397,10 @@ MainAssistant.prototype.topSpeed = function (event) {
 MainAssistant.prototype.heading = function(event){
 	if (event.velocity == 0)
 		return "&nbsp;";
+
+	if (gpsDashboard.headingPref == 2)
+		return event.heading.toFixed(0);
+		
 	if ((event.heading >= 348.75 && event.heading <= 360) ||
 		(event.heading >= 0 && event.heading < 11.25)		) 
 		return "N";
