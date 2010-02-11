@@ -247,7 +247,8 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 			scenes[0].get('dashTripDuration').update(this.tripDuration(event));
 	}
 
-	this.controller.get('speed').update(this.speed(event));
+//	this.controller.get('speed').update(this.speed(event));
+	this.controller.get('speed').update(this.calcSpeed(event));
 	this.controller.get('tripDuration').update(this.tripDuration());
 	this.controller.get('speedometerSpeed').update(this.speed(event));
 	this.controller.get('heading').update(this.heading(event));
@@ -273,18 +274,25 @@ MainAssistant.prototype.handleServiceResponseError = function(event) {
 }
 
 /*
- * Calculates the speed based on the current and
- * last fix (Not currently used)
+ * Calculates the speed based on the current, last
+ * and the fix before that.
  */
 MainAssistant.prototype.calcSpeed = function( event ){
 	if (!gpsDashboard.prevLoc)
-		return 0;
-	if (gpsDashboard.units = 1)
-		return (this.calcDist(gpsDashboard.prevLoc, event) / 
-			 this.calcTime(gpsDashboard.prevLoc, event) * 3600 * .621371192).toFixed(1);
-	if (gpsDashboard.units = 2)
-		return (this.calcDist(gpsDashboard.prevLoc, event) / 
-		 	 this.calcTime(gpsDashboard.prevLoc, event) * 3600).toFixed(1);
+		return this.speed(event);
+
+	currSpeed = (this.calcDist(gpsDashboard.prevLoc, event) / 
+	 	 this.calcTime(gpsDashboard.prevLoc, event) * 3600);
+
+	if (gpsDashboard.prevSpeed)
+		currSpeed = (currSpeed + gpsDashboard.prevSpeed) / 2;
+
+	gpsDashboard.prevSpeed = currSpeed;
+
+	if (gpsDashboard.units == 1)
+		return (currSpeed * .621371192).toFixed(1) + " mph";
+	if (gpsDashboard.units == 2)
+		return currSpeed.toFixed(1) + " kph";
 }
 
 /*
@@ -557,7 +565,7 @@ MainAssistant.prototype.calcDist = function( point1, point2 ) {
 	K2 = (111.41513 * Math.cos(mLat)) - 
 		 (0.09455 * Math.cos(3 * mLat)) + 
 		 (0.00012 * Math.cos(5 * mLat));
-	dist = Math.sqrt( Math.pow((K1 * dLat), 2) + Math.pow((K2 * dLon), 2));
+	dist = Math.sqrt( Math.pow((K1 * dLat), 2) + Math.pow((K2 * dLon), 2) );
 	return dist;
 }
 
