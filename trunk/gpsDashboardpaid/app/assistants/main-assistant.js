@@ -247,8 +247,6 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 			scenes[0].get('dashTripDuration').update(this.tripDuration(event));
 	}
 
-	this.controller.get('accel').update(this.accel(event));
-	
 	this.controller.get('speed').update(this.speed(event));
 	this.controller.get('tripDuration').update(this.tripDuration());
 	this.controller.get('speedometerSpeed').update(this.speed(event));
@@ -288,15 +286,7 @@ MainAssistant.prototype.calcSpeed = function( event ){
 		return (this.calcDist(gpsDashboard.prevLoc, event) / 
 		 	 this.calcTime(gpsDashboard.prevLoc, event) * 3600).toFixed(1);
 }
-MainAssistant.prototype.accel = function(event) {
-	currentSpeed = this.calcSpeed(event);
-	accel = "&nbsp;";
-	if (gpsDashboard.prevSpeed)
-		accel = ((currentSpeed - gpsDashboard.prevSpeed) * 1.4666667 /
-		this.calcTime(gpsDashboard.prevLoc, event)).toFixed(1) + " fps";
-	gpsDashboard.prevSpeed = currentSpeed;
-	return accel;
-}
+
 /*
  * Updates the signal strength indicator
  */
