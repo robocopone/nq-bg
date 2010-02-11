@@ -294,6 +294,9 @@ MainAssistant.prototype.calcSpeed = function( event ){
 
 	gpsDashboard.prevSpeed = currSpeed;
 
+	if (currSpeed == 0)
+		return "&nbsp;";
+		
 	if (gpsDashboard.units == 1)
 		return (currSpeed * .621371192).toFixed(1) + " mph";
 	if (gpsDashboard.units == 2)
