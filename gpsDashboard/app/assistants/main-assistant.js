@@ -11,6 +11,7 @@ gpsDashboard.tripometer = {time: 0, dist: 0};	// Distance traveled data
 gpsDashboard.lifeDist = 0;						// Lifetime distance traveled
 gpsDashboard.hidden = true;						// Is the dashboard visable?
 gpsDashboard.maxError = 10;						// Max error in meters
+gpsDashboard.heading = 1;
 
 /*
  * Stores and recalls data stored between sessions
@@ -26,10 +27,15 @@ gpsDashboard.cookie = ({
 			gpsDashboard.lifeDist = storedData.lifeDist;
 			gpsDashboard.maxError = storedData.maxError;
 		}
+		if (storedData && storedData.version) {
+			gpsDashboard.heading = storedData.heading;
+		}
 		this.storeCookie();
 	},
 	storeCookie: function() {
 		this.cookieData.put({  
+			version: '1.2.5',
+			heading: gpsDashboard.heading,
 			units: gpsDashboard.units,                                                
 			backlight: gpsDashboard.backlight,
 			lifeDist: gpsDashboard.lifeDist,
@@ -125,7 +131,7 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 	
 	this.controller.get('horizAccuracy').update("Horizontal Error = " + event.horizAccuracy.toFixed(1) + "m > " + gpsDashboard.maxError + "m");
 
-	this.controller.get('speed').update(this.speed(event));
+	this.controller.get('speed').update(this.calcSpeed(event));
 	this.controller.get('heading').update(this.heading(event));
 	this.controller.get('altitude').update(this.altitude(event));
 
@@ -181,6 +187,10 @@ MainAssistant.prototype.topSpeed = function (event) {
 MainAssistant.prototype.heading = function(event){
 	if (event.velocity == 0)
 		return "&nbsp;";
+
+	if (gpsDashboard.heading == 2)
+		return event.heading.toFixed(0);
+
 	if ((event.heading >= 348.75 && event.heading <= 360) ||
 		(event.heading >= 0 && event.heading < 11.25)		) 
 		return "N";
@@ -337,20 +347,28 @@ MainAssistant.prototype.calcDist = function( point1, point2 ) {
 }
 
 /*
- * Calculates the speed based on the current and
- * last fix (Not currently used)
+ * Calculates the speed based on the current, last
+ * and the fix before that.
  */
 MainAssistant.prototype.calcSpeed = function( event ){
 	if (!gpsDashboard.prevLoc)
-		return "Calculated Speed: -";
-	if (gpsDashboard.units = 1)
-		return "Calculated Speed: " +
-			(this.calcDist(gpsDashboard.prevLoc, event) / 
-			 this.calcTime(gpsDashboard.prevLoc, event) * 3600 * .621371192).toFixed(1) + " mph";
-	if (gpsDashboard.units = 2)
-		return "Calculated Speed: " +
-			(this.calcDist(gpsDashboard.prevLoc, event) / 
-		 	 this.calcTime(gpsDashboard.prevLoc, event) * 3600).toFixed(1) + " kph";
+		return this.speed(event);
+
+	currSpeed = (this.calcDist(gpsDashboard.prevLoc, event) / 
+	 	 this.calcTime(gpsDashboard.prevLoc, event) * 3600);
+
+	if (gpsDashboard.prevSpeed)
+		currSpeed = (currSpeed + gpsDashboard.prevSpeed) / 2;
+
+	gpsDashboard.prevSpeed = currSpeed;
+
+	if (currSpeed == 0)
+		return "&nbsp;"
+
+	if (gpsDashboard.units == 1)
+		return (currSpeed * .621371192).toFixed(1) + " mph";
+	if (gpsDashboard.units == 2)
+		return currSpeed.toFixed(1) + " kph";
 }
 
 MainAssistant.prototype.deactivate = function(event) {
