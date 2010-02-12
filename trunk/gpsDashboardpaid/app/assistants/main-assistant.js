@@ -238,34 +238,37 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 		scenes[0].get('dashSpeed').update(this.speed(event));
 		scenes[0].get('dashHeading').update(this.heading(event));
 		scenes[0].get('dashAltitude').update(this.altitude(event));
-		if (gpsDashboard.dashAvgSpeed)
-			scenes[0].get('dashAvgSpeed').update(this.avgSpeed(event));
-		if (gpsDashboard.dashTopSpeed)
-			scenes[0].get('dashTopSpeed').update(this.topSpeed(event));
-		if (gpsDashboard.dashDistTraveled)
-			scenes[0].get('dashDistTraveled').update(this.distTraveled(event));
-		if (gpsDashboard.dashDistFromInit)
-			scenes[0].get('dashDistFromInit').update(this.distFromInit(event));
-		if (gpsDashboard.dashLifeDist)
-			scenes[0].get('dashLifeDist').update(this.lifeDist(event));
-		if (gpsDashboard.dashTripDuration)
-			scenes[0].get('dashTripDuration').update(this.tripDuration(event));
 	}
 
-//	this.controller.get('speed').update(this.speed(event));
-	this.controller.get('speed').update(this.calcSpeed(event));
-	this.controller.get('tripDuration').update(this.tripDuration());
+	this.controller.get('speed').update(this.speed(event));
+//	this.controller.get('speed').update(this.calcSpeed(event));
 	this.controller.get('speedometerSpeed').update(this.speed(event));
 	this.controller.get('heading').update(this.heading(event));
 	this.controller.get('speedometerHeading').update(this.heading(event));
 	this.setSpeedometer(event);
 	this.controller.get('altitude').update(this.altitude(event));
 	if (event.errorCode == 0 && event.horizAccuracy <= gpsDashboard.maxError) {
+		this.controller.get('tripDuration').update(this.tripDuration());
 		this.controller.get('avgSpeed').update(this.avgSpeed(event));
 		this.controller.get('topSpeed').update(this.topSpeed(event));
 		this.controller.get('distTraveled').update(this.distTraveled(event));
 		this.controller.get('distFromInit').update(this.distFromInit(event));
 		this.controller.get('lifeDist').update(this.lifeDist(event));
+		if (gpsDashboard.stage) {
+			if (gpsDashboard.dashAvgSpeed)
+				scenes[0].get('dashAvgSpeed').update(this.avgSpeed(event));
+			if (gpsDashboard.dashTopSpeed)
+				scenes[0].get('dashTopSpeed').update(this.topSpeed(event));
+			if (gpsDashboard.dashDistTraveled)
+				scenes[0].get('dashDistTraveled').update(this.distTraveled(event));
+			if (gpsDashboard.dashDistFromInit)
+				scenes[0].get('dashDistFromInit').update(this.distFromInit(event));
+			if (gpsDashboard.dashLifeDist)
+				scenes[0].get('dashLifeDist').update(this.lifeDist(event));
+			if (gpsDashboard.dashTripDuration)
+				scenes[0].get('dashTripDuration').update(this.tripDuration(event));
+		}
+
 		gpsDashboard.prevLoc = event;
 		this.recordCheck(event);
 	}
