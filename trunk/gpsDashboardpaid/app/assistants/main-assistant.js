@@ -205,6 +205,8 @@ MainAssistant.prototype.activate = function(event) {
 }
 
 MainAssistant.prototype.handleServiceResponse = function(event){
+	if (gpsDashboard.stage)
+		scenes = gpsDashboard.stage.getScenes();
 	this.controller.get('clock').update(Mojo.Format.formatDate(new Date(), { time: 'medium' }));
 
 	// Remove initial display and show normal display
@@ -224,17 +226,21 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 		gpsDashboard.hidden = false;
 		this.controller.get('tripInfoData').removeClassName('hidden');
 		this.controller.get('lowAccuracy').addClassName('hidden');
+		if (gpsDashboard.stage)
+			scenes[0].get('dashAccuracy').addClassName('hidden');
 	}
 	else if (event.horizAccuracy > gpsDashboard.maxError && !gpsDashboard.hidden) {
 		gpsDashboard.hidden = true;
 		this.controller.get('tripInfoData').addClassName('hidden');
 		this.controller.get('lowAccuracy').removeClassName('hidden');
+		if (gpsDashboard.stage)
+			scenes[0].get('dashAccuracy').removeClassName('hidden');
 	}
+
 	this.controller.get('horizAccuracy').update("Horizontal Error = " + event.horizAccuracy.toFixed(1) + "m > " + gpsDashboard.maxError + "m");
 	this.strengthBar(event);
 
 	if (gpsDashboard.stage) {
-		scenes = gpsDashboard.stage.getScenes();
 		scenes[0].get('dashSpeed').update(this.speed(event));
 		scenes[0].get('dashHeading').update(this.heading(event));
 		scenes[0].get('dashAltitude').update(this.altitude(event));
