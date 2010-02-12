@@ -203,10 +203,10 @@ MainAssistant.prototype.activate = function(event) {
 		}
 	);
 }
-
 MainAssistant.prototype.handleServiceResponse = function(event){
 	if (gpsDashboard.stage)
 		scenes = gpsDashboard.stage.getScenes();
+
 	this.controller.get('clock').update(Mojo.Format.formatDate(new Date(), { time: 'medium' }));
 
 	// Remove initial display and show normal display
@@ -226,15 +226,19 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 		gpsDashboard.hidden = false;
 		this.controller.get('tripInfoData').removeClassName('hidden');
 		this.controller.get('lowAccuracy').addClassName('hidden');
-		if (gpsDashboard.stage)
+		if (gpsDashboard.stage){
+			scenes[0].get('dashInfo').removeClassName('hidden');
 			scenes[0].get('dashAccuracy').addClassName('hidden');
+		}
 	}
 	else if (event.horizAccuracy > gpsDashboard.maxError && !gpsDashboard.hidden) {
 		gpsDashboard.hidden = true;
 		this.controller.get('tripInfoData').addClassName('hidden');
 		this.controller.get('lowAccuracy').removeClassName('hidden');
-		if (gpsDashboard.stage)
+		if (gpsDashboard.stage) {
+			scenes[0].get('dashInfo').addClassName('hidden');
 			scenes[0].get('dashAccuracy').removeClassName('hidden');
+		}
 	}
 
 	this.controller.get('horizAccuracy').update("Horizontal Error = " + event.horizAccuracy.toFixed(1) + "m > " + gpsDashboard.maxError + "m");
@@ -253,8 +257,8 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 	this.controller.get('speedometerHeading').update(this.heading(event));
 	this.setSpeedometer(event);
 	this.controller.get('altitude').update(this.altitude(event));
+	this.controller.get('tripDuration').update(this.tripDuration());
 	if (event.errorCode == 0 && event.horizAccuracy <= gpsDashboard.maxError) {
-		this.controller.get('tripDuration').update(this.tripDuration());
 		this.controller.get('avgSpeed').update(this.avgSpeed(event));
 		this.controller.get('topSpeed').update(this.topSpeed(event));
 		this.controller.get('distTraveled').update(this.distTraveled(event));
@@ -274,7 +278,6 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 			if (gpsDashboard.dashTripDuration)
 				scenes[0].get('dashTripDuration').update(this.tripDuration(event));
 		}
-
 		gpsDashboard.prevLoc = event;
 		this.recordCheck(event);
 	}
@@ -383,9 +386,9 @@ MainAssistant.prototype.speed = function(event){
 	}
 		
 	if (gpsDashboard.units == 1)
-		return (event.velocity * 2.23693629).toFixed(1) + " mph";
+		return (event.velocity * 2.23693629).toFixed(0) + " mph";
 	if (gpsDashboard.units == 2)
-		return (event.velocity * 3.6).toFixed(1) + " kph";
+		return (event.velocity * 3.6).toFixed(0) + " kph";
 }
 
 /*
@@ -452,7 +455,7 @@ MainAssistant.prototype.heading = function(event){
  * Current altitude display
  */
 MainAssistant.prototype.altitude = function(event){
-	if (event.vertAccuracy == 0)
+	if (event.vertAccuracy == 0 || event.vertAccuracy > gpsDashboard.maxError)
 		return "&nbsp;";
 	if (gpsDashboard.units == 1)
 		return (event.altitude * 3.2808399).toFixed(0) + " feet";
@@ -557,7 +560,7 @@ MainAssistant.prototype.lifeDist = function(event){
 	if (gpsDashboard.units == 1)
 		return (gpsDashboard.lifeDist * 0.621371192).toFixed(1) + " mi";
 	if (gpsDashboard.units == 2)
-		return gpsDashboard.lifeDist.toFixed(1) + " km";
+		return gpsDashboard.lifeDist.toFixed(0) + " km";
 }
 
 /*
