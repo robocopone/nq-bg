@@ -405,7 +405,7 @@ MainAssistant.prototype.heading = function(event){
 		return "&nbsp;";
 
 	if (gpsDashboard.headingPref == 2)
-		return event.heading.toFixed(0);
+		return event.heading.toFixed(0) + "&deg;";
 		
 	if ((event.heading >= 348.75 && event.heading <= 360) ||
 		(event.heading >= 0 && event.heading < 11.25)		) 
