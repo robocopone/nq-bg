@@ -52,7 +52,7 @@
 }
 
 
-.hidden { opacity: 0 }
+.hidden { display: none; }
 /*
  * Settings for the Records section
  */
