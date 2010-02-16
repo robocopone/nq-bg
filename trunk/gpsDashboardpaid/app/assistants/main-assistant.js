@@ -3,7 +3,7 @@
  */
 gpsDashboard = { };
 gpsDashboard.hidden = true;						// Is the trip info visable?
-gpsDashboard.dashHidden = true;					// Is ths dashboard visable?
+gpsDashboard.dashHidden = true;					// Is the dashboard visable?
 gpsDashboard.units = 1;							// Preferred unit of measure
 gpsDashboard.backlight = 1;						// Backlight preference
 gpsDashboard.maxError = 10;						// Max error in meters preference
@@ -620,6 +620,7 @@ MainAssistant.prototype.handleActivated = function(event){
 MainAssistant.prototype.handleMinimized = function (event) {
     var f = function(stageController){
 		gpsDashboard.stage = stageController;
+		gpsDashboard.dashHidden = true;		
 		stageController.pushScene('dashboardScene');
 	}
 
