@@ -2,7 +2,8 @@
  *	gpsDashboard environment
  */
 gpsDashboard = { };
-gpsDashboard.hidden = true;						// Is the dashboard visable?
+gpsDashboard.hidden = true;						// Is the trip info visable?
+gpsDashboard.dashHidden = true;					// Is ths dashboard visable?
 gpsDashboard.units = 1;							// Preferred unit of measure
 gpsDashboard.backlight = 1;						// Backlight preference
 gpsDashboard.maxError = 10;						// Max error in meters preference
@@ -222,20 +223,28 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 	if (!gpsDashboard.initialLoc && event.horizAccuracy <= gpsDashboard.maxError) 
 		gpsDashboard.initialLoc = event;
 	
-	if (event.horizAccuracy <= gpsDashboard.maxError && gpsDashboard.hidden) {
-		gpsDashboard.hidden = false;
-		this.controller.get('tripInfoData').removeClassName('hidden');
-		this.controller.get('lowAccuracy').addClassName('hidden');
-		if (gpsDashboard.stage){
+	if  (event.horizAccuracy <= gpsDashboard.maxError && 
+		(gpsDashboard.hidden || (gpsDashboard.stage && gpsDashboard.dashHidden) ) ) {
+		if (gpsDashboard.hidden) {
+			gpsDashboard.hidden = false;
+			this.controller.get('tripInfoData').removeClassName('hidden');
+			this.controller.get('lowAccuracy').addClassName('hidden');
+		}
+		if (gpsDashboard.stage && gpsDashboard.dashHidden){
+			gpsDashboard.dashHidden = false;
 			scenes[0].get('dashInfo').removeClassName('hidden');
 			scenes[0].get('dashAccuracy').addClassName('hidden');
 		}
 	}
-	else if (event.horizAccuracy > gpsDashboard.maxError && !gpsDashboard.hidden) {
-		gpsDashboard.hidden = true;
-		this.controller.get('tripInfoData').addClassName('hidden');
-		this.controller.get('lowAccuracy').removeClassName('hidden');
-		if (gpsDashboard.stage) {
+	else if (event.horizAccuracy > gpsDashboard.maxError && 
+			(!gpsDashboard.hidden || (gpsDashboard.stage && !gpsDashboard.dashHidden) ) ) {
+		if (!gpsDashboard.hidden) {
+			gpsDashboard.hidden = true;
+			this.controller.get('tripInfoData').addClassName('hidden');
+			this.controller.get('lowAccuracy').removeClassName('hidden');
+		}
+		if (gpsDashboard.stage && !gpsDashboard.dashHidden) {
+			gpsDashboard.dashHidden = true;
 			scenes[0].get('dashInfo').addClassName('hidden');
 			scenes[0].get('dashAccuracy').removeClassName('hidden');
 		}
@@ -248,6 +257,8 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 		scenes[0].get('dashSpeed').update(this.speed(event));
 		scenes[0].get('dashHeading').update(this.heading(event));
 		scenes[0].get('dashAltitude').update(this.altitude(event));
+		if (gpsDashboard.dashTripDuration)
+			scenes[0].get('dashTripDuration').update(this.tripDuration(event));
 	}
 
 	this.controller.get('speed').update(this.speed(event));
@@ -259,6 +270,9 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 	this.controller.get('altitude').update(this.altitude(event));
 	this.controller.get('tripDuration').update(this.tripDuration());
 	if (event.errorCode == 0 && event.horizAccuracy <= gpsDashboard.maxError) {
+		this.calcAvgSpeed(event);
+		this.calcDistTraveled(event);
+		this.calcLifeDist(event);
 		this.controller.get('avgSpeed').update(this.avgSpeed(event));
 		this.controller.get('topSpeed').update(this.topSpeed(event));
 		this.controller.get('distTraveled').update(this.distTraveled(event));
@@ -275,8 +289,6 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 				scenes[0].get('dashDistFromInit').update(this.distFromInit(event));
 			if (gpsDashboard.dashLifeDist)
 				scenes[0].get('dashLifeDist').update(this.lifeDist(event));
-			if (gpsDashboard.dashTripDuration)
-				scenes[0].get('dashTripDuration').update(this.tripDuration(event));
 		}
 		gpsDashboard.prevLoc = event;
 		this.recordCheck(event);
@@ -488,11 +500,14 @@ MainAssistant.prototype.tripDuration = function () {
 /*
  * Trip average speed display
  */
-MainAssistant.prototype.avgSpeed = function(event){
+MainAssistant.prototype.calcAvgSpeed = function (event) {
 	if (gpsDashboard.prevLoc) {
 		gpsDashboard.avgSpeed.dist += this.calcDist(gpsDashboard.prevLoc, event);
 		gpsDashboard.avgSpeed.time += this.calcTime(gpsDashboard.prevLoc, event);
 	}
+}
+
+MainAssistant.prototype.avgSpeed = function(event){
 	if (gpsDashboard.avgSpeedPref == 1 && gpsDashboard.initialLoc) {
 		if (this.calcTime(gpsDashboard.initialLoc, event) == 0)
 			return "&nbsp;";
@@ -525,15 +540,17 @@ MainAssistant.prototype.avgSpeed = function(event){
 /*
  * Trip distance display
  */
-MainAssistant.prototype.distTraveled = function( event ) {
+MainAssistant.prototype.calcDistTraveled = function (event) {
 	if (gpsDashboard.prevLoc) {
 		gpsDashboard.tripometer.dist += this.calcDist(gpsDashboard.prevLoc, event);
 		gpsDashboard.tripometer.time += this.calcTime(gpsDashboard.prevLoc, event);
-		if (gpsDashboard.units == 1) 
-			return (gpsDashboard.tripometer.dist * 0.621371192).toFixed(1) + " mi";
-		if (gpsDashboard.units == 2) 
-			return gpsDashboard.tripometer.dist.toFixed(1) + " km";
 	}
+}
+MainAssistant.prototype.distTraveled = function( event ) {
+	if (gpsDashboard.units == 1) 
+		return (gpsDashboard.tripometer.dist * 0.621371192).toFixed(1) + " mi";
+	if (gpsDashboard.units == 2) 
+		return gpsDashboard.tripometer.dist.toFixed(1) + " km";
 	return "&nbsp;";
 }
 
@@ -554,9 +571,11 @@ MainAssistant.prototype.distFromInit = function( event ) {
 /*
  * Displays the lifetime distance traveled
  */
-MainAssistant.prototype.lifeDist = function(event){
+MainAssistant.prototype.calcLifeDist = function (event) {
 	if (gpsDashboard.prevLoc)
 		gpsDashboard.lifeDist += this.calcDist(event, gpsDashboard.prevLoc);
+}
+MainAssistant.prototype.lifeDist = function(event){
 	if (gpsDashboard.units == 1)
 		return (gpsDashboard.lifeDist * 0.621371192).toFixed(1) + " mi";
 	if (gpsDashboard.units == 2)
