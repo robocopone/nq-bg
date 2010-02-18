@@ -164,8 +164,10 @@ MainAssistant.prototype.setup = function(){
 	this.controller.listen(this.controller.get('tripInfo'),Mojo.Event.tap, this.resets.bindAsEventListener(this));
 	this.controller.listen(this.controller.get('appHeader'),Mojo.Event.tap, this.nav.bindAsEventListener(this));
 	this.controller.listen(this.controller.get('speedLimit'),Mojo.Event.propertyChange, this.speedLimit.bindAsEventListener(this));
+	this.controller.listen(this.controller.get('address'),Mojo.Event.tap, this.copyAddress.bindAsEventListener(this));
 	this.controller.listen(this.controller.stageController.document, Mojo.Event.stageDeactivate, this.handleMinimized.bindAsEventListener(this));
 	this.controller.listen(this.controller.stageController.document, Mojo.Event.stageActivate, this.handleActivated.bindAsEventListener(this));
+	
 
 
 	if (gpsDashboard.startupPref == 'ask')
@@ -657,6 +659,7 @@ MainAssistant.prototype.cleanup = function(event){
 	this.controller.stopListening(this.controller.get('speedLimit'),Mojo.Event.propertyChange, this.speedLimit.bindAsEventListener(this));
 	this.controller.stopListening(this.controller.stageController.document, Mojo.Event.stageDeactivate, this.handleMinimized.bindAsEventListener(this));
 	this.controller.stopListening(this.controller.stageController.document, Mojo.Event.stageActivate, this.handleActivated.bindAsEventListener(this));
+	this.controller.stopListening(this.controller.get('address'),Mojo.Event.tap, this.copyAddress.bindAsEventListener(this));
 }
 MainAssistant.prototype.reverse = function () {
 	if (this.controller.get('speedometer').hasClassName('reverse'))
@@ -809,7 +812,7 @@ MainAssistant.prototype.getAddress = function(){
 
 MainAssistant.prototype.handleReverseResponse = function( event ) {
 	this.controller.get('addressButton').mojo.deactivate();
-
+	gpsDashboard.address = event.address;
 	add = event.address.split(";");
 	this.controller.get('address').removeClassName('hidden');
 	this.controller.get('address1').update(add[0]);
@@ -935,4 +938,23 @@ MainAssistant.prototype.setSpeedometer = function(event) {
 			this.controller.get(element).addClassName('redBack');
 		}
 	}
+}
+
+MainAssistant.prototype.copyAddress = function () {
+	this.controller.popupSubmenu({
+		onChoose: this.copyHandler,
+		placeNear: this.controller.get('address'),
+		items: [{
+			label: 'Copy to Clipboard',
+			command: 'copy',
+		}]
+	});
+}
+
+/*
+ * Reset menu that pops up when trip info is tapped
+ */
+MainAssistant.prototype.copyHandler = function(command){
+	if (command == 'copy')
+		this.controller.stageController.setClipboard(gpsDashboard.address);
 }
