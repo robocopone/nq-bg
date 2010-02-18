@@ -131,7 +131,7 @@ PreferencesAssistant.prototype.setup = function(){
 			label: "N/S/E/W",
 			value: 1
 		}, {
-			label: "Numeric Values",
+			label: "Degrees",
 			value: 2
 		}, ],
 	}, model = {
