@@ -179,6 +179,8 @@ MainAssistant.prototype.setup = function(){
 	if (gpsDashboard.theme == "dark") {
 		$$('body')[0].addClassName('palm-dark');
 		$$('body')[0].removeClassName('palm-default');
+		this.controller.get('border').addClassName('dark');
+		this.controller.get('speedometerSpeed').addClassName('dark');
 		this.controller.get('speedImgDark').removeClassName('hidden');
 		this.controller.get('speedImgLight').addClassName('hidden');
 	}
@@ -187,15 +189,6 @@ MainAssistant.prototype.setup = function(){
 MainAssistant.prototype.activate = function(event) {
 	if (gpsDashboard.backlight == 1)
 		this.controller.stageController.setWindowProperties({blockScreenTimeout: true});
-
-	if (gpsDashboard.theme == 'dark') {
-		$$('body')[0].addClassName('palm-dark');
-		$$('body')[0].removeClassName('palm-default');
-	}
-	if (gpsDashboard.theme == 'light') {
-		$$('body')[0].removeClassName('palm-dark');
-		$$('body')[0].addClassName('palm-default');
-	}
 
 	// GPS Information gathering
 	this.trackingHandle = this.controller.serviceRequest
@@ -210,12 +203,7 @@ MainAssistant.prototype.activate = function(event) {
 	);
 }
 MainAssistant.prototype.handleServiceResponse = function(event){
-/*
-	event.altitude = 30479.55;
-	event.velocity = 50;
-	event.heading = 292;
-	gpsDashboard.tripometer.time = 86400;
-*/	
+	event.velocity = 19.5;
 	
 	if (gpsDashboard.stage)
 		scenes = gpsDashboard.stage.getScenes();
@@ -394,6 +382,7 @@ MainAssistant.prototype.recordCheck = function (event) {
  * Current speed display
  */
 MainAssistant.prototype.speed = function(event){
+	//return "0000 mph" //remove
 	if (event.velocity == 0) 
 		return "&nbsp;";
 	avg = gpsDashboard.avgSpeed.dist / gpsDashboard.avgSpeed.time * 1000;
@@ -438,6 +427,7 @@ MainAssistant.prototype.topSpeed = function (event) {
  * Converts degrees to N/S/E/W
  */
 MainAssistant.prototype.heading = function(event){
+	//return '000&deg;' //remove
 	if (event.velocity == 0)
 		return "&nbsp;";
 
@@ -483,6 +473,7 @@ MainAssistant.prototype.heading = function(event){
  * Current altitude display
  */
 MainAssistant.prototype.altitude = function(event){
+	//return "00000 feet";//remove
 	if (event.vertAccuracy == 0 || event.vertAccuracy > gpsDashboard.maxError)
 		return "&nbsp;";
 	if (gpsDashboard.units == 1)
@@ -524,6 +515,7 @@ MainAssistant.prototype.calcAvgSpeed = function (event) {
 }
 
 MainAssistant.prototype.avgSpeed = function(event){
+	//return "000.0 mph" //remove
 	if (gpsDashboard.avgSpeedPref == 1 && gpsDashboard.initialLoc) {
 		if (this.calcTime(gpsDashboard.initialLoc, event) == 0)
 			return "&nbsp;";
@@ -563,6 +555,7 @@ MainAssistant.prototype.calcDistTraveled = function (event) {
 	}
 }
 MainAssistant.prototype.distTraveled = function( event ) {
+	//return "00000.0 mi" //remove
 	if (gpsDashboard.units == 1) 
 		return (gpsDashboard.tripometer.dist * 0.621371192).toFixed(1) + " mi";
 	if (gpsDashboard.units == 2) 
@@ -575,6 +568,7 @@ MainAssistant.prototype.distTraveled = function( event ) {
  * the initial position
  */
 MainAssistant.prototype.distFromInit = function( event ) {
+	//return "0000.0 mi" //remove
 	if (gpsDashboard.initialLoc) {
 		if (gpsDashboard.units == 1) 
 			return (this.calcDist(event, gpsDashboard.initialLoc) * 0.621371192).toFixed(1) + " mi";
@@ -592,6 +586,7 @@ MainAssistant.prototype.calcLifeDist = function (event) {
 		gpsDashboard.lifeDist += this.calcDist(event, gpsDashboard.prevLoc);
 }
 MainAssistant.prototype.lifeDist = function(event){
+	//return "0000000 mi" //remove
 	if (gpsDashboard.units == 1)
 		return (gpsDashboard.lifeDist * 0.621371192).toFixed(0) + " mi";
 	if (gpsDashboard.units == 2)
@@ -762,6 +757,7 @@ MainAssistant.prototype.handleOrientation = function( event ) {
 		this.controller.get('speedometer').addClassName('landscape');
 		this.controller.get('speedLimit').addClassName('landscape');
 		this.controller.get('reverse').addClassName('landscape');
+		this.controller.get('altHead').update('Alt:')
 	}	
 	if (event.position == 2 || event.position == 3) {
 		this.controller.get('currentInfo').removeClassName('landscape');
@@ -772,6 +768,7 @@ MainAssistant.prototype.handleOrientation = function( event ) {
 		this.controller.get('speedometer').removeClassName('landscape');
 		this.controller.get('speedLimit').removeClassName('landscape');
 		this.controller.get('reverse').removeClassName('landscape');
+		this.controller.get('altHead').update('Altitude:')
 	}
 }
 
@@ -953,11 +950,11 @@ MainAssistant.prototype.setSpeedometer = function(event) {
 	if (bound > 160)
 		degrees = 210;
 
-//	this.controller.get('speedometerSpeed').update(degrees);
 	for (x = -30; x <= 210; x++)
 		this.controller.get(speedImg).removeClassName('r' + x);
 
 	this.controller.get(speedImg).addClassName('r' + degrees.toFixed(0));
+	this.controller.get('border').addClassName('r' + degrees.toFixed(0));
 
 	for (x = 0; x <= bound && x <= 160; x+= 5) {
 		element = 'hash' + x;

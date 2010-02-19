@@ -25,7 +25,7 @@
 	<div class="heading">Speed:</div>
 		<div id="speed" class="data"></div>
 	<div id="heading" class="data"></div>
-	<div class="heading">Altitude:</div>
+	<div id="altHead" class="heading">Altitude:</div>
 		<div id="altitude" class="data"></div>
 </div>
 <div id="tripInfo" class="palm-group hidden">
@@ -50,7 +50,9 @@
 	</div>
 </div>
 <div id="speedometer" class="hidden">
-	<div id="speedometerSpeed"></div>
+	<div class="speedBox">
+		<div align="center" id="speedometerSpeed"></div>
+	</div>
 	<div id="speedometerHeading"></div>
 	<div id="speedometerTripometer"></div>
 	<div id="label0" class="speedCenter label">0</div>
@@ -103,10 +105,11 @@
 	<div id="hash150" class="hash speedCenter blackBack"></div>
 	<div id="hash155" class="hash speedCenter blackBack"></div>
 	<div id="hash160" class="hash speedCenter blackBack"></div>
+
 	<img id="speedImgLight" class="needle" src="images/NeedleLight.png" alt="" />
 	<img id="speedImgDark" class="needle hidden" src="images/NeedleDark.png" alt="" />
+	<div id="border"></div>
 </div>
-
 
 <div x-mojo-element="FloatPicker" id="speedLimit" class="hidden"></div>
 <div x-mojo-element="Button" id="reverse" class="hidden"></div>
