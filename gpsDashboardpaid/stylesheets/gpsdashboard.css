@@ -98,25 +98,25 @@
 	margin-right: 5px;
 }
 .data {
-	width: 71;
+	width: 88px;
 	margin-right: 5px;
 	margin-bottom: 5px;
 	float: left;
 }
 #heading {
 	text-align: center;
-	width: 53px;
+	width: 66px;
 }
-#speed 			{ width: 95px; }
+#speed 			{ width: 108px; }
 #speed.red		{ color: red; }
 #speed.green	{ color: green; }
-#altitude 		{ width: 98px; }
+#altitude 		{ width: 115px; }
 
 /*
  * Current info Display
  */
-#currentInfo 			{ height: 60px; }
-#currentInfo.landscape 	{ height: 30px; }
+#currentInfo 			{ height: 66px; font-size: 120%}
+#currentInfo.landscape 	{ height: 30px;}
 
 /*
  * Trip info Display
@@ -156,6 +156,20 @@
  * Speedometer
  */
 
+#border {
+	z-index: -4;
+	border: solid;
+	border-width: 2px;
+	border-color: #e4e4e2;
+	position: absolute;
+	top: 117px;
+	left: 48px;
+	width: 109px;
+	height: 9px;
+	-webkit-transform-origin: right;
+}
+#border.dark {border-color: #393e43;}
+
 .needle {
 	z-index: -5;
 	position: absolute;
@@ -163,6 +177,7 @@
 	left: 49px;
 	-webkit-transform-origin: right;
 }
+
 .speedCenter {
 	position: absolute;
 	left: 150px;
@@ -179,15 +194,20 @@
 .yellowBack { background-color: yellow; }
 .greenBack { background-color: green; }
 
+
 .label { font-size: 80%; }
-#speedometerSpeed {
-	z-index: 2;
-	width: 132px;
+.speedBox {
+	width: 140px; 
 	position: absolute;
-	left: 90px;
+	left: 88px;
 	top: 100px;
-	font-size: xx-large;
-	text-align: center;
+}
+#speedometerSpeed {
+	background-color: #e4e4e2;
+	font-size: 155%;
+}
+#speedometerSpeed.dark {
+	background-color: #393e43;
 }
 #speedometerHeading {
 	font-size: large;
