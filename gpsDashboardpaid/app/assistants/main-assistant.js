@@ -130,17 +130,18 @@ MainAssistant.prototype.setup = function(){
 		scrimClass: 'palm-scrim'
 	});
 	this.controller.get('scrim').appendChild(this.scrim).appendChild(this.controller.get('spinner'));
-	
-	// Address button widget
-	this.controller.setupWidget('addressButton', this.atts = {
-		type: Mojo.Widget.activityButton
-	}, this.model = {
-		buttonLabel: 'Get Address',
-		buttonClass: 'affirmative',
-		disabled: false
-	});
 
 	// Address button widget
+	this.addressButtonModel = {				// Handles enabling the address
+		buttonLabel: 'Get Address',					// button
+		buttonClass: 'affirmative',
+		disabled: true
+	}
+	this.addressButton = this.controller.setupWidget('addressButton', atts = {
+		type: Mojo.Widget.activityButton
+	}, this.addressButtonModel);
+
+	// Heads up button.
 	this.controller.setupWidget('reverse', this.atts = {
 	}, this.model = {
 		buttonLabel: 'Reverse (Heads-Up Mode)',
@@ -214,7 +215,7 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 	event.velocity = 50;
 	event.heading = 292;
 	gpsDashboard.tripometer.time = 86400;
-*/
+*/	
 	
 	if (gpsDashboard.stage)
 		scenes = gpsDashboard.stage.getScenes();
@@ -302,6 +303,10 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 				scenes[0].get('dashLifeDist').update(this.lifeDist(event));
 		}
 		gpsDashboard.prevLoc = event;
+		if (this.addressButtonModel.disabled) {
+			this.addressButtonModel.disabled = false;
+			this.controller.modelChanged(this.addressButtonModel, this);
+		}
 		this.recordCheck(event);
 	}
 
@@ -867,6 +872,10 @@ MainAssistant.prototype.doReset = function(choice) {
 	if (choice == 'yes') {
 		gpsDashboard.initialLoc = undefined;
 		gpsDashboard.prevLoc = undefined;
+		if (!this.addressButtonModel.disabled) {
+			this.addressButtonModel.disabled = true;
+			this.controller.modelChanged(this.addressButtonModel, this);
+		}
 		gpsDashboard.avgSpeed = {time: 0, dist: 0};
 		gpsDashboard.tripometer = {time: 0, dist: 0};
 	}
