@@ -254,10 +254,14 @@ PreferencesAssistant.prototype.changeThemeSelector = function (event) {
 	if (gpsDashboard.theme == 'dark') {
 		$$('body')[0].addClassName('palm-dark');
 		$$('body')[0].removeClassName('palm-default');
+		this.controller.get('speedImgDark').removeClassName('hidden');
+		this.controller.get('speedImgLight').addClassName('hidden');
 	}
 	if (gpsDashboard.theme == 'light') {
 		$$('body')[0].removeClassName('palm-dark');
 		$$('body')[0].addClassName('palm-default');
+		this.controller.get('speedImgDark').addClassName('hidden');
+		this.controller.get('speedImgLight').removeClassName('hidden');
 	}
 }
 PreferencesAssistant.prototype.coloredSpeedPref = function (event) {

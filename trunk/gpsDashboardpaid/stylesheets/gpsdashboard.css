@@ -98,7 +98,7 @@
 	margin-right: 5px;
 }
 .data {
-	width: 45%;
+	width: 71;
 	margin-right: 5px;
 	margin-bottom: 5px;
 	float: left;
@@ -110,11 +110,7 @@
 #speed 			{ width: 95px; }
 #speed.red		{ color: red; }
 #speed.green	{ color: green; }
-#avgSpeed 		{ width: 71px; }
 #altitude 		{ width: 98px; }
-#distTraveled 	{ width: 100px; }
-#distFromInit 	{ width: 81px; }
-#lifeDist 		{ width: 100px; }
 
 /*
  * Current info Display
@@ -128,7 +124,8 @@
 #tripInfo{
 	letter-spacing: .1em;
 	height: 90px;
-	font-size: medium;
+	font-size: 77%;
+	padding: 0px;
 }
 #tripInfo.landscape {
 	margin-right: 0;
@@ -158,6 +155,14 @@
 /*
  * Speedometer
  */
+
+.needle {
+	z-index: -5;
+	position: absolute;
+	top: 117px;
+	left: 49px;
+	-webkit-transform-origin: right;
+}
 .speedCenter {
 	position: absolute;
 	left: 150px;
@@ -176,6 +181,7 @@
 
 .label { font-size: 80%; }
 #speedometerSpeed {
+	z-index: 2;
 	width: 132px;
 	position: absolute;
 	left: 90px;
@@ -295,3 +301,245 @@
 	height: 320;
 	width: 480;
 }
+
+.r-30{ -webkit-transform: rotate(-30deg); }
+.r-29{ -webkit-transform: rotate(-29deg); }
+.r-28{ -webkit-transform: rotate(-28deg); }
+.r-27{ -webkit-transform: rotate(-27deg); }
+.r-26{ -webkit-transform: rotate(-26deg); }
+.r-25{ -webkit-transform: rotate(-25deg); }
+.r-24{ -webkit-transform: rotate(-24deg); }
+.r-23{ -webkit-transform: rotate(-23deg); }
+.r-22{ -webkit-transform: rotate(-22deg); }
+.r-21{ -webkit-transform: rotate(-21deg); }
+.r-20{ -webkit-transform: rotate(-20deg); }
+.r-19{ -webkit-transform: rotate(-19deg); }
+.r-18{ -webkit-transform: rotate(-18deg); }
+.r-17{ -webkit-transform: rotate(-17deg); }
+.r-16{ -webkit-transform: rotate(-16deg); }
+.r-15{ -webkit-transform: rotate(-15deg); }
+.r-14{ -webkit-transform: rotate(-14deg); }
+.r-13{ -webkit-transform: rotate(-13deg); }
+.r-12{ -webkit-transform: rotate(-12deg); }
+.r-11{ -webkit-transform: rotate(-11deg); }
+.r-10{ -webkit-transform: rotate(-10deg); }
+.r-9{ -webkit-transform: rotate(-9deg); }
+.r-8{ -webkit-transform: rotate(-8deg); }
+.r-7{ -webkit-transform: rotate(-7deg); }
+.r-6{ -webkit-transform: rotate(-6deg); }
+.r-5{ -webkit-transform: rotate(-5deg); }
+.r-4{ -webkit-transform: rotate(-4deg); }
+.r-3{ -webkit-transform: rotate(-3deg); }
+.r-2{ -webkit-transform: rotate(-2deg); }
+.r-1{ -webkit-transform: rotate(-1deg); }
+.r0{ -webkit-transform: rotate(0deg); }
+.r1{ -webkit-transform: rotate(1deg); }
+.r2{ -webkit-transform: rotate(2deg); }
+.r3{ -webkit-transform: rotate(3deg); }
+.r4{ -webkit-transform: rotate(4deg); }
+.r5{ -webkit-transform: rotate(5deg); }
+.r6{ -webkit-transform: rotate(6deg); }
+.r7{ -webkit-transform: rotate(7deg); }
+.r8{ -webkit-transform: rotate(8deg); }
+.r9{ -webkit-transform: rotate(9deg); }
+.r10{ -webkit-transform: rotate(10deg); }
+.r11{ -webkit-transform: rotate(11deg); }
+.r12{ -webkit-transform: rotate(12deg); }
+.r13{ -webkit-transform: rotate(13deg); }
+.r14{ -webkit-transform: rotate(14deg); }
+.r15{ -webkit-transform: rotate(15deg); }
+.r16{ -webkit-transform: rotate(16deg); }
+.r17{ -webkit-transform: rotate(17deg); }
+.r18{ -webkit-transform: rotate(18deg); }
+.r19{ -webkit-transform: rotate(19deg); }
+.r20{ -webkit-transform: rotate(20deg); }
+.r21{ -webkit-transform: rotate(21deg); }
+.r22{ -webkit-transform: rotate(22deg); }
+.r23{ -webkit-transform: rotate(23deg); }
+.r24{ -webkit-transform: rotate(24deg); }
+.r25{ -webkit-transform: rotate(25deg); }
+.r26{ -webkit-transform: rotate(26deg); }
+.r27{ -webkit-transform: rotate(27deg); }
+.r28{ -webkit-transform: rotate(28deg); }
+.r29{ -webkit-transform: rotate(29deg); }
+.r30{ -webkit-transform: rotate(30deg); }
+.r31{ -webkit-transform: rotate(31deg); }
+.r32{ -webkit-transform: rotate(32deg); }
+.r33{ -webkit-transform: rotate(33deg); }
+.r34{ -webkit-transform: rotate(34deg); }
+.r35{ -webkit-transform: rotate(35deg); }
+.r36{ -webkit-transform: rotate(36deg); }
+.r37{ -webkit-transform: rotate(37deg); }
+.r38{ -webkit-transform: rotate(38deg); }
+.r39{ -webkit-transform: rotate(39deg); }
+.r40{ -webkit-transform: rotate(40deg); }
+.r41{ -webkit-transform: rotate(41deg); }
+.r42{ -webkit-transform: rotate(42deg); }
+.r43{ -webkit-transform: rotate(43deg); }
+.r44{ -webkit-transform: rotate(44deg); }
+.r45{ -webkit-transform: rotate(45deg); }
+.r46{ -webkit-transform: rotate(46deg); }
+.r47{ -webkit-transform: rotate(47deg); }
+.r48{ -webkit-transform: rotate(48deg); }
+.r49{ -webkit-transform: rotate(49deg); }
+.r50{ -webkit-transform: rotate(50deg); }
+.r51{ -webkit-transform: rotate(51deg); }
+.r52{ -webkit-transform: rotate(52deg); }
+.r53{ -webkit-transform: rotate(53deg); }
+.r54{ -webkit-transform: rotate(54deg); }
+.r55{ -webkit-transform: rotate(55deg); }
+.r56{ -webkit-transform: rotate(56deg); }
+.r57{ -webkit-transform: rotate(57deg); }
+.r58{ -webkit-transform: rotate(58deg); }
+.r59{ -webkit-transform: rotate(59deg); }
+.r60{ -webkit-transform: rotate(60deg); }
+.r61{ -webkit-transform: rotate(61deg); }
+.r62{ -webkit-transform: rotate(62deg); }
+.r63{ -webkit-transform: rotate(63deg); }
+.r64{ -webkit-transform: rotate(64deg); }
+.r65{ -webkit-transform: rotate(65deg); }
+.r66{ -webkit-transform: rotate(66deg); }
+.r67{ -webkit-transform: rotate(67deg); }
+.r68{ -webkit-transform: rotate(68deg); }
+.r69{ -webkit-transform: rotate(69deg); }
+.r70{ -webkit-transform: rotate(70deg); }
+.r71{ -webkit-transform: rotate(71deg); }
+.r72{ -webkit-transform: rotate(72deg); }
+.r73{ -webkit-transform: rotate(73deg); }
+.r74{ -webkit-transform: rotate(74deg); }
+.r75{ -webkit-transform: rotate(75deg); }
+.r76{ -webkit-transform: rotate(76deg); }
+.r77{ -webkit-transform: rotate(77deg); }
+.r78{ -webkit-transform: rotate(78deg); }
+.r79{ -webkit-transform: rotate(79deg); }
+.r80{ -webkit-transform: rotate(80deg); }
+.r81{ -webkit-transform: rotate(81deg); }
+.r82{ -webkit-transform: rotate(82deg); }
+.r83{ -webkit-transform: rotate(83deg); }
+.r84{ -webkit-transform: rotate(84deg); }
+.r85{ -webkit-transform: rotate(85deg); }
+.r86{ -webkit-transform: rotate(86deg); }
+.r87{ -webkit-transform: rotate(87deg); }
+.r88{ -webkit-transform: rotate(88deg); }
+.r89{ -webkit-transform: rotate(89deg); }
+.r90{ -webkit-transform: rotate(90deg); }
+.r91{ -webkit-transform: rotate(91deg); }
+.r92{ -webkit-transform: rotate(92deg); }
+.r93{ -webkit-transform: rotate(93deg); }
+.r94{ -webkit-transform: rotate(94deg); }
+.r95{ -webkit-transform: rotate(95deg); }
+.r96{ -webkit-transform: rotate(96deg); }
+.r97{ -webkit-transform: rotate(97deg); }
+.r98{ -webkit-transform: rotate(98deg); }
+.r99{ -webkit-transform: rotate(99deg); }
+.r100{ -webkit-transform: rotate(100deg); }
+.r101{ -webkit-transform: rotate(101deg); }
+.r102{ -webkit-transform: rotate(102deg); }
+.r103{ -webkit-transform: rotate(103deg); }
+.r104{ -webkit-transform: rotate(104deg); }
+.r105{ -webkit-transform: rotate(105deg); }
+.r106{ -webkit-transform: rotate(106deg); }
+.r107{ -webkit-transform: rotate(107deg); }
+.r108{ -webkit-transform: rotate(108deg); }
+.r109{ -webkit-transform: rotate(109deg); }
+.r110{ -webkit-transform: rotate(110deg); }
+.r111{ -webkit-transform: rotate(111deg); }
+.r112{ -webkit-transform: rotate(112deg); }
+.r113{ -webkit-transform: rotate(113deg); }
+.r114{ -webkit-transform: rotate(114deg); }
+.r115{ -webkit-transform: rotate(115deg); }
+.r116{ -webkit-transform: rotate(116deg); }
+.r117{ -webkit-transform: rotate(117deg); }
+.r118{ -webkit-transform: rotate(118deg); }
+.r119{ -webkit-transform: rotate(119deg); }
+.r120{ -webkit-transform: rotate(120deg); }
+.r121{ -webkit-transform: rotate(121deg); }
+.r122{ -webkit-transform: rotate(122deg); }
+.r123{ -webkit-transform: rotate(123deg); }
+.r124{ -webkit-transform: rotate(124deg); }
+.r125{ -webkit-transform: rotate(125deg); }
+.r126{ -webkit-transform: rotate(126deg); }
+.r127{ -webkit-transform: rotate(127deg); }
+.r128{ -webkit-transform: rotate(128deg); }
+.r129{ -webkit-transform: rotate(129deg); }
+.r130{ -webkit-transform: rotate(130deg); }
+.r131{ -webkit-transform: rotate(131deg); }
+.r132{ -webkit-transform: rotate(132deg); }
+.r133{ -webkit-transform: rotate(133deg); }
+.r134{ -webkit-transform: rotate(134deg); }
+.r135{ -webkit-transform: rotate(135deg); }
+.r136{ -webkit-transform: rotate(136deg); }
+.r137{ -webkit-transform: rotate(137deg); }
+.r138{ -webkit-transform: rotate(138deg); }
+.r139{ -webkit-transform: rotate(139deg); }
+.r140{ -webkit-transform: rotate(140deg); }
+.r141{ -webkit-transform: rotate(141deg); }
+.r142{ -webkit-transform: rotate(142deg); }
+.r143{ -webkit-transform: rotate(143deg); }
+.r144{ -webkit-transform: rotate(144deg); }
+.r145{ -webkit-transform: rotate(145deg); }
+.r146{ -webkit-transform: rotate(146deg); }
+.r147{ -webkit-transform: rotate(147deg); }
+.r148{ -webkit-transform: rotate(148deg); }
+.r149{ -webkit-transform: rotate(149deg); }
+.r150{ -webkit-transform: rotate(150deg); }
+.r151{ -webkit-transform: rotate(151deg); }
+.r152{ -webkit-transform: rotate(152deg); }
+.r153{ -webkit-transform: rotate(153deg); }
+.r154{ -webkit-transform: rotate(154deg); }
+.r155{ -webkit-transform: rotate(155deg); }
+.r156{ -webkit-transform: rotate(156deg); }
+.r157{ -webkit-transform: rotate(157deg); }
+.r158{ -webkit-transform: rotate(158deg); }
+.r159{ -webkit-transform: rotate(159deg); }
+.r160{ -webkit-transform: rotate(160deg); }
+.r161{ -webkit-transform: rotate(161deg); }
+.r162{ -webkit-transform: rotate(162deg); }
+.r163{ -webkit-transform: rotate(163deg); }
+.r164{ -webkit-transform: rotate(164deg); }
+.r165{ -webkit-transform: rotate(165deg); }
+.r166{ -webkit-transform: rotate(166deg); }
+.r167{ -webkit-transform: rotate(167deg); }
+.r168{ -webkit-transform: rotate(168deg); }
+.r169{ -webkit-transform: rotate(169deg); }
+.r170{ -webkit-transform: rotate(170deg); }
+.r171{ -webkit-transform: rotate(171deg); }
+.r172{ -webkit-transform: rotate(172deg); }
+.r173{ -webkit-transform: rotate(173deg); }
+.r174{ -webkit-transform: rotate(174deg); }
+.r175{ -webkit-transform: rotate(175deg); }
+.r176{ -webkit-transform: rotate(176deg); }
+.r177{ -webkit-transform: rotate(177deg); }
+.r178{ -webkit-transform: rotate(178deg); }
+.r179{ -webkit-transform: rotate(179deg); }
+.r180{ -webkit-transform: rotate(180deg); }
+.r181{ -webkit-transform: rotate(181deg); }
+.r182{ -webkit-transform: rotate(182deg); }
+.r183{ -webkit-transform: rotate(183deg); }
+.r184{ -webkit-transform: rotate(184deg); }
+.r185{ -webkit-transform: rotate(185deg); }
+.r186{ -webkit-transform: rotate(186deg); }
+.r187{ -webkit-transform: rotate(187deg); }
+.r188{ -webkit-transform: rotate(188deg); }
+.r189{ -webkit-transform: rotate(189deg); }
+.r190{ -webkit-transform: rotate(190deg); }
+.r191{ -webkit-transform: rotate(191deg); }
+.r192{ -webkit-transform: rotate(192deg); }
+.r193{ -webkit-transform: rotate(193deg); }
+.r194{ -webkit-transform: rotate(194deg); }
+.r195{ -webkit-transform: rotate(195deg); }
+.r196{ -webkit-transform: rotate(196deg); }
+.r197{ -webkit-transform: rotate(197deg); }
+.r198{ -webkit-transform: rotate(198deg); }
+.r199{ -webkit-transform: rotate(199deg); }
+.r200{ -webkit-transform: rotate(200deg); }
+.r201{ -webkit-transform: rotate(201deg); }
+.r202{ -webkit-transform: rotate(202deg); }
+.r203{ -webkit-transform: rotate(203deg); }
+.r204{ -webkit-transform: rotate(204deg); }
+.r205{ -webkit-transform: rotate(205deg); }
+.r206{ -webkit-transform: rotate(206deg); }
+.r207{ -webkit-transform: rotate(207deg); }
+.r208{ -webkit-transform: rotate(208deg); }
+.r209{ -webkit-transform: rotate(209deg); }
+.r210{ -webkit-transform: rotate(210deg); }

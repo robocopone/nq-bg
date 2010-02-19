@@ -178,6 +178,8 @@ MainAssistant.prototype.setup = function(){
 	if (gpsDashboard.theme == "dark") {
 		$$('body')[0].addClassName('palm-dark');
 		$$('body')[0].removeClassName('palm-default');
+		this.controller.get('speedImgDark').removeClassName('hidden');
+		this.controller.get('speedImgLight').addClassName('hidden');
 	}
 }
 
@@ -207,6 +209,13 @@ MainAssistant.prototype.activate = function(event) {
 	);
 }
 MainAssistant.prototype.handleServiceResponse = function(event){
+/*
+	event.altitude = 30479.55;
+	event.velocity = 50;
+	event.heading = 292;
+	gpsDashboard.tripometer.time = 86400;
+*/
+	
 	if (gpsDashboard.stage)
 		scenes = gpsDashboard.stage.getScenes();
 
@@ -415,9 +424,9 @@ MainAssistant.prototype.topSpeed = function (event) {
 	if (gpsDashboard.topSpeed == 0)
 		return "&nbsp;";
 	if (gpsDashboard.units == 1)
-		return (gpsDashboard.topSpeed * 2.23693629).toFixed(1) + " mph";
+		return (gpsDashboard.topSpeed * 2.23693629).toFixed(0) + " mph";
 	if (gpsDashboard.units == 2)
-		return (gpsDashboard.topSpeed * 3.6).toFixed(1) + " kph";
+		return (gpsDashboard.topSpeed * 3.6).toFixed(0) + " kph";
 }
 
 /*
@@ -579,7 +588,7 @@ MainAssistant.prototype.calcLifeDist = function (event) {
 }
 MainAssistant.prototype.lifeDist = function(event){
 	if (gpsDashboard.units == 1)
-		return (gpsDashboard.lifeDist * 0.621371192).toFixed(1) + " mi";
+		return (gpsDashboard.lifeDist * 0.621371192).toFixed(0) + " mi";
 	if (gpsDashboard.units == 2)
 		return gpsDashboard.lifeDist.toFixed(0) + " km";
 }
@@ -909,6 +918,11 @@ MainAssistant.prototype.speedLimit = function (event) {
  * Lights up the speedometer
  */
 MainAssistant.prototype.setSpeedometer = function(event) {
+	if (gpsDashboard.theme == 'light')
+		speedImg = 'speedImgLight';
+	if (gpsDashboard.theme == 'dark')
+		speedImg = 'speedImgDark';
+
 	for (x = 0; x <= 160; x += 5) {
 		hashElement = 'hash' + x;
 		labelElement = 'label' + x;
@@ -916,6 +930,9 @@ MainAssistant.prototype.setSpeedometer = function(event) {
 		this.controller.get(hashElement).removeClassName('greenBack');
 		this.controller.get(hashElement).removeClassName('yellowBack');
 		this.controller.get(hashElement).addClassName('blackBack');
+		this.controller.get(speedImg).removeClassName('redBack');
+		this.controller.get(speedImg).removeClassName('greenBack');
+		this.controller.get(speedImg).removeClassName('yellowBack');
 	}
 	
 	if (gpsDashboard.units == 1)
@@ -923,19 +940,35 @@ MainAssistant.prototype.setSpeedometer = function(event) {
 	if (gpsDashboard.units == 2)
 		bound = event.velocity * 3.6;
 
-	for (x = 0; x <= bound; x+= 5) {
+	degrees = (3 * (bound - 20))/2;
+	if (bound > 160)
+		degrees = 210;
+
+//	this.controller.get('speedometerSpeed').update(degrees);
+	for (x = -30; x <= 210; x++)
+		this.controller.get(speedImg).removeClassName('r' + x);
+
+	this.controller.get(speedImg).addClassName('r' + degrees.toFixed(0));
+
+	for (x = 0; x <= bound && x <= 160; x+= 5) {
 		element = 'hash' + x;
 		if (bound < gpsDashboard.speedLimit - 5) {
 			this.controller.get(element).removeClassName('blackBack');
 			this.controller.get(element).addClassName('greenBack');
+			this.controller.get(speedImg).removeClassName('blackBack');
+			this.controller.get(speedImg).addClassName('greenBack');
 		}
 		else if (bound <= gpsDashboard.speedLimit + 5) {
 			this.controller.get(element).removeClassName('blackBack');
 			this.controller.get(element).addClassName('yellowBack');
+			this.controller.get(speedImg).removeClassName('blackBack');
+			this.controller.get(speedImg).addClassName('yellowBack');
 		}
 		else {
 			this.controller.get(element).removeClassName('blackBack');
 			this.controller.get(element).addClassName('redBack');
+			this.controller.get(speedImg).removeClassName('blackBack');
+			this.controller.get(speedImg).addClassName('redBack');
 		}
 	}
 }
