@@ -157,21 +157,21 @@
  */
 
 #border {
-	z-index: -4;
+	z-index: -6;
 	border: solid;
 	border-width: 2px;
 	border-color: #e4e4e2;
 	position: absolute;
-	top: 117px;
+	top: 116px;
 	left: 48px;
-	width: 109px;
-	height: 9px;
+	width: 107px;
+	height: 8px;
 	-webkit-transform-origin: right;
 }
 #border.dark {border-color: #393e43;}
 
 .needle {
-	z-index: -5;
+	z-index: -7;
 	position: absolute;
 	top: 117px;
 	left: 49px;
