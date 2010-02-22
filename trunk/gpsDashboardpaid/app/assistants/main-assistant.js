@@ -203,8 +203,6 @@ MainAssistant.prototype.activate = function(event) {
 	);
 }
 MainAssistant.prototype.handleServiceResponse = function(event){
-	event.velocity = 19.5;
-	
 	if (gpsDashboard.stage)
 		scenes = gpsDashboard.stage.getScenes();
 
@@ -950,11 +948,14 @@ MainAssistant.prototype.setSpeedometer = function(event) {
 	if (bound > 160)
 		degrees = 210;
 
-	for (x = -30; x <= 210; x++)
+	for (x = -30; x <= 210; x++) {
 		this.controller.get(speedImg).removeClassName('r' + x);
+		this.controller.get('border').removeClassName('r' + x);
+	}
 
 	this.controller.get(speedImg).addClassName('r' + degrees.toFixed(0));
 	this.controller.get('border').addClassName('r' + degrees.toFixed(0));
+	
 
 	for (x = 0; x <= bound && x <= 160; x+= 5) {
 		element = 'hash' + x;
