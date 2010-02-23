@@ -922,6 +922,11 @@ MainAssistant.prototype.speedLimit = function (event) {
  * Lights up the speedometer
  */
 MainAssistant.prototype.setSpeedometer = function(event) {
+	if (event.velocity != 0 && this.controller.get('speedometerSpeed').hasClassName('hidden'))
+		this.controller.get('speedometerSpeed').removeClassName('hidden');
+	if (event.velocity == 0 && !(this.controller.get('speedometerSpeed').hasClassName('hidden')))
+		this.controller.get('speedometerSpeed').addClassName('hidden');
+
 	if (gpsDashboard.theme == 'light')
 		speedImg = 'speedImgLight';
 	if (gpsDashboard.theme == 'dark')
@@ -944,6 +949,18 @@ MainAssistant.prototype.setSpeedometer = function(event) {
 	if (gpsDashboard.units == 2)
 		bound = event.velocity * 3.6;
 
+	
+	this.controller.get('speedometerSpeed').removeClassName('w10');
+	this.controller.get('speedometerSpeed').removeClassName('w100');
+	this.controller.get('speedometerSpeed').removeClassName('w1000');
+
+	if (bound > 999)
+		this.controller.get('speedometerSpeed').addClassName('w1000');
+	else if (bound > 99)
+		this.controller.get('speedometerSpeed').addClassName('w100');
+	else if (bound > 9)
+		this.controller.get('speedometerSpeed').addClassName('w10');
+	
 	degrees = (3 * (bound - 20))/2;
 	if (bound > 160)
 		degrees = 210;

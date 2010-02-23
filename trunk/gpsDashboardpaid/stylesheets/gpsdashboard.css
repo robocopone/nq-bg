@@ -196,16 +196,28 @@
 
 
 .label { font-size: 80%; }
-.speedBox {
-	width: 140px; 
-	position: absolute;
-	left: 88px;
-	top: 100px;
+
+#speedometerSpeed.w10 {
+	left: 107px;
+	width: 106px; 
+}
+#speedometerSpeed.w100 {
+	left: 98px;
+	width: 123px;
+}
+#speedometerSpeed.w1000 {
+	left: 87px;
+	width: 142px;
 }
 #speedometerSpeed {
 	background-color: #e4e4e2;
 	font-size: 155%;
+	position: absolute;
+	top: 98px;
+	left: 115px;
+	width: 90px;
 }
+
 #speedometerSpeed.dark {
 	background-color: #393e43;
 }
