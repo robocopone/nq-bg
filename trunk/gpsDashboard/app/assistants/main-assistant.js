@@ -12,6 +12,7 @@ gpsDashboard.lifeDist = 0;						// Lifetime distance traveled
 gpsDashboard.hidden = true;						// Is the dashboard visable?
 gpsDashboard.maxError = 10;						// Max error in meters
 gpsDashboard.heading = 1;
+gpsDashboard.initialRun = true;
 
 /*
  * Stores and recalls data stored between sessions
@@ -27,20 +28,24 @@ gpsDashboard.cookie = ({
 			gpsDashboard.lifeDist = storedData.lifeDist;
 			gpsDashboard.maxError = storedData.maxError;
 		}
-		if (storedData && storedData.version) {
+		if (storedData && storedData.version >= "1.2.5") {
 			gpsDashboard.heading = storedData.heading;
+		}
+		if (storedData && storedData.version == "1.2.6") {
+			gpsDashboard.initialRun = storedData.initialRun;
 		}
 		this.storeCookie();
 	},
 	storeCookie: function() {
 		this.cookieData.put({  
-			version: '1.2.5',
+			version: "1.2.6",
 			heading: gpsDashboard.heading,
 			units: gpsDashboard.units,                                                
 			backlight: gpsDashboard.backlight,
 			lifeDist: gpsDashboard.lifeDist,
 			avgSpeedPref: gpsDashboard.avgSpeedPref,
-			maxError: gpsDashboard.maxError
+			maxError: gpsDashboard.maxError,
+			initialRun: gpsDashboard.initialRun
 		});		
 	}
 });
@@ -78,7 +83,7 @@ MainAssistant.prototype.setup = function(){
 	
 	// Address button widget
 	this.addressButtonModel = {				// Handles enabling the address
-		buttonLabel: 'Get Address',					// button
+		buttonLabel: 'Get Address',			// button
 		buttonClass: 'affirmative',
 		disabled: true
 	}
@@ -88,6 +93,8 @@ MainAssistant.prototype.setup = function(){
 	
 	this.controller.listen(this.controller.get('addressButton'), Mojo.Event.tap, this.getAddress.bindAsEventListener(this));
 	this.controller.listen(this.controller.get('tripInfo'),Mojo.Event.tap, this.resets.bindAsEventListener(this));
+	if (gpsDashboard.initialRun)
+		this.initialPrompt();
 }
 
 MainAssistant.prototype.activate = function(event) {
@@ -533,4 +540,51 @@ MainAssistant.prototype.handleReverseResponseError = function(event){
 		this.controller.get('address1').update("Error: The application already has a pending message");
 	if (event.errorCode == 8)
 		this.controller.get('address1').update("Error: The application has been temporarily blacklisted");
+}
+
+/*
+ * Initial Run Prompt
+ */
+MainAssistant.prototype.initialPrompt = function () {
+	this.controller.showAlertDialog({
+		onChoose: this.doInitialChoice,
+		title: $L("gpsDashboard Free"),
+		message: $L("Would you like to see the features you get when you upgrade to gpsDashboard Plus?"),
+		choices: [{
+			label: $L('Yes (Opens a new browser)'),
+			value: 'yes',
+			type: 'affirmative'
+		}, {
+			label: $L('No'),
+			value: 'no',
+			type: 'negative'
+		}, {
+			label: $L('No, and never ask again'),
+			value: 'nono',
+			type: 'negative'
+		}, ]
+	});	
+}
+
+/*
+ * 
+ */
+MainAssistant.prototype.doInitialChoice = function(choice) {
+	if (choice == 'yes') {
+		this.controller.serviceRequest("palm://com.palm.applicationManager", {
+			method: "open",
+			parameters: {
+				id: 'com.palm.app.browser',
+				params: {
+					target: "http://www.bradleygraber.net/gpsDashboard"
+				}
+			}
+		});
+	}
+	if (choice == 'no') {
+	}
+	if (choice == 'nono') {
+		gpsDashboard.initialRun = false;
+		gpsDashboard.cookie.storeCookie();
+	}
 }
