@@ -107,10 +107,11 @@
 	text-align: center;
 	width: 66px;
 }
+#altitude 		{ width: 115px; }
+
 #speed 			{ width: 108px; }
 #speed.red		{ color: red; }
 #speed.green	{ color: green; }
-#altitude 		{ width: 115px; }
 
 /*
  * Current info Display
