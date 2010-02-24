@@ -1,3 +1,5 @@
+.hidden { display: none; }
+
 /*
  * Title bar for the Current info box
  */
@@ -33,41 +35,25 @@
 	float: left;
 }
 
-#speed {
-	width: 95px;
-}
-#avgSpeed {
-	width: 71px;
-}
+#speed		{ width: 108px; }
+#altitude	{ width: 115px; }
 #heading {
 	text-align: center;
-	width: 53px;
+	width: 66px;
 }
-#distTraveled {
-	width: 100px;
-}
-#distFromInit {
-	width: 81px;
-}
-#lifeDist {
-	width: 100px;
-}
+
+
+#avgSpeed	{ width: 71px; }
+#distTraveled {	width: 100px; }
+#distFromInit {	width: 81px; }
+#lifeDist { width: 100px; }
 
 /*
  * Current info Display
  */
-#currentInfo {
-	margin-top: 50px;
-	height: 60px;
-}
 
-#currentInfo.landscape {
-	height: 30px;
-}
-
-#currentInfo.hidden {
-	opacity: 0;
-}
+#currentInfo 			{ height: 66px; font-size: 120%}
+#currentInfo.landscape	{ height: 30px; }
 
 /*
  * Trip info Display
@@ -82,9 +68,6 @@
 	width: 52%;
 	float: left;
 }
-#tripInfo.hidden {
-	opacity: 0;
-}
 
 /*
  * Address info Display
@@ -94,16 +77,9 @@
 	width: 39%;
 	float: left;
 }
-#addressInfo.hidden {
-	opacity: 0;
-}
 
 #address {
 	margin-top: 5px;	
-}
-
-#address.hidden {
-	opacity: 0;
 }
 
 /*
@@ -111,17 +87,9 @@
  */
 #initialDisplay {
 	text-align: center;
-	margin-top: 80px;
+	margin-top: 40px;
 }
-#initialDisplay.hidden {
-	opacity: 0;
-}
+
 #initialDisplay.landscape {
 	margin-top: 60px;
-}
-#accuracyNotice {
-	margin-top: 200px;
-}
-#accuracyNotice.landscape {
-	margin-top: 0px;
 }
