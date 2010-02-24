@@ -549,7 +549,7 @@ MainAssistant.prototype.initialPrompt = function () {
 	this.controller.showAlertDialog({
 		onChoose: this.doInitialChoice,
 		title: $L("gpsDashboard Free"),
-		message: $L("Would you like to see the features you get when you upgrade to gpsDashboard Plus?"),
+		message: $L("Would you like to see the features you get when you upgrade to gpsDashboard Plus? (Not currently available outside of the US)"),
 		choices: [{
 			label: $L('Yes (Opens a new browser)'),
 			value: 'yes',
