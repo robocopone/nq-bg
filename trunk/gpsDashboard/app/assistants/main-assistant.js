@@ -77,13 +77,15 @@ MainAssistant.prototype.setup = function(){
 	this.controller.get('scrim').appendChild(this.scrim).appendChild(this.controller.get('spinner'));
 	
 	// Address button widget
-	this.controller.setupWidget('addressButton', this.atts = {
-		type: Mojo.Widget.activityButton
-	}, this.model = {
-		buttonLabel: 'Get Address',
+	this.addressButtonModel = {				// Handles enabling the address
+		buttonLabel: 'Get Address',					// button
 		buttonClass: 'affirmative',
-		disabled: false
-	});
+		disabled: true
+	}
+	this.addressButton = this.controller.setupWidget('addressButton', atts = {
+		type: Mojo.Widget.activityButton
+	}, this.addressButtonModel);
+	
 	this.controller.listen(this.controller.get('addressButton'), Mojo.Event.tap, this.getAddress.bindAsEventListener(this));
 	this.controller.listen(this.controller.get('tripInfo'),Mojo.Event.tap, this.resets.bindAsEventListener(this));
 }
@@ -131,7 +133,7 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 	
 	this.controller.get('horizAccuracy').update("Horizontal Error = " + event.horizAccuracy.toFixed(1) + "m > " + gpsDashboard.maxError + "m");
 
-	this.controller.get('speed').update(this.calcSpeed(event));
+	this.controller.get('speed').update(this.speed(event));
 	this.controller.get('heading').update(this.heading(event));
 	this.controller.get('altitude').update(this.altitude(event));
 
@@ -142,6 +144,10 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 		this.controller.get('distFromInit').update(this.distFromInit(event));
 		this.controller.get('lifeDist').update(this.lifeDist(event));
 		gpsDashboard.prevLoc = event;
+		if (this.addressButtonModel.disabled) {
+			this.addressButtonModel.disabled = false;
+			this.controller.modelChanged(this.addressButtonModel, this);
+		}
 	}
 
 	else if (event.errorCode != 0)
@@ -160,9 +166,9 @@ MainAssistant.prototype.speed = function(event) {
 	if (event.velocity == 0)
 		return "&nbsp;";
 	if (gpsDashboard.units == 1)
-		return (event.velocity * 2.23693629).toFixed(1) + " mph";
+		return (event.velocity * 2.23693629).toFixed(0) + " mph";
 	if (gpsDashboard.units == 2)
-		return (event.velocity * 3.6).toFixed(1) + " kph";
+		return (event.velocity * 3.6).toFixed(0) + " kph";
 }
 
 /*
@@ -175,9 +181,9 @@ MainAssistant.prototype.topSpeed = function (event) {
 	if (gpsDashboard.topSpeed == 0)
 		return "&nbsp;";
 	if (gpsDashboard.units == 1)
-		return (gpsDashboard.topSpeed * 2.23693629).toFixed(1) + " mph";
+		return (gpsDashboard.topSpeed * 2.23693629).toFixed(0) + " mph";
 	if (gpsDashboard.units == 2)
-		return (gpsDashboard.topSpeed * 3.6).toFixed(1) + " kph";
+		return (gpsDashboard.topSpeed * 3.6).toFixed(0) + " kph";
 }
 
 
@@ -311,9 +317,9 @@ MainAssistant.prototype.lifeDist = function(event){
 	if (gpsDashboard.prevLoc)
 		gpsDashboard.lifeDist += this.calcDist(event, gpsDashboard.prevLoc);
 	if (gpsDashboard.units == 1)
-		return (gpsDashboard.lifeDist * 0.621371192).toFixed(1) + " miles";
+		return (gpsDashboard.lifeDist * 0.621371192).toFixed(0) + " miles";
 	if (gpsDashboard.units == 2)
-		return gpsDashboard.lifeDist.toFixed(1) + " km";
+		return gpsDashboard.lifeDist.toFixed(0) + " km";
 }
 
 /*
@@ -348,7 +354,7 @@ MainAssistant.prototype.calcDist = function( point1, point2 ) {
 
 /*
  * Calculates the speed based on the current, last
- * and the fix before that.
+ * and the fix before that. (Not in use)
  */
 MainAssistant.prototype.calcSpeed = function( event ){
 	if (!gpsDashboard.prevLoc)
@@ -449,14 +455,14 @@ MainAssistant.prototype.handleOrientation = function( event ) {
 		this.controller.get('tripInfo').addClassName('landscape');
 		this.controller.get('addressInfo').addClassName('landscape');
 		this.controller.get('initialDisplay').addClassName('landscape');
-		this.controller.get('accuracyNotice').addClassName('landscape');
+		this.controller.get('altHead').update('Alt:');
 	}	
 	if (event.position == 2 || event.position == 3) {
 		this.controller.get('currentInfo').removeClassName('landscape');
 		this.controller.get('tripInfo').removeClassName('landscape');
 		this.controller.get('addressInfo').removeClassName('landscape');
 		this.controller.get('initialDisplay').removeClassName('landscape');
-		this.controller.get('accuracyNotice').removeClassName('landscape');
+		this.controller.get('altHead').update('Altitude:');
 	}
 }
 
