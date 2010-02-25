@@ -56,7 +56,8 @@
 /*
  * Settings for the Records section
  */
-.record { text-align: center; }
+.record { text-align: center; float: left;}
+.recordDate { float: right;}
 .recordGroup { height: 25px }
 
 /*

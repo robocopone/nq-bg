@@ -360,19 +360,19 @@ MainAssistant.prototype.recordCheck = function (event) {
 		event.horizAccuracy <= 5) {
 		gpsDashboard.alltimeTopSpeed.data = event;
 		gpsDashboard.alltimeTopSpeed.date =
-			Mojo.Format.formatDate(new Date(), { date: 'medium' });
+			Mojo.Format.formatDate(new Date(), { date: 'long' });
 	}
 	if (event.altitude > gpsDashboard.alltimeHigh.data.altitude &&
 		event.vertAccuracy <= 10 ) {
 		gpsDashboard.alltimeHigh.data = event;
 		gpsDashboard.alltimeHigh.date =
-			Mojo.Format.formatDate(new Date(), { date: 'medium' });
+			Mojo.Format.formatDate(new Date(), { date: 'long' });
 	}
 	if (event.altitude < gpsDashboard.alltimeLow.data.altitude &&
 		event.vertAccuracy <= 10 ) {
 		gpsDashboard.alltimeLow.data = event;
 		gpsDashboard.alltimeLow.date =
-			Mojo.Format.formatDate(new Date(), { date: 'medium'});
+			Mojo.Format.formatDate(new Date(), { date: 'long'});
 	}
 }
 
