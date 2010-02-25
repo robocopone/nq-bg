@@ -203,6 +203,8 @@ MainAssistant.prototype.activate = function(event) {
 	);
 }
 MainAssistant.prototype.handleServiceResponse = function(event){
+	event.velocity = 80;
+	event.heading = 292;
 	if (gpsDashboard.stage)
 		scenes = gpsDashboard.stage.getScenes();
 
@@ -756,6 +758,8 @@ MainAssistant.prototype.handleOrientation = function( event ) {
 		this.controller.get('speedLimit').addClassName('landscape');
 		this.controller.get('reverse').addClassName('landscape');
 		this.controller.get('altHead').update('Alt:')
+		this.controller.get('altHead').addClassName('landscape');
+		this.controller.get('altitude').addClassName('landscape');
 	}	
 	if (event.position == 2 || event.position == 3) {
 		this.controller.get('currentInfo').removeClassName('landscape');
@@ -767,6 +771,8 @@ MainAssistant.prototype.handleOrientation = function( event ) {
 		this.controller.get('speedLimit').removeClassName('landscape');
 		this.controller.get('reverse').removeClassName('landscape');
 		this.controller.get('altHead').update('Altitude:')
+		this.controller.get('altHead').removeClassName('landscape');
+		this.controller.get('altitude').removeClassName('landscape');
 	}
 }
 
