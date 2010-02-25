@@ -35,11 +35,24 @@
 	float: left;
 }
 
-#speed		{ width: 108px; }
-#altitude	{ width: 115px; }
+#speedHead	{ margin-top: 9px}
+#speed		{ font-size: 150%; width: 127px; }
+
+#altHead.landscape {
+	margin-top: 9px; 
+}
+#altitude	{ 
+	width: 115px; 
+}
+#altitude.landscape {
+	margin-top: 9px;
+}
+
 #heading {
+	margin-top: 9px;
+	margin-bottom: 10px;
 	text-align: center;
-	width: 66px;
+	width: 65px;
 }
 
 
@@ -52,8 +65,8 @@
  * Current info Display
  */
 
-#currentInfo 			{ height: 66px; font-size: 120%}
-#currentInfo.landscape	{ height: 30px; }
+#currentInfo 			{ height: 78px; }
+#currentInfo.landscape	{ height: 35px; }
 
 /*
  * Trip info Display
