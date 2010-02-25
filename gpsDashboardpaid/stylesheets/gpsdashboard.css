@@ -104,19 +104,30 @@
 	float: left;
 }
 #heading {
+	margin-top: 9px;
+	margin-bottom: 10px;
 	text-align: center;
-	width: 66px;
+	width: 62px;
+}
+
+#altHead.landscape {
+	margin-top: 9px; 
 }
 #altitude 		{ width: 115px; }
+#altitude.landscape {
+	margin-top: 9px;
+}
 
-#speed 			{ width: 108px; }
+#speedHead	{ margin-top: 9px}
+#speed		{ font-size: 150%; width: 130px; }
+
 #speed.red		{ color: red; }
 #speed.green	{ color: green; }
 
 /*
  * Current info Display
  */
-#currentInfo 			{ height: 66px; font-size: 120%}
+#currentInfo 			{ height: 66px;}
 #currentInfo.landscape 	{ height: 30px;}
 
 /*
