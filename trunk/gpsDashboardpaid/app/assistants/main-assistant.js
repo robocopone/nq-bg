@@ -203,8 +203,6 @@ MainAssistant.prototype.activate = function(event) {
 	);
 }
 MainAssistant.prototype.handleServiceResponse = function(event){
-	event.velocity = 80;
-	event.heading = 292;
 	if (gpsDashboard.stage)
 		scenes = gpsDashboard.stage.getScenes();
 
