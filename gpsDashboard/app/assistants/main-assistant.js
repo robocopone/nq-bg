@@ -463,6 +463,8 @@ MainAssistant.prototype.handleOrientation = function( event ) {
 		this.controller.get('addressInfo').addClassName('landscape');
 		this.controller.get('initialDisplay').addClassName('landscape');
 		this.controller.get('altHead').update('Alt:');
+		this.controller.get('altHead').addClassName('landscape');
+		this.controller.get('altitude').addClassName('landscape');
 	}	
 	if (event.position == 2 || event.position == 3) {
 		this.controller.get('currentInfo').removeClassName('landscape');
@@ -470,6 +472,8 @@ MainAssistant.prototype.handleOrientation = function( event ) {
 		this.controller.get('addressInfo').removeClassName('landscape');
 		this.controller.get('initialDisplay').removeClassName('landscape');
 		this.controller.get('altHead').update('Altitude:');
+		this.controller.get('altHead').removeClassName('landscape');
+		this.controller.get('altitude').removeClassName('landscape');
 	}
 }
 
