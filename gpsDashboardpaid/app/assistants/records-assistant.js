@@ -4,18 +4,18 @@ function RecordsAssistant() {
 RecordsAssistant.prototype.setup = function(){
 
 	if (gpsDashboard.units == 1 && gpsDashboard.alltimeTopSpeed.data.velocity != 0)
-		this.controller.get('alltimeTopSpeed').update((gpsDashboard.alltimeTopSpeed.data.velocity * 2.23693629).toFixed(1) + $L(" mph"));
+		this.controller.get('alltimeTopSpeed').update((gpsDashboard.alltimeTopSpeed.data.velocity * 2.23693629).toFixed(0) + $L(" mph"));
 	if (gpsDashboard.units == 2 && gpsDashboard.alltimeTopSpeed.data.velocity != 0) 
-		this.controller.get('alltimeTopSpeed').update((gpsDashboard.alltimeTopSpeed.data.velocity * 3.6).toFixed(1) + $L(" kph"));
+		this.controller.get('alltimeTopSpeed').update((gpsDashboard.alltimeTopSpeed.data.velocity * 3.6).toFixed(0) + $L(" kph"));
 	
 	if (gpsDashboard.units == 1 && gpsDashboard.alltimeHigh.data.altitude != 0)
-		this.controller.get('alltimeHigh').update((gpsDashboard.alltimeHigh.data.altitude * 3.2808399).toFixed(1) + $L(" feet"));
+		this.controller.get('alltimeHigh').update((gpsDashboard.alltimeHigh.data.altitude * 3.2808399).toFixed(0) + $L(" ft"));
 	if (gpsDashboard.units == 1 && gpsDashboard.alltimeLow.data.altitude != 15000)
-		this.controller.get('alltimeLow').update((gpsDashboard.alltimeLow.data.altitude * 3.2808399).toFixed(1) + $L(" feet"));
+		this.controller.get('alltimeLow').update((gpsDashboard.alltimeLow.data.altitude * 3.2808399).toFixed(0) + $L(" ft"));
 	if (gpsDashboard.units == 2 && gpsDashboard.alltimeHigh.data.altitude != 0) 
-		this.controller.get('alltimeHigh').update(gpsDashboard.alltimeHigh.data.altitude + $L(" meters"));
+		this.controller.get('alltimeHigh').update(gpsDashboard.alltimeHigh.data.altitude + $L(" m"));
 	if (gpsDashboard.units == 2 && gpsDashboard.alltimeHigh.data.altitude != 15000) 
-		this.controller.get('alltimeLow').update(gpsDashboard.alltimeLow.data.altitude + $L(" meters"));
+		this.controller.get('alltimeLow').update(gpsDashboard.alltimeLow.data.altitude + $L(" m"));
 
 	if (gpsDashboard.alltimeTopSpeed.date)	
 		this.controller.get('alltimeTopSpeedDate').update(gpsDashboard.alltimeTopSpeed.date);
