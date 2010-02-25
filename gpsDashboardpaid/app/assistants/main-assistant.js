@@ -965,17 +965,21 @@ MainAssistant.prototype.setSpeedometer = function(event) {
 	else if (bound > 9)
 		this.controller.get('speedometerSpeed').addClassName('w10');
 	
-	degrees = (3 * (bound - 20))/2;
+	degrees = ((3 * (bound - 20))/2).toFixed(0);
+
 	if (bound > 160)
 		degrees = 210;
+
+	if (degrees % 2 != 0)
+		degrees--;
 
 	for (x = -30; x <= 210; x++) {
 		this.controller.get(speedImg).removeClassName('r' + x);
 		this.controller.get('border').removeClassName('r' + x);
 	}
 
-	this.controller.get(speedImg).addClassName('r' + degrees.toFixed(0));
-	this.controller.get('border').addClassName('r' + degrees.toFixed(0));
+	this.controller.get(speedImg).addClassName('r' + degrees);
+	this.controller.get('border').addClassName('r' + degrees);
 	
 
 	for (x = 0; x <= bound && x <= 160; x+= 5) {
