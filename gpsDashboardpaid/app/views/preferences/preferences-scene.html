@@ -5,95 +5,119 @@
 
 <div id="palm-header-spacer" class="palm-header-spacer"></div>
 
-<div class="palm-group">
-	<div class="palm-group-title">Dashboard View (First 3 Displayed)</div>
-	<div class="palm-list">
-		<div class="palm-row first">
-			<div class="palm-row-wrapper">
-				<div x-mojo-element="CheckBox" class="left" id="dashAvgSpeed"></div>
-				<div class="title">Average Speed</div>
-			</div>			
-		</div>
-		<div class="palm-row">
-			<div class="palm-row-wrapper">
-				<div x-mojo-element="CheckBox" class="left" id="dashTopSpeed"></div>
-				<div class="title">Top Speed</div>
+<table class="palm-divider collapsible" x-mojo-touch-feedback="delayed">
+  <tr>
+      <td class="left"></td>
+      <td class="label">Global</td>
+      <td class="line" width="100%"></td>
+      <td><div id="globalDivider" class="palm-arrow-closed arrow_button"></div></td>
+      <td class="right"></td>
+    </tr>
+ </table>
+
+<div x-mojo-element="Drawer" id="globalDrawer"> 
+	<div class="palm-group">
+		<div class="palm-group-title">Options</div>
+		<div class="palm-list">
+			<div class="palm-row first" x-mojo-touch-feedback="delayed">
+				<div class="palm-row-wrapper">
+					<div id="startupPref" x-mojo-element="ListSelector"></div>                                                   
+				</div>
 			</div>
-		</div>
-		<div class="palm-row">
-			<div class="palm-row-wrapper">
-				<div x-mojo-element="CheckBox" class="left" id="dashDistTraveled"></div>
-				<div class="title">Distance Traveled</div>
+			<div class="palm-row" x-mojo-touch-feedback="delayed">
+				<div class="palm-row-wrapper">
+					<div id="themeSelector" x-mojo-element="ListSelector"></div>                                                   
+				</div>
 			</div>
-		</div>
-		<div class="palm-row">
-			<div class="palm-row-wrapper">
-				<div x-mojo-element="CheckBox" class="left" id="dashDistFromInit"></div>
-				<div class="title">Dist from Initial Position</div>
+			<div class="palm-row" x-mojo-touch-feedback="delayed">
+				<div class="palm-row-wrapper">
+					<div id="unitsSelector" x-mojo-element="ListSelector"></div>                                                   
+				</div>
 			</div>
-		</div>
-		<div class="palm-row">
-			<div class="palm-row-wrapper">
-				<div x-mojo-element="CheckBox" class="left" id="dashLifeDist"></div>
-				<div class="title">Lifetime Distance</div>
+			<div class="palm-row" x-mojo-touch-feedback="delayed">
+				<div class="palm-row-wrapper">
+					<div id="backlightSelector" x-mojo-element="ListSelector"></div>
+				</div>
 			</div>
-		</div>
-		<div class="palm-row last">
-			<div class="palm-row-wrapper">
-				<div x-mojo-element="CheckBox" class="left" id="dashTripDuration"></div>
-				<div class="title">Trip Duration</div>
-			</div>			
-		</div>
+			<div class="palm-row" x-mojo-touch-feedback="delayed">
+				<div class="palm-row-wrapper">
+					<div id="maxErrorPrefSelector" x-mojo-element="ListSelector"></div>
+				</div>
+			</div>
+			<div class="palm-row" x-mojo-touch-feedback="delayed">
+				<div class="palm-row-wrapper">
+					<div id="shakePref" x-mojo-element="ListSelector"></div>
+				</div>
+			</div>
+			<div class="palm-row" x-mojo-touch-feedback="delayed">
+				<div class="palm-row-wrapper">
+					<div id="coloredSpeedPref" x-mojo-element="ListSelector"></div>
+				</div>
+			</div>
+			<div class="palm-row" x-mojo-touch-feedback="delayed">
+				<div class="palm-row-wrapper">
+					<div id="headingPref" x-mojo-element="ListSelector"></div>
+				</div>
+			</div>
+			<div class="palm-row last" x-mojo-touch-feedback="delayed">
+				<div class="palm-row-wrapper">
+					<div id="avgSpeedPref" x-mojo-element="ListSelector"></div>   
+				</div>
+			</div>
+		</div>     	
 	</div>
 </div>
 
-<div class="palm-group">
-	<div class="palm-group-title">Options</div>
-	<div class="palm-list">
-		<div class="palm-row first" x-mojo-touch-feedback="delayed">
-			<div class="palm-row-wrapper">
-				<div id="startupPref" x-mojo-element="ListSelector"></div>                                                   
+<table class="palm-divider collapsible" x-mojo-touch-feedback="delayed">
+  <tr>
+      <td class="left"></td>
+      <td class="label">Dashboard</td>
+      <td class="line" width="100%"></td>
+      <td><div id="dashDivider" class="palm-arrow-closed arrow_button"></div></td>
+      <td class="right"></td>
+    </tr>
+ </table>
+
+<div x-mojo-element="Drawer" id="dashDrawer"> 
+	<div class="palm-group">
+		<div class="palm-group-title">Dashboard View (First 3 Displayed)</div>
+		<div class="palm-list">
+			<div class="palm-row first">
+				<div class="palm-row-wrapper">
+					<div x-mojo-element="CheckBox" class="left" id="dashAvgSpeed"></div>
+					<div class="title">Average Speed</div>
+				</div>			
+			</div>
+			<div class="palm-row">
+				<div class="palm-row-wrapper">
+					<div x-mojo-element="CheckBox" class="left" id="dashTopSpeed"></div>
+					<div class="title">Top Speed</div>
+				</div>
+			</div>
+			<div class="palm-row">
+				<div class="palm-row-wrapper">
+					<div x-mojo-element="CheckBox" class="left" id="dashDistTraveled"></div>
+					<div class="title">Distance Traveled</div>
+				</div>
+			</div>
+			<div class="palm-row">
+				<div class="palm-row-wrapper">
+					<div x-mojo-element="CheckBox" class="left" id="dashDistFromInit"></div>
+					<div class="title">Dist from Initial Position</div>
+				</div>
+			</div>
+			<div class="palm-row">
+				<div class="palm-row-wrapper">
+					<div x-mojo-element="CheckBox" class="left" id="dashLifeDist"></div>
+					<div class="title">Lifetime Distance</div>
+				</div>
+			</div>
+			<div class="palm-row last">
+				<div class="palm-row-wrapper">
+					<div x-mojo-element="CheckBox" class="left" id="dashTripDuration"></div>
+					<div class="title">Trip Duration</div>
+				</div>			
 			</div>
 		</div>
-		<div class="palm-row" x-mojo-touch-feedback="delayed">
-			<div class="palm-row-wrapper">
-				<div id="themeSelector" x-mojo-element="ListSelector"></div>                                                   
-			</div>
-		</div>
-		<div class="palm-row" x-mojo-touch-feedback="delayed">
-			<div class="palm-row-wrapper">
-				<div id="unitsSelector" x-mojo-element="ListSelector"></div>                                                   
-			</div>
-		</div>
-		<div class="palm-row" x-mojo-touch-feedback="delayed">
-			<div class="palm-row-wrapper">
-				<div id="backlightSelector" x-mojo-element="ListSelector"></div>
-			</div>
-		</div>
-		<div class="palm-row" x-mojo-touch-feedback="delayed">
-			<div class="palm-row-wrapper">
-				<div id="maxErrorPrefSelector" x-mojo-element="ListSelector"></div>
-			</div>
-		</div>
-		<div class="palm-row" x-mojo-touch-feedback="delayed">
-			<div class="palm-row-wrapper">
-				<div id="shakePref" x-mojo-element="ListSelector"></div>
-			</div>
-		</div>
-		<div class="palm-row" x-mojo-touch-feedback="delayed">
-			<div class="palm-row-wrapper">
-				<div id="coloredSpeedPref" x-mojo-element="ListSelector"></div>
-			</div>
-		</div>
-		<div class="palm-row" x-mojo-touch-feedback="delayed">
-			<div class="palm-row-wrapper">
-				<div id="headingPref" x-mojo-element="ListSelector"></div>
-			</div>
-		</div>
-		<div class="palm-row last" x-mojo-touch-feedback="delayed">
-			<div class="palm-row-wrapper">
-				<div id="avgSpeedPref" x-mojo-element="ListSelector"></div>   
-			</div>
-		</div>
-	</div>     	
+	</div>
 </div>
