@@ -1,7 +1,55 @@
 function PreferencesAssistant() {
 }
 
+PreferencesAssistant.prototype.dashTapped = function () {
+	dashDivider = this.controller.get('dashDivider');
+	dashDrawer = this.controller.get('dashDrawer');
+	
+	if (dashDivider.hasClassName('palm-arrow-closed')){
+		dashDivider.removeClassName('palm-arrow-closed');
+		dashDivider.addClassName('palm-arrow-expanded');
+		dashDrawer.mojo.setOpenState(true);
+	}
+	else if (dashDivider.hasClassName('palm-arrow-expanded')) {
+		dashDivider.removeClassName('palm-arrow-expanded');
+		dashDivider.addClassName('palm-arrow-closed');
+		dashDrawer.mojo.setOpenState(false);
+	}
+}
+
+PreferencesAssistant.prototype.globalTapped = function () {
+	globalDivider = this.controller.get('globalDivider');
+	globalDrawer = this.controller.get('globalDrawer');
+	
+	if (globalDivider.hasClassName('palm-arrow-closed')){
+		globalDivider.removeClassName('palm-arrow-closed');
+		globalDivider.addClassName('palm-arrow-expanded');
+		globalDrawer.mojo.setOpenState(true);
+	}
+	else if (globalDivider.hasClassName('palm-arrow-expanded')) {
+		globalDivider.removeClassName('palm-arrow-expanded');
+		globalDivider.addClassName('palm-arrow-closed');
+		globalDrawer.mojo.setOpenState(false);
+	}
+}
+
 PreferencesAssistant.prototype.setup = function(){
+	this.controller.listen("globalDivider", Mojo.Event.tap, this.globalTapped.bindAsEventListener(this));
+	this.controller.listen("dashDivider", Mojo.Event.tap, this.dashTapped.bindAsEventListener(this));
+
+	this.controller.setupWidget("globalDrawer", attrs = {
+		modelProperty: 'open',
+		unstyled: true
+	}, model = {
+		open: false
+	});
+
+	this.controller.setupWidget("dashDrawer", attrs = {
+		modelProperty: 'open',
+		unstyled: true
+	}, model = {
+		open: false
+	});
 
 	this.controller.setupWidget("dashAvgSpeed", attributes = {
 	}, model = {
@@ -298,6 +346,9 @@ PreferencesAssistant.prototype.activate = function(event) {
 PreferencesAssistant.prototype.deactivate = function(event) {
 }
 PreferencesAssistant.prototype.cleanup = function(event){
+	this.controller.stopListening("globalDivider", Mojo.Event.tap, this.globalTapped.bindAsEventListener(this));
+	this.controller.stopListening("dashDivider", Mojo.Event.tap, this.dashTapped.bindAsEventListener(this));
+
 	this.controller.stopListening("startupPref", Mojo.Event.propertyChange, this.startupPref.bindAsEventListener(this));
 	this.controller.stopListening("themeSelector", Mojo.Event.propertyChange, this.changeThemeSelector.bindAsEventListener(this));
 	this.controller.stopListening("unitsSelector", Mojo.Event.propertyChange, this.changeUnitsSelector.bindAsEventListener(this));
