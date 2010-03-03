@@ -202,7 +202,18 @@ MainAssistant.prototype.activate = function(event) {
 		}
 	);
 }
+speed = 0;
+dir = 'up';
 MainAssistant.prototype.handleServiceResponse = function(event){
+	if (speed > 70)
+		dir = 'down';
+	if (speed <= 0)
+		dir = 'up';
+	if (dir == 'up')
+		event.velocity = speed += 5;
+	else
+		event.velocity = speed -= 5;
+	
 	if (gpsDashboard.stage)
 		scenes = gpsDashboard.stage.getScenes();
 
@@ -264,7 +275,8 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 	this.controller.get('speedometerSpeed').update(this.speed(event));
 	this.controller.get('heading').update(this.heading(event));
 	this.controller.get('speedometerHeading').update(this.heading(event));
-	this.setSpeedometer(event);
+	if (!this.controller.get('speedometer').hasClassName('hidden'))
+		this.setSpeedometer(event);
 	this.controller.get('altitude').update(this.altitude(event));
 	this.controller.get('tripDuration').update(this.tripDuration());
 	if (event.errorCode == 0 && event.horizAccuracy <= gpsDashboard.maxError) {
@@ -624,9 +636,13 @@ MainAssistant.prototype.calcDist = function( point1, point2 ) {
 MainAssistant.prototype.handleActivated = function(event){
 	Mojo.Controller.getAppController().closeStage('dashboardStage');
 	gpsDashboard.stage = undefined;
+	if (!this.controller.get('speedLimit').hasClassName('hidden'))
+		this.controller.get('speedometer').removeClassName('hidden');
 }
 
 MainAssistant.prototype.handleMinimized = function (event) {
+	if (!this.controller.get('speedometer').hasClassName('hidden'))
+		this.controller.get('speedometer').addClassName('hidden');
     var f = function(stageController){
 		gpsDashboard.stage = stageController;
 		gpsDashboard.dashHidden = true;		
@@ -925,6 +941,7 @@ MainAssistant.prototype.speedLimit = function (event) {
 /*
  * Lights up the speedometer
  */
+gpsDashboard.prevRotation = 'r-30';
 MainAssistant.prototype.setSpeedometer = function(event) {
 	if (event.velocity != 0 && this.controller.get('speedometerSpeed').hasClassName('hidden'))
 		this.controller.get('speedometerSpeed').removeClassName('hidden');
@@ -938,15 +955,12 @@ MainAssistant.prototype.setSpeedometer = function(event) {
 
 	for (x = 0; x <= 160; x += 5) {
 		hashElement = 'hash' + x;
-		labelElement = 'label' + x;
 		this.controller.get(hashElement).removeClassName('redBack');
 		this.controller.get(hashElement).removeClassName('greenBack');
 		this.controller.get(hashElement).removeClassName('yellowBack');
-		this.controller.get(hashElement).addClassName('blackBack');
-		this.controller.get(speedImg).removeClassName('redBack');
-		this.controller.get(speedImg).removeClassName('greenBack');
-		this.controller.get(speedImg).removeClassName('yellowBack');
 	}
+	this.controller.get(speedImg).removeClassName('redBack');
+	this.controller.get(speedImg).removeClassName('yellowBack');
 	
 	if (gpsDashboard.units == 1)
 		bound = event.velocity * 2.23693629;
@@ -973,33 +987,25 @@ MainAssistant.prototype.setSpeedometer = function(event) {
 	if (degrees % 2 != 0)
 		degrees--;
 
-	for (x = -30; x <= 210; x++) {
-		this.controller.get(speedImg).removeClassName('r' + x);
-		this.controller.get('border').removeClassName('r' + x);
-	}
+	this.controller.get(speedImg).removeClassName(gpsDashboard.prevRotation);
+	this.controller.get('border').removeClassName(gpsDashboard.prevRotation);
 
-	this.controller.get(speedImg).addClassName('r' + degrees);
-	this.controller.get('border').addClassName('r' + degrees);
-	
+	gpsDashboard.prevRotation = 'r' + degrees;
+
+	this.controller.get(speedImg).addClassName(gpsDashboard.prevRotation);
+	this.controller.get('border').addClassName(gpsDashboard.prevRotation);
 
 	for (x = 0; x <= bound && x <= 160; x+= 5) {
 		element = 'hash' + x;
 		if (bound < gpsDashboard.speedLimit - 5) {
-			this.controller.get(element).removeClassName('blackBack');
 			this.controller.get(element).addClassName('greenBack');
-			this.controller.get(speedImg).removeClassName('blackBack');
-			this.controller.get(speedImg).addClassName('greenBack');
 		}
 		else if (bound <= gpsDashboard.speedLimit + 5) {
-			this.controller.get(element).removeClassName('blackBack');
 			this.controller.get(element).addClassName('yellowBack');
-			this.controller.get(speedImg).removeClassName('blackBack');
 			this.controller.get(speedImg).addClassName('yellowBack');
 		}
 		else {
-			this.controller.get(element).removeClassName('blackBack');
 			this.controller.get(element).addClassName('redBack');
-			this.controller.get(speedImg).removeClassName('blackBack');
 			this.controller.get(speedImg).addClassName('redBack');
 		}
 	}
