@@ -1,12 +1,10 @@
+.hidden { display: none; }
+
 /*
- * Applicatino header, set to background
+ * Application header, clock, and signal strength display
  */
-#appHeader {
-	z-index: 1;
-}
-/*
- * Clock that sits on top of the app header in landscape
- */
+#appHeader { z-index: 1; }
+
 #clock {
 	z-index: 2;
 	position: absolute;
@@ -14,10 +12,8 @@
 	left: 15px;
 	color: #e0e0e0;
 }
-/*
- * Satellite signal strength indicator
- */
-.strength {
+
+.strengthBar {
 	position: absolute;
 	width: 5px;
 	z-index: 2;
@@ -25,46 +21,37 @@
 }
 .lit { background-color: #e0e0e0; }
 
-#one {
+#strengthBarLevelOne {
 	top: 33px;
 	right: 34px;
 	height: 3px;
 }
-#two {
+#strengthBarLevelTwo {
 	top: 28px;
 	right: 28px;
 	height: 8px;
 }
-#three {
+#strengthBarLevelThree {
 	top: 23px;
 	right: 22px;
 	height: 13px;
 }
-#four {
+#strengthBarLevelFour {
 	top: 18px;
 	right: 16px;
 	height: 18px;
 }
-#five {
+#strengthBarLevelFive {
 	top: 13px;
 	right: 10px;
 	height: 23px;
 }
 
-
-.hidden { display: none; }
-/*
- * Settings for the Records section
- */
-.record { text-align: center; float: left;}
-.recordDate { float: right;}
-.recordGroup { height: 25px }
-
 /*
  * Title bar for the Current info box
  */
 #currentTitle { float: left; }
-#currentSpeedHead {
+#topSpeedHead {
 	float: left;
 	font-size: small;
 	width: 20%;
@@ -78,6 +65,7 @@
 	float: left;
 	width: 58px;
 }
+
 /*
  * Title bar for the Trip info box
  */
@@ -169,9 +157,9 @@
  * Speedometer
  */
 
-#speedometer			{ -webkit-transform: scale(1.3, 1.3); }
+#scaledSpeedometer				{ -webkit-transform: scale(1.3, 1.3); }
+#scaledSpeedometer.reverse		{ -webkit-transform: scale(-1.3, 1.3); }
 #speedometer.landscape	{ margin-left: 80px;	margin-right: 80px; }
-#speedometer.reverse	{ -webkit-transform: scale(-1.3, 1.3); }
 
 .speedCenter {
 	position: absolute;
@@ -460,3 +448,10 @@
 	height: 320;
 	width: 480;
 }
+
+/*
+ * Settings for the Records section
+ */
+.record { text-align: center; float: left;}
+.recordDate { float: right;}
+.recordGroup { height: 25px }
