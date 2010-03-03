@@ -17,27 +17,44 @@ PreferencesAssistant.prototype.dashTapped = function () {
 	}
 }
 
-PreferencesAssistant.prototype.globalTapped = function () {
-	globalDivider = this.controller.get('globalDivider');
-	globalDrawer = this.controller.get('globalDrawer');
+PreferencesAssistant.prototype.dispTapped = function () {
+	dispDivider = this.controller.get('dispDivider');
+	dispDrawer = this.controller.get('dispDrawer');
 	
-	if (globalDivider.hasClassName('palm-arrow-closed')){
-		globalDivider.removeClassName('palm-arrow-closed');
-		globalDivider.addClassName('palm-arrow-expanded');
-		globalDrawer.mojo.setOpenState(true);
+	if (dispDivider.hasClassName('palm-arrow-closed')){
+		dispDivider.removeClassName('palm-arrow-closed');
+		dispDivider.addClassName('palm-arrow-expanded');
+		dispDrawer.mojo.setOpenState(true);
 	}
-	else if (globalDivider.hasClassName('palm-arrow-expanded')) {
-		globalDivider.removeClassName('palm-arrow-expanded');
-		globalDivider.addClassName('palm-arrow-closed');
-		globalDrawer.mojo.setOpenState(false);
+	else if (dispDivider.hasClassName('palm-arrow-expanded')) {
+		dispDivider.removeClassName('palm-arrow-expanded');
+		dispDivider.addClassName('palm-arrow-closed');
+		dispDrawer.mojo.setOpenState(false);
+	}
+}
+
+PreferencesAssistant.prototype.prefTapped = function () {
+	prefDivider = this.controller.get('prefDivider');
+	prefDrawer = this.controller.get('prefDrawer');
+	
+	if (prefDivider.hasClassName('palm-arrow-closed')){
+		prefDivider.removeClassName('palm-arrow-closed');
+		prefDivider.addClassName('palm-arrow-expanded');
+		prefDrawer.mojo.setOpenState(true);
+	}
+	else if (prefDivider.hasClassName('palm-arrow-expanded')) {
+		prefDivider.removeClassName('palm-arrow-expanded');
+		prefDivider.addClassName('palm-arrow-closed');
+		prefDrawer.mojo.setOpenState(false);
 	}
 }
 
 PreferencesAssistant.prototype.setup = function(){
-	this.controller.listen("globalDivider", Mojo.Event.tap, this.globalTapped.bindAsEventListener(this));
+	this.controller.listen("prefDivider", Mojo.Event.tap, this.prefTapped.bindAsEventListener(this));
+	this.controller.listen("dispDivider", Mojo.Event.tap, this.dispTapped.bindAsEventListener(this));
 	this.controller.listen("dashDivider", Mojo.Event.tap, this.dashTapped.bindAsEventListener(this));
 
-	this.controller.setupWidget("globalDrawer", attrs = {
+	this.controller.setupWidget("prefDrawer", attrs = {
 		modelProperty: 'open',
 		unstyled: true
 	}, model = {
@@ -45,6 +62,13 @@ PreferencesAssistant.prototype.setup = function(){
 	});
 
 	this.controller.setupWidget("dashDrawer", attrs = {
+		modelProperty: 'open',
+		unstyled: true
+	}, model = {
+		open: false
+	});
+
+	this.controller.setupWidget("dispDrawer", attrs = {
 		modelProperty: 'open',
 		unstyled: true
 	}, model = {
@@ -346,8 +370,9 @@ PreferencesAssistant.prototype.activate = function(event) {
 PreferencesAssistant.prototype.deactivate = function(event) {
 }
 PreferencesAssistant.prototype.cleanup = function(event){
-	this.controller.stopListening("globalDivider", Mojo.Event.tap, this.globalTapped.bindAsEventListener(this));
+	this.controller.stopListening("prefDivider", Mojo.Event.tap, this.prefTapped.bindAsEventListener(this));
 	this.controller.stopListening("dashDivider", Mojo.Event.tap, this.dashTapped.bindAsEventListener(this));
+	this.controller.stopListening("dispDivider", Mojo.Event.tap, this.dispTapped.bindAsEventListener(this));
 
 	this.controller.stopListening("startupPref", Mojo.Event.propertyChange, this.startupPref.bindAsEventListener(this));
 	this.controller.stopListening("themeSelector", Mojo.Event.propertyChange, this.changeThemeSelector.bindAsEventListener(this));

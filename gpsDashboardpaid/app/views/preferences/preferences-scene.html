@@ -8,14 +8,14 @@
 <table class="palm-divider collapsible" x-mojo-touch-feedback="delayed">
   <tr>
       <td class="left"></td>
-      <td class="label">Global</td>
+      <td class="label">Preferences</td>
       <td class="line" width="100%"></td>
-      <td><div id="globalDivider" class="palm-arrow-closed arrow_button"></div></td>
+      <td><div id="prefDivider" class="palm-arrow-closed arrow_button"></div></td>
       <td class="right"></td>
     </tr>
  </table>
 
-<div x-mojo-element="Drawer" id="globalDrawer"> 
+<div x-mojo-element="Drawer" id="prefDrawer"> 
 	<div class="palm-group">
 		<div class="palm-group-title">Options</div>
 		<div class="palm-list">
@@ -26,37 +26,12 @@
 			</div>
 			<div class="palm-row" x-mojo-touch-feedback="delayed">
 				<div class="palm-row-wrapper">
-					<div id="themeSelector" x-mojo-element="ListSelector"></div>                                                   
-				</div>
-			</div>
-			<div class="palm-row" x-mojo-touch-feedback="delayed">
-				<div class="palm-row-wrapper">
-					<div id="unitsSelector" x-mojo-element="ListSelector"></div>                                                   
-				</div>
-			</div>
-			<div class="palm-row" x-mojo-touch-feedback="delayed">
-				<div class="palm-row-wrapper">
-					<div id="backlightSelector" x-mojo-element="ListSelector"></div>
-				</div>
-			</div>
-			<div class="palm-row" x-mojo-touch-feedback="delayed">
-				<div class="palm-row-wrapper">
 					<div id="maxErrorPrefSelector" x-mojo-element="ListSelector"></div>
 				</div>
 			</div>
 			<div class="palm-row" x-mojo-touch-feedback="delayed">
 				<div class="palm-row-wrapper">
 					<div id="shakePref" x-mojo-element="ListSelector"></div>
-				</div>
-			</div>
-			<div class="palm-row" x-mojo-touch-feedback="delayed">
-				<div class="palm-row-wrapper">
-					<div id="coloredSpeedPref" x-mojo-element="ListSelector"></div>
-				</div>
-			</div>
-			<div class="palm-row" x-mojo-touch-feedback="delayed">
-				<div class="palm-row-wrapper">
-					<div id="headingPref" x-mojo-element="ListSelector"></div>
 				</div>
 			</div>
 			<div class="palm-row last" x-mojo-touch-feedback="delayed">
@@ -71,7 +46,50 @@
 <table class="palm-divider collapsible" x-mojo-touch-feedback="delayed">
   <tr>
       <td class="left"></td>
-      <td class="label">Dashboard</td>
+      <td class="label">Display Prefs</td>
+      <td class="line" width="100%"></td>
+      <td><div id="dispDivider" class="palm-arrow-closed arrow_button"></div></td>
+      <td class="right"></td>
+    </tr>
+ </table>
+
+<div x-mojo-element="Drawer" id="dispDrawer"> 
+	<div class="palm-group">
+		<div class="palm-group-title">Options</div>
+		<div class="palm-list">
+			<div class="palm-row first" x-mojo-touch-feedback="delayed">
+				<div class="palm-row-wrapper">
+					<div id="themeSelector" x-mojo-element="ListSelector"></div>                                                   
+				</div>
+			</div>
+			<div class="palm-row" x-mojo-touch-feedback="delayed">
+				<div class="palm-row-wrapper">
+					<div id="backlightSelector" x-mojo-element="ListSelector"></div>
+				</div>
+			</div>
+			<div class="palm-row" x-mojo-touch-feedback="delayed">
+				<div class="palm-row-wrapper">
+					<div id="unitsSelector" x-mojo-element="ListSelector"></div>                                                   
+				</div>
+			</div>
+			<div class="palm-row" x-mojo-touch-feedback="delayed">
+				<div class="palm-row-wrapper">
+					<div id="coloredSpeedPref" x-mojo-element="ListSelector"></div>
+				</div>
+			</div>
+			<div class="palm-row last" x-mojo-touch-feedback="delayed">
+				<div class="palm-row-wrapper">
+					<div id="headingPref" x-mojo-element="ListSelector"></div>
+				</div>
+			</div>
+		</div>     	
+	</div>
+</div>
+
+<table class="palm-divider collapsible" x-mojo-touch-feedback="delayed">
+  <tr>
+      <td class="left"></td>
+      <td class="label">Dashboard Prefs</td>
       <td class="line" width="100%"></td>
       <td><div id="dashDivider" class="palm-arrow-closed arrow_button"></div></td>
       <td class="right"></td>
