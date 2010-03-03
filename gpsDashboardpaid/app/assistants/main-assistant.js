@@ -893,7 +893,7 @@ MainAssistant.prototype.handleReverseResponseError = function(event){
 	elements.address.removeClassName('hidden');
 	this.controller.get('address1').update(event.errorCode);
 	if (event.errorCode == 6)
-		this.controller.get('address1').update("Error: Permission Denied - You have not accepted the terms of use for GPS Services");
+		this.controller.get('address1').update("Error: Permission Denied - You have not accepted the terms of use for Google Location Services");
 	if (event.errorCode == 7)
 		this.controller.get('address1').update("Error: The application already has a pending message");
 	if (event.errorCode == 8)
