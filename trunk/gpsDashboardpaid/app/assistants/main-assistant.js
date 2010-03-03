@@ -251,17 +251,17 @@ MainAssistant.prototype.activate = function(event) {
 		}
 	);
 }
-speed = 0;
-dir = 'up';
+//speed = 0;
+//dir = 'up';
 MainAssistant.prototype.handleServiceResponse = function(event){
-	if (speed > 70)
-		dir = 'down';
-	if (speed <= 0)
-		dir = 'up';
-	if (dir == 'up')
-		event.velocity = speed += 5;
-	else
-		event.velocity = speed -= 5;
+//	if (speed > 70)
+//		dir = 'down';
+//	if (speed <= 0)
+//		dir = 'up';
+//	if (dir == 'up')
+//		event.velocity = speed += 5;
+//	else
+//		event.velocity = speed -= 5;
 
 	if (gpsDashboard.stage)
 		scenes = gpsDashboard.stage.getScenes();
