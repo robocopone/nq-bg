@@ -150,6 +150,13 @@ MainAssistant.prototype.setup = function(){
 	elements.addressInfo = this.controller.get('addressInfo');
 	elements.addressButton = this.controller.get('addressButton');
 	elements.address = this.controller.get('address');
+	elements.address1 = this.controller.get('address1');
+	elements.address2 = this.controller.get('address2');
+	
+	elements.speedometer = this.controller.get('speedometer');
+	elements.scaledSpeedometer = this.controller.get('scaledSpeedometer');
+	elements.speedometerSpeed = this.controller.get('speedometerSpeed');
+	elements.speedometerHeading = this.controller.get('speedometerHeading');
 	
 	
 	
@@ -222,7 +229,7 @@ MainAssistant.prototype.setup = function(){
 		$$('body')[0].addClassName('palm-dark');
 		$$('body')[0].removeClassName('palm-default');
 		this.controller.get('border').addClassName('dark');
-		this.controller.get('speedometerSpeed').addClassName('dark');
+		elements.speedometerSpeed.addClassName('dark');
 		this.controller.get('speedImgDark').removeClassName('hidden');
 		this.controller.get('speedImgLight').addClassName('hidden');
 	}
@@ -313,10 +320,10 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 	}
 
 	elements.speed.update(this.speed(event));
-	this.controller.get('speedometerSpeed').update(this.speed(event));
+	elements.speedometerSpeed.update(this.speed(event));
 	elements.heading.update(this.heading(event));
-	this.controller.get('speedometerHeading').update(this.heading(event));
-	if (gpsDashboard.processSpeedometer && !this.controller.get('speedometer').hasClassName('hidden'))
+	elements.speedometerHeading.update(this.heading(event));
+	if (gpsDashboard.processSpeedometer && !elements.speedometer.hasClassName('hidden'))
 		this.setSpeedometer(event);
 	elements.altitude.update(this.altitude(event));
 	elements.tripDuration.update(this.tripDuration());
@@ -725,10 +732,10 @@ MainAssistant.prototype.cleanup = function(event){
 	this.controller.stopListening(elements.address,Mojo.Event.tap, this.copyAddress.bindAsEventListener(this));
 }
 MainAssistant.prototype.reverse = function () {
-	if (this.controller.get('scaledSpeedometer').hasClassName('reverse'))
-		this.controller.get('scaledSpeedometer').removeClassName('reverse');
+	if (elements.scaledSpeedometer.hasClassName('reverse'))
+		elements.scaledSpeedometer.removeClassName('reverse');
 	else 
-		this.controller.get('scaledSpeedometer').addClassName('reverse');
+		elements.scaledSpeedometer.addClassName('reverse');
 }
 
 MainAssistant.prototype.resets = function(){
@@ -808,7 +815,7 @@ MainAssistant.prototype.handleOrientation = function( event ) {
 		elements.addressInfo.addClassName('landscape');
 		elements.initialDisplay.addClassName('landscape');
 		elements.clock.removeClassName('hidden');
-		this.controller.get('speedometer').addClassName('landscape');
+		elements.speedometer.addClassName('landscape');
 		this.controller.get('speedLimit').addClassName('landscape');
 		this.controller.get('reverse').addClassName('landscape');
 		elements.altHead.update('Alt:')
@@ -821,7 +828,7 @@ MainAssistant.prototype.handleOrientation = function( event ) {
 		elements.addressInfo.removeClassName('landscape');
 		elements.initialDisplay.removeClassName('landscape');
 		elements.clock.addClassName('hidden');
-		this.controller.get('speedometer').removeClassName('landscape');
+		elements.speedometer.removeClassName('landscape');
 		this.controller.get('speedLimit').removeClassName('landscape');
 		this.controller.get('reverse').removeClassName('landscape');
 		elements.altHead.update('Altitude:')
@@ -884,20 +891,20 @@ MainAssistant.prototype.handleReverseResponse = function( event ) {
 	gpsDashboard.address = event.address;
 	add = event.address.split(";");
 	elements.address.removeClassName('hidden');
-	this.controller.get('address1').update(add[0]);
-	this.controller.get('address2').update(add[1]);
+	elements.address1.update(add[0]);
+	elements.address2.update(add[1]);
 }
 
 MainAssistant.prototype.handleReverseResponseError = function(event){
 	elements.addressButton.mojo.deactivate();
 	elements.address.removeClassName('hidden');
-	this.controller.get('address1').update(event.errorCode);
+	elements.address1.update(event.errorCode);
 	if (event.errorCode == 6)
-		this.controller.get('address1').update("Error: Permission Denied - You have not accepted the terms of use for Google Location Services");
+		elements.address1.update("Error: Permission Denied - You have not accepted the terms of use for Google Location Services");
 	if (event.errorCode == 7)
-		this.controller.get('address1').update("Error: The application already has a pending message");
+		elements.address1.update("Error: The application already has a pending message");
 	if (event.errorCode == 8)
-		this.controller.get('address1').update("Error: The application has been temporarily blacklisted");
+		elements.address1.update("Error: The application has been temporarily blacklisted");
 }
 
 /*
@@ -956,17 +963,17 @@ MainAssistant.prototype.navHandler = function(command) {
 	if (command == 'recordKeeping')
 		this.controller.stageController.pushScene('records');
 	if (command == 'toggle') {
-		if (this.controller.get('speedometer').hasClassName('hidden')) {
+		if (elements.speedometer.hasClassName('hidden')) {
 			elements.currentInfo.addClassName('hidden');
 			elements.tripInfo.addClassName('hidden');
 			elements.addressInfo.addClassName('hidden');
-			this.controller.get('speedometer').removeClassName('hidden');
+			elements.speedometer.removeClassName('hidden');
 		}
 		else {
 			elements.currentInfo.removeClassName('hidden');
 			elements.tripInfo.removeClassName('hidden');
 			elements.addressInfo.removeClassName('hidden');
-			this.controller.get('speedometer').addClassName('hidden');
+			elements.speedometer.addClassName('hidden');
 		}
 	}
 }
@@ -978,10 +985,10 @@ MainAssistant.prototype.speedLimit = function (event) {
  * Lights up the speedometer
  */
 MainAssistant.prototype.setSpeedometer = function(event) {
-	if (event.velocity != 0 && this.controller.get('speedometerSpeed').hasClassName('hidden'))
-		this.controller.get('speedometerSpeed').removeClassName('hidden');
-	if (event.velocity == 0 && !(this.controller.get('speedometerSpeed').hasClassName('hidden')))
-		this.controller.get('speedometerSpeed').addClassName('hidden');
+	if (event.velocity != 0 && elements.speedometerSpeed.hasClassName('hidden'))
+		elements.speedometerSpeed.removeClassName('hidden');
+	if (event.velocity == 0 && !(elements.speedometerSpeed.hasClassName('hidden')))
+		elements.speedometerSpeed.addClassName('hidden');
 
 	if (gpsDashboard.theme == 'light')
 		speedImg = 'speedImgLight';
@@ -1003,16 +1010,16 @@ MainAssistant.prototype.setSpeedometer = function(event) {
 		bound = event.velocity * 3.6;
 
 	
-	this.controller.get('speedometerSpeed').removeClassName('w10');
-	this.controller.get('speedometerSpeed').removeClassName('w100');
-	this.controller.get('speedometerSpeed').removeClassName('w1000');
+	elements.speedometerSpeed.removeClassName('w10');
+	elements.speedometerSpeed.removeClassName('w100');
+	elements.speedometerSpeed.removeClassName('w1000');
 
 	if (bound > 999)
-		this.controller.get('speedometerSpeed').addClassName('w1000');
+		elements.speedometerSpeed.addClassName('w1000');
 	else if (bound > 99)
-		this.controller.get('speedometerSpeed').addClassName('w100');
+		elements.speedometerSpeed.addClassName('w100');
 	else if (bound > 9)
-		this.controller.get('speedometerSpeed').addClassName('w10');
+		elements.speedometerSpeed.addClassName('w10');
 	
 	degrees = ((3 * (bound - 20))/2).toFixed(0);
 
