@@ -1,25 +1,24 @@
+<!--  App Header w/clock and signal strength indicator -->
 <div id="appHeader" class="palm-header" x-mojo-touch-feedback="immediate">
 	<div class="palm-header-wrapper title center" >GPS Dashboard+</div>
-	<div id="one" class="strength"></div>
-	<div id="two" class="strength"></div>
-	<div id="three" class="strength"></div>
-	<div id="four" class="strength"></div>
-	<div id="five" class="strength"></div>
+	<div id="strengthBarLevelOne" class="strengthBar"></div>
+	<div id="strengthBarLevelTwo" class="strengthBar"></div>
+	<div id="strengthBarLevelThree" class="strengthBar"></div>
+	<div id="strengthBarLevelFour" class="strengthBar"></div>
+	<div id="strengthBarLevelFive" class="strengthBar"></div>
 	<div id="clock" class="hidden"></div>
 </div>
-<div id="palm-header-spacer" class="palm-header-spacer"></div>
+<div class="palm-header-spacer"></div>
 
-
-<div id="scrim">
-	<div id="spinner" x-mojo-element="Spinner"></div>
-</div>
-
+<!--  Scrim, spinner, and initial display -->
+<div id="scrim"><div id="spinner" x-mojo-element="Spinner"></div></div>
 <div id="initialDisplay">Getting GPS information...</div>
 
+<!--  Current Information -->
 <div id="currentInfo" class="palm-group hidden">
 	<div class="palm-group-title">   
 		<div id="currentTitle">Current Information</div>
-		<div id="currentSpeedHead">Top:</div>
+		<div id="topSpeedHead">Top:</div>
 		<div id="topSpeed"></div> 
 	</div>
 	<div id="speedHead" class="heading">Speed:</div>
@@ -28,6 +27,8 @@
 	<div id="altHead" class="heading">Altitude:</div>
 		<div id="altitude" class="data"></div>
 </div>
+
+<!--  Trip Information -->
 <div id="tripInfo" class="palm-group hidden">
 	<div class="palm-group-title">   
 		<div id="tripTitle">Trip Information</div>
@@ -49,71 +50,8 @@
 			<div id="lifeDist" class="data"></div>
 	</div>
 </div>
-<div id="speedometer" class="hidden">
-	<div align="center" id="speedometerSpeed" class="hidden"></div>
-	<div id="speedometerHeading"></div>
 
-	<div id="lable0" class="label">0</div>
-	<div id="lable10" class="label">10</div>
-	<div id="lable20" class="label">20</div>
-	<div id="lable30" class="label">30</div>
-	<div id="lable40" class="label">40</div>
-	<div id="lable50" class="label">50</div>
-	<div id="lable60" class="label">60</div>
-	<div id="lable70" class="label">70</div>
-	<div id="lable80" class="label">80</div>
-	<div id="lable90" class="label">90</div>
-	<div id="lable100" class="label">100</div>
-	<div id="lable110" class="label">110</div>
-	<div id="lable120" class="label">120</div>
-	<div id="lable130" class="label">130</div>
-	<div id="lable140" class="label">140</div>
-	<div id="lable150" class="label">150</div>
-	<div id="lable160" class="label">160</div>
-
-	<div id="hash0" class="hash speedCenter greenBack"></div>
-	<div id="hash5" class="hash speedCenter blackBack"></div>
-	<div id="hash10" class="hash speedCenter blackBack"></div>
-	<div id="hash15" class="hash speedCenter blackBack"></div>
-	<div id="hash20" class="hash speedCenter blackBack"></div>
-	<div id="hash25" class="hash speedCenter blackBack"></div>
-	<div id="hash30" class="hash speedCenter blackBack"></div>
-	<div id="hash35" class="hash speedCenter blackBack"></div>
-	<div id="hash40" class="hash speedCenter blackBack"></div>
-	<div id="hash45" class="hash speedCenter blackBack"></div>
-	<div id="hash50" class="hash speedCenter blackBack"></div>
-	<div id="hash55" class="hash speedCenter blackBack"></div>
-	<div id="hash60" class="hash speedCenter blackBack"></div>
-	<div id="hash65" class="hash speedCenter blackBack"></div>
-	<div id="hash70" class="hash speedCenter blackBack"></div>
-	<div id="hash75" class="hash speedCenter blackBack"></div>
-	<div id="hash80" class="hash speedCenter blackBack"></div>
-	<div id="hash85" class="hash speedCenter blackBack"></div>
-	<div id="hash90" class="hash speedCenter blackBack"></div>
-	<div id="hash95" class="hash speedCenter blackBack"></div>
-	<div id="hash100" class="hash speedCenter blackBack"></div>
-	<div id="hash105" class="hash speedCenter blackBack"></div>
-	<div id="hash110" class="hash speedCenter blackBack"></div>
-	<div id="hash115" class="hash speedCenter blackBack"></div>
-	<div id="hash120" class="hash speedCenter blackBack"></div>
-	<div id="hash125" class="hash speedCenter blackBack"></div>
-	<div id="hash130" class="hash speedCenter blackBack"></div>
-	<div id="hash135" class="hash speedCenter blackBack"></div>
-	<div id="hash140" class="hash speedCenter blackBack"></div>
-	<div id="hash145" class="hash speedCenter blackBack"></div>
-	<div id="hash150" class="hash speedCenter blackBack"></div>
-	<div id="hash155" class="hash speedCenter blackBack"></div>
-	<div id="hash160" class="hash speedCenter blackBack"></div>
-
-	<img id="speedImgLight" class="needle r-30" src="images/NeedleLight.png" alt="" />
-	<img id="speedImgDark" class="needle hidden r-30" src="images/NeedleDark.png" alt="" />
-	<div id="border" class="r-30"></div>
-</div>
-
-<div x-mojo-element="FloatPicker" id="speedLimit" class="hidden"></div>
-<div x-mojo-element="Button" id="reverse" class="hidden"></div>
-
-
+<!--  Address Information -->
 <div id="addressInfo" class="hidden">
 	<div x-mojo-element="Button" id="addressButton"></div>
 	<div id="address" class="palm-group hidden">
@@ -121,4 +59,70 @@
 		<div id="address1"></div>
 		<div id="address2"></div>
 	</div>
+</div>
+
+<!--  Speedometer Display -->
+<div id="speedometer" class="hidden">
+	<div id="scaledSpeedometer">
+		<div align="center" id="speedometerSpeed" class="hidden"></div>
+		<div id="speedometerHeading"></div>
+	
+		<div id="lable0" class="label">0</div>
+		<div id="lable10" class="label">10</div>
+		<div id="lable20" class="label">20</div>
+		<div id="lable30" class="label">30</div>
+		<div id="lable40" class="label">40</div>
+		<div id="lable50" class="label">50</div>
+		<div id="lable60" class="label">60</div>
+		<div id="lable70" class="label">70</div>
+		<div id="lable80" class="label">80</div>
+		<div id="lable90" class="label">90</div>
+		<div id="lable100" class="label">100</div>
+		<div id="lable110" class="label">110</div>
+		<div id="lable120" class="label">120</div>
+		<div id="lable130" class="label">130</div>
+		<div id="lable140" class="label">140</div>
+		<div id="lable150" class="label">150</div>
+		<div id="lable160" class="label">160</div>
+	
+		<div id="hash0" class="hash speedCenter greenBack"></div>
+		<div id="hash5" class="hash speedCenter blackBack"></div>
+		<div id="hash10" class="hash speedCenter blackBack"></div>
+		<div id="hash15" class="hash speedCenter blackBack"></div>
+		<div id="hash20" class="hash speedCenter blackBack"></div>
+		<div id="hash25" class="hash speedCenter blackBack"></div>
+		<div id="hash30" class="hash speedCenter blackBack"></div>
+		<div id="hash35" class="hash speedCenter blackBack"></div>
+		<div id="hash40" class="hash speedCenter blackBack"></div>
+		<div id="hash45" class="hash speedCenter blackBack"></div>
+		<div id="hash50" class="hash speedCenter blackBack"></div>
+		<div id="hash55" class="hash speedCenter blackBack"></div>
+		<div id="hash60" class="hash speedCenter blackBack"></div>
+		<div id="hash65" class="hash speedCenter blackBack"></div>
+		<div id="hash70" class="hash speedCenter blackBack"></div>
+		<div id="hash75" class="hash speedCenter blackBack"></div>
+		<div id="hash80" class="hash speedCenter blackBack"></div>
+		<div id="hash85" class="hash speedCenter blackBack"></div>
+		<div id="hash90" class="hash speedCenter blackBack"></div>
+		<div id="hash95" class="hash speedCenter blackBack"></div>
+		<div id="hash100" class="hash speedCenter blackBack"></div>
+		<div id="hash105" class="hash speedCenter blackBack"></div>
+		<div id="hash110" class="hash speedCenter blackBack"></div>
+		<div id="hash115" class="hash speedCenter blackBack"></div>
+		<div id="hash120" class="hash speedCenter blackBack"></div>
+		<div id="hash125" class="hash speedCenter blackBack"></div>
+		<div id="hash130" class="hash speedCenter blackBack"></div>
+		<div id="hash135" class="hash speedCenter blackBack"></div>
+		<div id="hash140" class="hash speedCenter blackBack"></div>
+		<div id="hash145" class="hash speedCenter blackBack"></div>
+		<div id="hash150" class="hash speedCenter blackBack"></div>
+		<div id="hash155" class="hash speedCenter blackBack"></div>
+		<div id="hash160" class="hash speedCenter blackBack"></div>
+	
+		<img id="speedImgLight" class="needle r-30" src="images/NeedleLight.png" alt="" />
+		<img id="speedImgDark" class="needle hidden r-30" src="images/NeedleDark.png" alt="" />
+		<div id="border" class="r-30"></div>
+	</div>
+	<div x-mojo-element="FloatPicker" id="speedLimit"></div>
+	<div x-mojo-element="Button" id="reverse"></div>
 </div>

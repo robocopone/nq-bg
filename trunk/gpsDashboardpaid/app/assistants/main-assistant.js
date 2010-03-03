@@ -24,7 +24,10 @@ gpsDashboard.alltimeLow.data = {altitude: 15000};
 gpsDashboard.lifeDist = 0;						// Lifetime distance traveled
 gpsDashboard.initialLoc = undefined;			// Inital Location
 gpsDashboard.prevLoc = undefined;				// Previous location
+gpsDashboard.prevRotation = 'r-30';				// Preveious rotation of the needle
 gpsDashboard.speedLimit = 55;
+gpsDashboard.processSpeedometer = true;
+
 
 gpsDashboard.dashAvgSpeed = true;
 gpsDashboard.dashTopSpeed = false;
@@ -112,28 +115,64 @@ function MainAssistant() {}
  * 	Main Scene Setup
  */
 MainAssistant.prototype.setup = function(){
+	// Div Elements
+	elements = {};
+	
+	elements.document = this.controller.document;
+	
+	elements.strengthBarLevelOne = this.controller.get('strengthBarLevelOne');
+	elements.strengthBarLevelTwo = this.controller.get('strengthBarLevelTwo');
+	elements.strengthBarLevelThree = this.controller.get('strengthBarLevelThree');
+	elements.strengthBarLevelFour = this.controller.get('strengthBarLevelFour');
+	elements.strengthBarLevelFive = this.controller.get('strengthBarLevelFive');
+	elements.clock = this.controller.get('clock');
+	
+	elements.scrim = this.controller.get('scrim');
+	elements.spinner = this.controller.get('spinner');
+	elements.initialDisplay = this.controller.get('initialDisplay');
+
+	elements.currentInfo = this.controller.get('currentInfo');	
+	elements.topSpeed = this.controller.get('topSpeed');
+	elements.speed = this.controller.get('speed');
+	elements.heading = this.controller.get('heading');
+	elements.altHead = this.controller.get('altHead');
+	elements.altitude = this.controller.get('altitude');
+	
+	elements.tripInfo = this.controller.get('tripInfo');
+	elements.tripDuration = this.controller.get('tripDuration');
+	elements.lowAccuracy = this.controller.get('lowAccuracy');
+	elements.horizAccuracy = this.controller.get('horizAccuracy');
+	elements.avgSpeed = this.controller.get('avgSpeed');
+	elements.distTraveled = this.controller.get('distTraveled');
+	elements.distFromInit = this.controller.get('distFromInit');
+	elements.lifeDist = this.controller.get('lifeDist');
+	
+	elements.addressInfo = this.controller.get('addressInfo');
+	elements.addressButton = this.controller.get('addressButton');
+	elements.address = this.controller.get('address');
+	
+	
+	
 	gpsDashboard.cookie.initialize();
 	
+	// Allow landscape mode if screen height >= 480 (Pre only)
 	if (this.controller.stageController.setWindowOrientation &&
-		Mojo.Environment.DeviceInfo.screenHeight >= 480) 
+	Mojo.Environment.DeviceInfo.screenHeight >= 480) 
 		this.controller.stageController.setWindowOrientation("free");
-	this.controller.listen(document, 'orientationchange', this.handleOrientation.bindAsEventListener(this));
-	this.controller.listen(document, 'shakestart', this.handleShake.bindAsEventListener(this));
 	
 	// Scrim and activity spinner
-	this.controller.setupWidget("spinner", this.spinnerAttr = {
+	this.controller.setupWidget("spinner", spinnerAttr = {
 		spinnerSize: 'large'
-	}, this.model = {
+	}, model = {
 		spinning: true
 	});
-	this.scrim = Mojo.View.createScrim(this.controller.document, {
-		scrimClass: 'palm-scrim'
-	});
-	this.controller.get('scrim').appendChild(this.scrim).appendChild(this.controller.get('spinner'));
+
+	this.scrim = Mojo.View.createScrim(elements.document, { scrimClass: 'palm-scrim' });
+	elements.scrim.appendChild(this.scrim).appendChild(elements.spinner);
 
 	// Address button widget
-	this.addressButtonModel = {				// Handles enabling the address
-		buttonLabel: 'Get Address',					// button
+	this.addressButtonModel = {
+		buttonLabel: 'Get Address',
 		buttonClass: 'affirmative',
 		disabled: true
 	}
@@ -159,13 +198,16 @@ MainAssistant.prototype.setup = function(){
 		value: gpsDashboard.speedLimit
 	});
 
-	this.controller.listen(this.controller.get('addressButton'), Mojo.Event.tap, this.getAddress.bindAsEventListener(this));
+	this.controller.listen(elements.document, 'orientationchange', this.handleOrientation.bindAsEventListener(this));
+	this.controller.listen(elements.document, 'shakestart', this.handleShake.bindAsEventListener(this));
+
+	this.controller.listen(elements.addressButton, Mojo.Event.tap, this.getAddress.bindAsEventListener(this));
 	this.controller.listen(this.controller.get('reverse'), Mojo.Event.tap, this.reverse.bindAsEventListener(this));
-	this.controller.listen(this.controller.get('currentInfo'),Mojo.Event.tap, this.resets.bindAsEventListener(this));
-	this.controller.listen(this.controller.get('tripInfo'),Mojo.Event.tap, this.resets.bindAsEventListener(this));
+	this.controller.listen(elements.currentInfo,Mojo.Event.tap, this.resets.bindAsEventListener(this));
+	this.controller.listen(elements.tripInfo,Mojo.Event.tap, this.resets.bindAsEventListener(this));
 	this.controller.listen(this.controller.get('appHeader'),Mojo.Event.tap, this.nav.bindAsEventListener(this));
 	this.controller.listen(this.controller.get('speedLimit'),Mojo.Event.propertyChange, this.speedLimit.bindAsEventListener(this));
-	this.controller.listen(this.controller.get('address'),Mojo.Event.tap, this.copyAddress.bindAsEventListener(this));
+	this.controller.listen(elements.address,Mojo.Event.tap, this.copyAddress.bindAsEventListener(this));
 	this.controller.listen(this.controller.stageController.document, Mojo.Event.stageDeactivate, this.handleMinimized.bindAsEventListener(this));
 	this.controller.listen(this.controller.stageController.document, Mojo.Event.stageActivate, this.handleActivated.bindAsEventListener(this));
 	
@@ -202,31 +244,31 @@ MainAssistant.prototype.activate = function(event) {
 		}
 	);
 }
-//speed = 0;
-//dir = 'up';
+speed = 0;
+dir = 'up';
 MainAssistant.prototype.handleServiceResponse = function(event){
-//	if (speed > 70)
-//		dir = 'down';
-//	if (speed <= 0)
-//		dir = 'up';
-//	if (dir == 'up')
-//		event.velocity = speed += 5;
-//	else
-//		event.velocity = speed -= 5;
-	
+	if (speed > 70)
+		dir = 'down';
+	if (speed <= 0)
+		dir = 'up';
+	if (dir == 'up')
+		event.velocity = speed += 5;
+	else
+		event.velocity = speed -= 5;
+
 	if (gpsDashboard.stage)
 		scenes = gpsDashboard.stage.getScenes();
 
-	this.controller.get('clock').update(Mojo.Format.formatDate(new Date(), { time: 'medium' }));
+	elements.clock.update(Mojo.Format.formatDate(new Date(), { time: 'medium' }));
 
 	// Remove initial display and show normal display
-	if (this.controller.get('currentInfo').hasClassName('hidden') &&
-		!(this.controller.get('initialDisplay')).hasClassName('hidden')) {
-		this.controller.get('initialDisplay').addClassName('hidden');
+	if (elements.currentInfo.hasClassName('hidden') &&
+		!elements.initialDisplay.hasClassName('hidden')) {
+		elements.initialDisplay.addClassName('hidden');
 		this.scrim.hide();
-		this.controller.get('currentInfo').removeClassName('hidden');
-		this.controller.get('tripInfo').removeClassName('hidden');
-		this.controller.get('addressInfo').removeClassName('hidden');
+		elements.currentInfo.removeClassName('hidden');
+		elements.tripInfo.removeClassName('hidden');
+		elements.addressInfo.removeClassName('hidden');
 	}
 
 	if (!gpsDashboard.initialLoc && event.horizAccuracy <= gpsDashboard.maxError) 
@@ -237,7 +279,7 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 		if (gpsDashboard.hidden) {
 			gpsDashboard.hidden = false;
 			this.controller.get('tripInfoData').removeClassName('hidden');
-			this.controller.get('lowAccuracy').addClassName('hidden');
+			elements.lowAccuracy.addClassName('hidden');
 		}
 		if (gpsDashboard.stage && gpsDashboard.dashHidden){
 			gpsDashboard.dashHidden = false;
@@ -250,7 +292,7 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 		if (!gpsDashboard.hidden) {
 			gpsDashboard.hidden = true;
 			this.controller.get('tripInfoData').addClassName('hidden');
-			this.controller.get('lowAccuracy').removeClassName('hidden');
+			elements.lowAccuracy.removeClassName('hidden');
 		}
 		if (gpsDashboard.stage && !gpsDashboard.dashHidden) {
 			gpsDashboard.dashHidden = true;
@@ -259,7 +301,7 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 		}
 	}
 
-	this.controller.get('horizAccuracy').update("Horizontal Error = " + event.horizAccuracy.toFixed(1) + "m > " + gpsDashboard.maxError + "m");
+	elements.horizAccuracy.update("Horizontal Error = " + event.horizAccuracy.toFixed(1) + "m > " + gpsDashboard.maxError + "m");
 	this.strengthBar(event);
 
 	if (gpsDashboard.stage) {
@@ -270,24 +312,23 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 			scenes[0].get('dashTripDuration').update(this.tripDuration(event));
 	}
 
-	this.controller.get('speed').update(this.speed(event));
-//	this.controller.get('speed').update(this.calcSpeed(event));
+	elements.speed.update(this.speed(event));
 	this.controller.get('speedometerSpeed').update(this.speed(event));
-	this.controller.get('heading').update(this.heading(event));
+	elements.heading.update(this.heading(event));
 	this.controller.get('speedometerHeading').update(this.heading(event));
-	if (!this.controller.get('speedometer').hasClassName('hidden'))
+	if (gpsDashboard.processSpeedometer && !this.controller.get('speedometer').hasClassName('hidden'))
 		this.setSpeedometer(event);
-	this.controller.get('altitude').update(this.altitude(event));
-	this.controller.get('tripDuration').update(this.tripDuration());
+	elements.altitude.update(this.altitude(event));
+	elements.tripDuration.update(this.tripDuration());
 	if (event.errorCode == 0 && event.horizAccuracy <= gpsDashboard.maxError) {
 		this.calcAvgSpeed(event);
 		this.calcDistTraveled(event);
 		this.calcLifeDist(event);
-		this.controller.get('avgSpeed').update(this.avgSpeed(event));
-		this.controller.get('topSpeed').update(this.topSpeed(event));
-		this.controller.get('distTraveled').update(this.distTraveled(event));
-		this.controller.get('distFromInit').update(this.distFromInit(event));
-		this.controller.get('lifeDist').update(this.lifeDist(event));
+		elements.avgSpeed.update(this.avgSpeed(event));
+		elements.topSpeed.update(this.topSpeed(event));
+		elements.distTraveled.update(this.distTraveled(event));
+		elements.distFromInit.update(this.distFromInit(event));
+		elements.lifeDist.update(this.lifeDist(event));
 		if (gpsDashboard.stage) {
 			if (gpsDashboard.dashAvgSpeed)
 				scenes[0].get('dashAvgSpeed').update(this.avgSpeed(event));
@@ -345,22 +386,22 @@ MainAssistant.prototype.calcSpeed = function( event ){
  * Updates the signal strength indicator
  */
 MainAssistant.prototype.strengthBar = function (event) {
-	this.controller.get('one').removeClassName('lit');
-	this.controller.get('two').removeClassName('lit');
-	this.controller.get('three').removeClassName('lit');
-	this.controller.get('four').removeClassName('lit');
-	this.controller.get('five').removeClassName('lit');
+	elements.strengthBarLevelOne.removeClassName('lit');
+	elements.strengthBarLevelTwo.removeClassName('lit');
+	elements.strengthBarLevelThree.removeClassName('lit');
+	elements.strengthBarLevelFour.removeClassName('lit');
+	elements.strengthBarLevelFive.removeClassName('lit');
 	
 	if (event.horizAccuracy <= 1500)
-		this.controller.get('one').addClassName('lit');
+		elements.strengthBarLevelOne.addClassName('lit');
 	if (event.horizAccuracy <= 500)
-		this.controller.get('two').addClassName('lit');
+		elements.strengthBarLevelTwo.addClassName('lit');
 	if (event.horizAccuracy <= 100)
-		this.controller.get('three').addClassName('lit');
+		elements.strengthBarLevelThree.addClassName('lit');
 	if (event.horizAccuracy <= gpsDashboard.maxError)
-		this.controller.get('four').addClassName('lit');
+		elements.strengthBarLevelFour.addClassName('lit');
 	if (event.horizAccuracy <= 5)
-		this.controller.get('five').addClassName('lit');
+		elements.strengthBarLevelFive.addClassName('lit');
 }
 
 /*
@@ -399,17 +440,17 @@ MainAssistant.prototype.speed = function(event){
 
 	if (gpsDashboard.coloredSpeedPref == 'true') {
 		if (avg < event.velocity) {
-			this.controller.get('speed').removeClassName('red');
-			this.controller.get('speed').addClassName('green');
+			elements.speed.removeClassName('red');
+			elements.speed.addClassName('green');
 		}
 		if (avg >= event.velocity) {
-			this.controller.get('speed').removeClassName('green');
-			this.controller.get('speed').addClassName('red');
+			elements.speed.removeClassName('green');
+			elements.speed.addClassName('red');
 		}
 	}
 	else {
-		this.controller.get('speed').removeClassName('red');
-		this.controller.get('speed').removeClassName('green');
+		elements.speed.removeClassName('red');
+		elements.speed.removeClassName('green');
 	}
 		
 	if (gpsDashboard.units == 1)
@@ -636,13 +677,11 @@ MainAssistant.prototype.calcDist = function( point1, point2 ) {
 MainAssistant.prototype.handleActivated = function(event){
 	Mojo.Controller.getAppController().closeStage('dashboardStage');
 	gpsDashboard.stage = undefined;
-	if (!this.controller.get('speedLimit').hasClassName('hidden'))
-		this.controller.get('speedometer').removeClassName('hidden');
+	gpsDashboard.processSpeedometer = true;
 }
 
 MainAssistant.prototype.handleMinimized = function (event) {
-	if (!this.controller.get('speedometer').hasClassName('hidden'))
-		this.controller.get('speedometer').addClassName('hidden');
+	gpsDashboard.processSpeedometer = false;
     var f = function(stageController){
 		gpsDashboard.stage = stageController;
 		gpsDashboard.dashHidden = true;		
@@ -672,29 +711,30 @@ MainAssistant.prototype.cleanup = function(event){
 	this.trackingHandle.cancel();
 	gpsDashboard.cookie.storeCookie();
 
+	this.controller.stopListening(elements.document, 'orientationchange', this.handleOrientation.bindAsEventListener(this));
+	this.controller.stopListening(elements.document, 'shakestart', this.handleShake.bindAsEventListener(this));
+
 	this.controller.stopListening(this.controller.get('reverse'), Mojo.Event.tap, this.reverse.bindAsEventListener(this));
-	this.controller.stopListening(this.controller.get('addressButton'), Mojo.Event.tap, this.getAddress.bindAsEventListener(this));
-	this.controller.stopListening(document, 'orientationchange', this.handleOrientation.bindAsEventListener(this));
-	this.controller.stopListening(this.controller.get('tripInfo'),Mojo.Event.tap, this.resets.bindAsEventListener(this));
-	this.controller.stopListening(this.controller.get('currentInfo'),Mojo.Event.tap, this.resets.bindAsEventListener(this));
+	this.controller.stopListening(elements.addressButton, Mojo.Event.tap, this.getAddress.bindAsEventListener(this));
+	this.controller.stopListening(elements.tripInfo,Mojo.Event.tap, this.resets.bindAsEventListener(this));
+	this.controller.stopListening(elements.currentInfo,Mojo.Event.tap, this.resets.bindAsEventListener(this));
 	this.controller.stopListening(this.controller.get('appHeader'),Mojo.Event.tap, this.nav.bindAsEventListener(this));
-	this.controller.stopListening(document, 'shakestart', this.handleShake.bindAsEventListener(this));
 	this.controller.stopListening(this.controller.get('speedLimit'),Mojo.Event.propertyChange, this.speedLimit.bindAsEventListener(this));
 	this.controller.stopListening(this.controller.stageController.document, Mojo.Event.stageDeactivate, this.handleMinimized.bindAsEventListener(this));
 	this.controller.stopListening(this.controller.stageController.document, Mojo.Event.stageActivate, this.handleActivated.bindAsEventListener(this));
-	this.controller.stopListening(this.controller.get('address'),Mojo.Event.tap, this.copyAddress.bindAsEventListener(this));
+	this.controller.stopListening(elements.address,Mojo.Event.tap, this.copyAddress.bindAsEventListener(this));
 }
 MainAssistant.prototype.reverse = function () {
-	if (this.controller.get('speedometer').hasClassName('reverse'))
-		this.controller.get('speedometer').removeClassName('reverse');
+	if (this.controller.get('scaledSpeedometer').hasClassName('reverse'))
+		this.controller.get('scaledSpeedometer').removeClassName('reverse');
 	else 
-		this.controller.get('speedometer').addClassName('reverse');
+		this.controller.get('scaledSpeedometer').addClassName('reverse');
 }
 
 MainAssistant.prototype.resets = function(){
 	this.controller.popupSubmenu({
 		onChoose: this.resetHandler,
-		placeNear: this.controller.get('currentInfo'),
+		placeNear: elements.currentInfo,
 		items: [{
 			label: 'Reset All',
 			command: 'reset-all',
@@ -763,30 +803,30 @@ MainAssistant.prototype.handleOrientation = function( event ) {
 		return;
 
 	if (event.position == 4 || event.position == 5) {
-		this.controller.get('currentInfo').addClassName('landscape');
-		this.controller.get('tripInfo').addClassName('landscape');
-		this.controller.get('addressInfo').addClassName('landscape');
-		this.controller.get('initialDisplay').addClassName('landscape');
-		this.controller.get('clock').removeClassName('hidden');
+		elements.currentInfo.addClassName('landscape');
+		elements.tripInfo.addClassName('landscape');
+		elements.addressInfo.addClassName('landscape');
+		elements.initialDisplay.addClassName('landscape');
+		elements.clock.removeClassName('hidden');
 		this.controller.get('speedometer').addClassName('landscape');
 		this.controller.get('speedLimit').addClassName('landscape');
 		this.controller.get('reverse').addClassName('landscape');
-		this.controller.get('altHead').update('Alt:')
-		this.controller.get('altHead').addClassName('landscape');
-		this.controller.get('altitude').addClassName('landscape');
+		elements.altHead.update('Alt:')
+		elements.altHead.addClassName('landscape');
+		elements.altitude.addClassName('landscape');
 	}	
 	if (event.position == 2 || event.position == 3) {
-		this.controller.get('currentInfo').removeClassName('landscape');
-		this.controller.get('tripInfo').removeClassName('landscape');
-		this.controller.get('addressInfo').removeClassName('landscape');
-		this.controller.get('initialDisplay').removeClassName('landscape');
-		this.controller.get('clock').addClassName('hidden');
+		elements.currentInfo.removeClassName('landscape');
+		elements.tripInfo.removeClassName('landscape');
+		elements.addressInfo.removeClassName('landscape');
+		elements.initialDisplay.removeClassName('landscape');
+		elements.clock.addClassName('hidden');
 		this.controller.get('speedometer').removeClassName('landscape');
 		this.controller.get('speedLimit').removeClassName('landscape');
 		this.controller.get('reverse').removeClassName('landscape');
-		this.controller.get('altHead').update('Altitude:')
-		this.controller.get('altHead').removeClassName('landscape');
-		this.controller.get('altitude').removeClassName('landscape');
+		elements.altHead.update('Altitude:')
+		elements.altHead.removeClassName('landscape');
+		elements.altitude.removeClassName('landscape');
 	}
 }
 
@@ -840,17 +880,17 @@ MainAssistant.prototype.getAddress = function(){
 }
 
 MainAssistant.prototype.handleReverseResponse = function( event ) {
-	this.controller.get('addressButton').mojo.deactivate();
+	elements.addressButton.mojo.deactivate();
 	gpsDashboard.address = event.address;
 	add = event.address.split(";");
-	this.controller.get('address').removeClassName('hidden');
+	elements.address.removeClassName('hidden');
 	this.controller.get('address1').update(add[0]);
 	this.controller.get('address2').update(add[1]);
 }
 
 MainAssistant.prototype.handleReverseResponseError = function(event){
-	this.controller.get('addressButton').mojo.deactivate();
-	this.controller.get('address').removeClassName('hidden');
+	elements.addressButton.mojo.deactivate();
+	elements.address.removeClassName('hidden');
 	this.controller.get('address1').update(event.errorCode);
 	if (event.errorCode == 6)
 		this.controller.get('address1').update("Error: Permission Denied - You have not accepted the terms of use for GPS Services");
@@ -917,20 +957,16 @@ MainAssistant.prototype.navHandler = function(command) {
 		this.controller.stageController.pushScene('records');
 	if (command == 'toggle') {
 		if (this.controller.get('speedometer').hasClassName('hidden')) {
-			this.controller.get('currentInfo').addClassName('hidden');
-			this.controller.get('tripInfo').addClassName('hidden');
-			this.controller.get('addressInfo').addClassName('hidden');
+			elements.currentInfo.addClassName('hidden');
+			elements.tripInfo.addClassName('hidden');
+			elements.addressInfo.addClassName('hidden');
 			this.controller.get('speedometer').removeClassName('hidden');
-			this.controller.get('speedLimit').removeClassName('hidden');
-			this.controller.get('reverse').removeClassName('hidden');
 		}
 		else {
-			this.controller.get('currentInfo').removeClassName('hidden');
-			this.controller.get('tripInfo').removeClassName('hidden');
-			this.controller.get('addressInfo').removeClassName('hidden');
+			elements.currentInfo.removeClassName('hidden');
+			elements.tripInfo.removeClassName('hidden');
+			elements.addressInfo.removeClassName('hidden');
 			this.controller.get('speedometer').addClassName('hidden');
-			this.controller.get('speedLimit').addClassName('hidden');
-			this.controller.get('reverse').addClassName('hidden');
 		}
 	}
 }
@@ -941,7 +977,6 @@ MainAssistant.prototype.speedLimit = function (event) {
 /*
  * Lights up the speedometer
  */
-gpsDashboard.prevRotation = 'r-30';
 MainAssistant.prototype.setSpeedometer = function(event) {
 	if (event.velocity != 0 && this.controller.get('speedometerSpeed').hasClassName('hidden'))
 		this.controller.get('speedometerSpeed').removeClassName('hidden');
@@ -1014,7 +1049,7 @@ MainAssistant.prototype.setSpeedometer = function(event) {
 MainAssistant.prototype.copyAddress = function () {
 	this.controller.popupSubmenu({
 		onChoose: this.copyHandler,
-		placeNear: this.controller.get('address'),
+		placeNear: elements.address,
 		items: [{
 			label: 'Copy to Clipboard',
 			command: 'copy',
