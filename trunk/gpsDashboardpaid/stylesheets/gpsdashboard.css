@@ -182,12 +182,8 @@
 	z-index: 2;
 	width: 20px;
 	height: 5px;
+	background-color: black;
 }
-
-.blackBack { background-color: black; }
-.redBack { background-color: red; }
-.yellowBack { background-color: yellow; }
-.greenBack { background-color: green; }
 
 .needle {
 	z-index: -7;
@@ -195,7 +191,13 @@
 	top: 117px;
 	left: 49px;
 	-webkit-transform-origin: right;
+	background-color: green;
 }
+
+.redBack { background-color: red; }
+.yellowBack { background-color: yellow; }
+.greenBack { background-color: green; }
+
 #border {
 	z-index: -6;
 	border: solid;
