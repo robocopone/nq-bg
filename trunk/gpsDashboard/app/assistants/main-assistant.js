@@ -90,7 +90,8 @@ MainAssistant.prototype.setup = function(){
 	this.addressButton = this.controller.setupWidget('addressButton', atts = {
 		type: Mojo.Widget.activityButton
 	}, this.addressButtonModel);
-	
+
+	this.controller.listen(this.controller.get('address'), Mojo.Event.tap, this.copyAddress.bindAsEventListener(this));
 	this.controller.listen(this.controller.get('addressButton'), Mojo.Event.tap, this.getAddress.bindAsEventListener(this));
 	this.controller.listen(this.controller.get('tripInfo'),Mojo.Event.tap, this.resets.bindAsEventListener(this));
 	if (gpsDashboard.initialRun)
@@ -395,6 +396,7 @@ MainAssistant.prototype.deactivate = function(event) {
  * Also stores the cookie
  */
 MainAssistant.prototype.cleanup = function(event){
+	this.controller.stopListening(this.controller.get('address'),Mojo.Event.tap, this.copyAddress.bindAsEventListener(this));
 	this.controller.stopListening(this.controller.get('addressButton'), Mojo.Event.tap, this.getAddress.bindAsEventListener(this));
 	this.controller.stopListening(document, 'orientationchange', this.handleOrientation.bindAsEventListener(this));
 	this.controller.stopListening(this.controller.get('tripInfo'),Mojo.Event.tap, this.resets.bindAsEventListener(this));
@@ -405,6 +407,26 @@ MainAssistant.prototype.cleanup = function(event){
 	this.trackingHandle.cancel();
 	gpsDashboard.cookie.storeCookie();
 }
+
+MainAssistant.prototype.copyAddress = function () {
+	this.controller.popupSubmenu({
+		onChoose: this.copyHandler,
+		placeNear: this.controller.get('address'),
+		items: [{
+			label: 'Copy to Clipboard',
+			command: 'copy',
+		}]
+	});
+}
+
+/*
+ * Reset menu that pops up when trip info is tapped
+ */
+MainAssistant.prototype.copyHandler = function(command){
+	if (command == 'copy')
+		this.controller.stageController.setClipboard(gpsDashboard.address);
+}
+
 
 MainAssistant.prototype.resets = function(){
 	this.controller.popupSubmenu({
@@ -528,6 +550,7 @@ MainAssistant.prototype.getAddress = function(){
 
 MainAssistant.prototype.handleReverseResponse = function( event ) {
 	this.controller.get('addressButton').mojo.deactivate();
+	gpsDashboard.address = event.address;
 
 	add = event.address.split(";");
 	this.controller.get('address').removeClassName('hidden');
