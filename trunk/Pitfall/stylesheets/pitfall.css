@@ -10,12 +10,13 @@
 	width: 13px;
 }
 .layer {
+	position: absolute;
 	height: 20px;
 	border: solid;
 	border-color: blue;
 	border-top: 0px;
 	border-bottom: 0px;
-	-webkit-transition-property: border;
+	-webkit-transition-property: top;
 	-webkit-transition-duration: .25s;
 }
 .hidden { display: none }
