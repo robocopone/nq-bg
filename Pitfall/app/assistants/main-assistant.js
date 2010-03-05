@@ -15,6 +15,14 @@ MainAssistant.prototype.setup = function(){
 		top: (screenHeight * .7) + 'px',
 		left: ((screenWidth / 2) - 50) + 'px' 
 	})
+	layer = {}
+	for (x = 1; x <= 16; x++){
+		layer[x] = this.controller.get('layer' + x);
+		layer[x].setStyle({
+			top: 20 * x
+		})
+	}
+		
 	// Go Button Widget
 	goButtonModel = {
 		buttonLabel: 'Go!',
@@ -133,6 +141,11 @@ MainAssistant.prototype.bumpUp = function () {
 		})		
 	}
 */
+	for (x = 2; x <= lastSlot; x++){
+		layer[x].setStyle({
+			top: parseInt(layer[x].getStyle('top')) + 20
+		})
+	}
 }
 
 MainAssistant.prototype.checkWidth = function (num) {
