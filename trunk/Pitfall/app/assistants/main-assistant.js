@@ -3,23 +3,22 @@ function MainAssistant() {
 
 MainAssistant.prototype.setup = function(){
 	goButton = this.controller.get('goButton');
-	layer4 = this.controller.get('layer4');
 	ship = this.controller.get('ship');
 	
 	
 	screenWidth = Mojo.Environment.DeviceInfo.screenHeight;
 	screenHeight = Mojo.Environment.DeviceInfo.screenWidth;
-	lastSlot = Math.floor(screenHeight / 20);
+	lastSlot = Math.floor(screenHeight / 20) + 2;
 
 	goButton.setStyle({
 		top: (screenHeight * .7) + 'px',
 		left: ((screenWidth / 2) - 50) + 'px' 
 	})
 	layer = {}
-	for (x = 1; x <= 16; x++){
+	for (x = 1; x <= lastSlot; x++){
 		layer[x] = this.controller.get('layer' + x);
 		layer[x].setStyle({
-			top: (20 * (x-1)) + 'px',
+			top: (20 * (x-2)) + 'px',
 		})
 	}
 		
@@ -79,8 +78,8 @@ MainAssistant.prototype.doMoveShip = function(event) {
 
 MainAssistant.prototype.moveShip = function (direction, magnitude) {
 	position = this.getShipPosition();
-	leftBound = this.getLeftBound(layer[4]);
-	rightBound = this.getRightBound(layer[4]);
+	leftBound = this.getLeftBound(layer[5]);
+	rightBound = this.getRightBound(layer[5]);
 	for (x = 0; x < magnitude; x++) {
 		if (direction == 'left' && position - 13 > leftBound)
 			position -= 13;
@@ -96,8 +95,8 @@ MainAssistant.prototype.moveShip = function (direction, magnitude) {
  * Iterative function
  */
 MainAssistant.prototype.doGo = function() {
-	this.bumpUp();
-	this.fillSlot(lastSlot, lastSlot)
+	currLastLayer = this.bumpUp();
+	this.fillSlot(currLastLayer, currLastLayer)
 	this.go();
 }
 
@@ -125,17 +124,20 @@ MainAssistant.prototype.fillSlot = function (start, finish){
 MainAssistant.prototype.bumpUp = function () {
 	for (x = 1; x <= lastSlot; x++){
 		topp = this.getTop(layer[x]);
-		if (topp == 0) {
-			layer[x].setStyle({
-				top: (lastSlot - 1) * 20 + 'px'
-			})
+		if (topp == -20) {
+			layer[x].addClassName('hidden');
+			layer[x].setStyle({ top: (lastSlot - 2) * 20 + 'px' })
+		}
+		else if (topp == (lastSlot - 2) * 20) {
+			layer[x].removeClassName('hidden');
+			layer[x].setStyle({ top: (topp - 20) + 'px' })
+			currLastLayer = x;
 		}
 		else {
-			layer[x].setStyle({
-				top: (topp - 20) + 'px'
-			})
+			layer[x].setStyle({ top: (topp - 20) + 'px' })
 		}
 	}
+	return currLastLayer;
 }
 MainAssistant.prototype.getTop = function (layer) {
 	return parseInt(layer.getStyle('top'));
@@ -178,8 +180,8 @@ MainAssistant.prototype.getShipPosition = function () {
 	return parseInt(ship.getStyle('left'));
 }
 MainAssistant.prototype.initShip = function () {
-	currWidth = this.getRightBound(layer4) - this.getLeftBound(layer4);
-	currPosition = this.getLeftBound(layer4) + Math.floor(currWidth / 2);
+	currWidth = this.getRightBound(layer[5]) - this.getLeftBound(layer[5]);
+	currPosition = this.getLeftBound(layer[5]) + Math.floor(currWidth / 2);
 	ship.setStyle({
 		left: (currPosition-6) + 'px'
 	})
