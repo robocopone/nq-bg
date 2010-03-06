@@ -19,7 +19,7 @@ MainAssistant.prototype.setup = function(){
 	for (x = 1; x <= 16; x++){
 		layer[x] = this.controller.get('layer' + x);
 		layer[x].setStyle({
-			top: 20 * x
+			top: (20 * (x-1)) + 'px',
 		})
 	}
 		
@@ -37,17 +37,6 @@ MainAssistant.prototype.setup = function(){
 
 	this.controller.listen(document, 'acceleration', this.doMoveShip.bindAsEventListener(this));
 	this.controller.listen(goButton, Mojo.Event.tap, this.tapGoButton.bindAsEventListener(this));
-}
-
-MainAssistant.prototype.cleanup = function(event) {
-	this.controller.stageController.setWindowProperties({blockScreenTimeout: false});
-	this.controller.stopListening(document, 'acceleration', this.doMoveShip.bindAsEventListener(this));
-	this.controller.stopListening(goButton, Mojo.Event.tap, this.tapGoButton.bindAsEventListener(this));
-}
-
-MainAssistant.prototype.tapGoButton = function() {
-	this.go();
-	goButton.addClassName('hidden');
 }
 
 /*
@@ -89,16 +78,18 @@ MainAssistant.prototype.doMoveShip = function(event) {
 }
 
 MainAssistant.prototype.moveShip = function (direction, magnitude) {
-	magnitude = magnitude * 13;
 	position = this.getShipPosition();
-	if(direction == 'left' && position - magnitude > this.getLeftBound(layer4))
-		ship.setStyle({
-			left: (position - magnitude) + 'px'
-		})
-	if(direction == 'right' && position + magnitude + 13 < this.getRightBound(layer4))
-		ship.setStyle({
-			left: (position + magnitude) + 'px'
-		})
+	leftBound = this.getLeftBound(layer[4]);
+	rightBound = this.getRightBound(layer[4]);
+	for (x = 0; x < magnitude; x++) {
+		if (direction == 'left' && position - 13 > leftBound)
+			position -= 13;
+		else if (direction == 'right' && position + 13 + 13 < rightBound)
+			position += 13;
+	}
+	ship.setStyle({
+		left: (position) + 'px'
+	})
 }
 
 /*
@@ -123,29 +114,31 @@ MainAssistant.prototype.fillSlot = function (start, finish){
 		prevCenter = this.checkCenter(prevCenter + randCenter, prevWidth);
 		borderLeft = prevCenter - prevWidth;
 		borderRight = screenWidth - (prevCenter + prevWidth);
-		this.controller.get('layer' + x).setStyle({
+		layer[x].setStyle({
 			borderLeftWidth: borderLeft + 'px',
-			borderRightWidth: borderRight + 'px'
+			borderRightWidth: borderRight + 'px',
+			width: (prevWidth * 2) + 'px'
 		});
 	}
 }
 
 MainAssistant.prototype.bumpUp = function () {
-/*
-	for (x = 1; x < lastSlot; x++){
-		currElement = this.controller.get('layer' + x);
-		nextElement = this.controller.get('layer' + (x + 1));
-		currElement.setStyle({
-			borderLeftWidth: nextElement.getStyle('borderLeftWidth'),
-			borderRightWidth: nextElement.getStyle('borderRightWidth')
-		})		
+	for (x = 1; x <= lastSlot; x++){
+		topp = this.getTop(layer[x]);
+		if (topp == 0) {
+			layer[x].setStyle({
+				top: (lastSlot - 1) * 20 + 'px'
+			})
+		}
+		else {
+			layer[x].setStyle({
+				top: (topp - 20) + 'px'
+			})
+		}
 	}
-*/
-	for (x = 2; x <= lastSlot; x++){
-		layer[x].setStyle({
-			top: parseInt(layer[x].getStyle('top')) + 20
-		})
-	}
+}
+MainAssistant.prototype.getTop = function (layer) {
+	return parseInt(layer.getStyle('top'));
 }
 
 MainAssistant.prototype.checkWidth = function (num) {
@@ -190,4 +183,14 @@ MainAssistant.prototype.initShip = function () {
 	ship.setStyle({
 		left: (currPosition-6) + 'px'
 	})
+}
+MainAssistant.prototype.cleanup = function(event) {
+	this.controller.stageController.setWindowProperties({blockScreenTimeout: false});
+	this.controller.stopListening(document, 'acceleration', this.doMoveShip.bindAsEventListener(this));
+	this.controller.stopListening(goButton, Mojo.Event.tap, this.tapGoButton.bindAsEventListener(this));
+}
+
+MainAssistant.prototype.tapGoButton = function() {
+	this.go();
+	goButton.addClassName('hidden');
 }
