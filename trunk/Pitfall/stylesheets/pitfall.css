@@ -8,6 +8,8 @@
 	position: absolute;
 	top: 59px;
 	width: 13px;
+	-webkit-transition-property: left;
+	-webkit-transition-duration: .25s;
 }
 .layer {
 	position: absolute;
