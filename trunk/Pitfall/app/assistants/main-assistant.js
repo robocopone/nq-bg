@@ -8,18 +8,17 @@ MainAssistant.prototype.setup = function(){
 	
 	screenWidth = Mojo.Environment.DeviceInfo.screenHeight;
 	screenHeight = Mojo.Environment.DeviceInfo.screenWidth;
-	lastSlot = Math.floor(screenHeight / 20) + 2;
+	shipLayer = Math.floor(screenHeight / 20) - 11;
+	lastLayer = Math.floor(screenHeight / 20) + 3;
 
 	goButton.setStyle({
 		top: (screenHeight * .7) + 'px',
 		left: ((screenWidth / 2) - 50) + 'px' 
 	})
 	layer = {}
-	for (x = 1; x <= lastSlot; x++){
+	for (x = 1; x <= lastLayer; x++){
 		layer[x] = this.controller.get('layer' + x);
-		layer[x].setStyle({
-			top: (20 * (x-2)) + 'px',
-		})
+		layer[x].setStyle({ top: (20 * (x-2)) + 'px' })
 	}
 		
 	// Go Button Widget
@@ -54,9 +53,8 @@ MainAssistant.prototype.activate = function(event) {
 	minWidth = 50;
 	widthRandomizer = 25;
 	centerRandomizer = 50;
-
 	
-	this.fillSlot(1, lastSlot);
+	this.fillLayer(1, lastLayer);
 	this.initShip();
 }
 
@@ -78,8 +76,8 @@ MainAssistant.prototype.doMoveShip = function(event) {
 
 MainAssistant.prototype.moveShip = function (direction, magnitude) {
 	position = this.getShipPosition();
-	leftBound = this.getLeftBound(layer[5]);
-	rightBound = this.getRightBound(layer[5]);
+	leftBound = this.getLeftBound(layer[shipLayer]);
+	rightBound = this.getRightBound(layer[shipLayer]);
 	for (x = 0; x < magnitude; x++) {
 		if (direction == 'left' && position - 13 > leftBound)
 			position -= 13;
@@ -96,11 +94,26 @@ MainAssistant.prototype.moveShip = function (direction, magnitude) {
  */
 MainAssistant.prototype.doGo = function() {
 	currLastLayer = this.bumpUp();
-	this.fillSlot(currLastLayer, currLastLayer)
-	this.go();
-}
+	this.fillLayer(currLastLayer, currLastLayer)
 
-MainAssistant.prototype.fillSlot = function (start, finish){
+	if (!this.collision())
+		this.go();
+}
+MainAssistant.prototype.collision = function () {
+	position = this.getShipPosition();
+	leftBound = this.getLeftBound(layer[this.shipLayerLookAhead()]);
+	rightBound = this.getRightBound(layer[this.shipLayerLookAhead()]);
+	if (leftBound < position && rightBound > position + 13)
+		return false;
+	goButton.removeClassName('hidden');
+	return true;
+}
+MainAssistant.prototype.shipLayerLookAhead = function () {
+	if (shipLayer + 1 > lastLayer)
+		return 1;
+	return shipLayer;
+}
+MainAssistant.prototype.fillLayer = function (start, finish){
 	for (x = start; x <= finish; x++) {
 		randWidth = Math.floor(Math.random()* widthRandomizer)
 		randCenter = Math.floor(Math.random()* centerRandomizer)
@@ -122,21 +135,23 @@ MainAssistant.prototype.fillSlot = function (start, finish){
 }
 
 MainAssistant.prototype.bumpUp = function () {
-	for (x = 1; x <= lastSlot; x++){
+	for (x = 1; x <= lastLayer; x++){
 		topp = this.getTop(layer[x]);
 		if (topp == -20) {
 			layer[x].addClassName('hidden');
-			layer[x].setStyle({ top: (lastSlot - 2) * 20 + 'px' })
-		}
-		else if (topp == (lastSlot - 2) * 20) {
-			layer[x].removeClassName('hidden');
-			layer[x].setStyle({ top: (topp - 20) + 'px' })
+			layer[x].setStyle({ top: (lastLayer - 2) * 20 + 'px' })
 			currLastLayer = x;
 		}
-		else {
+		else if (topp == (lastLayer - 2) * 20) {
+			layer[x].removeClassName('hidden');
 			layer[x].setStyle({ top: (topp - 20) + 'px' })
 		}
+		else
+			layer[x].setStyle({ top: (topp - 20) + 'px' })
 	}
+	shipLayer++;
+	if (shipLayer > lastLayer)
+		shipLayer = 1;
 	return currLastLayer;
 }
 MainAssistant.prototype.getTop = function (layer) {
@@ -180,8 +195,8 @@ MainAssistant.prototype.getShipPosition = function () {
 	return parseInt(ship.getStyle('left'));
 }
 MainAssistant.prototype.initShip = function () {
-	currWidth = this.getRightBound(layer[5]) - this.getLeftBound(layer[5]);
-	currPosition = this.getLeftBound(layer[5]) + Math.floor(currWidth / 2);
+	currWidth = this.getRightBound(layer[shipLayer]) - this.getLeftBound(layer[shipLayer]);
+	currPosition = this.getLeftBound(layer[shipLayer]) + Math.floor(currWidth / 2);
 	ship.setStyle({
 		left: (currPosition-6) + 'px'
 	})
