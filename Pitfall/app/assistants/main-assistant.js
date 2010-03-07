@@ -15,6 +15,7 @@ MainAssistant.prototype.setup = function(){
 		top: (screenHeight * .7) + 'px',
 		left: ((screenWidth / 2) - 50) + 'px' 
 	})
+	
 	layer = {}
 	for (x = 1; x <= lastLayer; x++){
 		layer[x] = this.controller.get('layer' + x);
@@ -45,14 +46,14 @@ MainAssistant.prototype.activate = function(event) {
 	/*
 	 * Constraints
 	 */
-	adjCenterDistribution = 0;
+	adjLeftDistribution = 0;
 	adjWidthDistribution = 0;
 	prevWidth = 75;
-	prevCenter = Math.floor(screenWidth / 2);
-	maxWidth = 100;
-	minWidth = 50;
+	prevLeft = Math.floor(screenWidth / 2) - 37;
+	maxWidth = 150;
+	minWidth = 100;
 	widthRandomizer = 25;
-	centerRandomizer = 50;
+	leftRandomizer = 50;
 	
 	this.fillLayer(1, lastLayer);
 	this.initShip();
@@ -76,16 +77,20 @@ MainAssistant.prototype.doMoveShip = function(event) {
 
 MainAssistant.prototype.moveShip = function (direction, magnitude) {
 	position = this.getShipPosition();
-	leftBound = this.getLeftBound(layer[shipLayer]);
-	rightBound = this.getRightBound(layer[shipLayer]);
+	leftBound = this.getLeft(layer[shipLayer]);
+	rightBound = leftBound + this.getWidth(layer[shipLayer]);
 	for (x = 0; x < magnitude; x++) {
 		if (direction == 'left' && position - 13 > leftBound)
 			position -= 13;
+		else if (direction == 'left')
+			position = leftBound + 1;
 		else if (direction == 'right' && position + 13 + 13 < rightBound)
 			position += 13;
+		else if (direction == 'right')
+			position = rightBound - 14;
 	}
 	ship.setStyle({
-		left: (position) + 'px'
+		left: position + 'px'
 	})
 }
 
@@ -95,15 +100,14 @@ MainAssistant.prototype.moveShip = function (direction, magnitude) {
 MainAssistant.prototype.doGo = function() {
 	currLastLayer = this.bumpUp();
 	this.fillLayer(currLastLayer, currLastLayer)
-
 	if (!this.collision())
 		this.go();
 }
 MainAssistant.prototype.collision = function () {
 	position = this.getShipPosition();
-	leftBound = this.getLeftBound(layer[this.shipLayerLookAhead()]);
-	rightBound = this.getRightBound(layer[this.shipLayerLookAhead()]);
-	if (leftBound < position && rightBound > position + 13)
+	left = this.getLeft(layer[this.shipLayerLookAhead()]);
+	width = this.getWidth(layer[this.shipLayerLookAhead()]);
+	if (left < position && (width+left) > position + 13)
 		return false;
 	goButton.removeClassName('hidden');
 	return true;
@@ -116,20 +120,17 @@ MainAssistant.prototype.shipLayerLookAhead = function () {
 MainAssistant.prototype.fillLayer = function (start, finish){
 	for (x = start; x <= finish; x++) {
 		randWidth = Math.floor(Math.random()* widthRandomizer)
-		randCenter = Math.floor(Math.random()* centerRandomizer)
-		if (randCenter % 20 < (10 + adjCenterDistribution))
-			randCenter *= -1;
+		randLeft = Math.floor(Math.random()* leftRandomizer)
+		if (randLeft % 20 < (10 + adjLeftDistribution))
+			randLeft *= -1;
 		if (randWidth % 20 < (10 + adjWidthDistribution))
 			randWidth *= -1;
 
 		prevWidth = this.checkWidth(prevWidth + randWidth);
-		prevCenter = this.checkCenter(prevCenter + randCenter, prevWidth);
-		borderLeft = prevCenter - prevWidth;
-		borderRight = screenWidth - (prevCenter + prevWidth);
+		prevLeft = this.checkLeft(prevLeft + randLeft, prevWidth);
 		layer[x].setStyle({
-			borderLeftWidth: borderLeft + 'px',
-			borderRightWidth: borderRight + 'px',
-			width: (prevWidth * 2) + 'px'
+			width: prevWidth + 'px',
+			left: prevLeft + 'px'
 		});
 	}
 }
@@ -169,14 +170,14 @@ MainAssistant.prototype.checkWidth = function (num) {
 	}
 	return num;
 }
-MainAssistant.prototype.checkCenter = function (num, inWidth) {
+MainAssistant.prototype.checkLeft = function (num, inWidth) {
 	if (num + inWidth >= screenWidth) {
-		adjCenterDistribution++;
+		adjLeftDistribution++;
 		return screenWidth - inWidth;
 	}
-	if (num - inWidth <= 0) {
-		adjCenterDistribution--;
-		return inWidth;
+	if (num <= 0) {
+		adjLeftDistribution--;
+		return 0;
 	}
 	return num;
 }
@@ -185,18 +186,18 @@ MainAssistant.prototype.deactivate = function(event) {
 	this.controller.stageController.setWindowProperties({blockScreenTimeout: false});
 }
 
-MainAssistant.prototype.getLeftBound = function (layer) {
-	return parseInt(layer.getStyle('border-left-width'))
+MainAssistant.prototype.getLeft = function (layer) {
+	return parseInt(layer.getStyle('left'))
 }
-MainAssistant.prototype.getRightBound = function (layer) {
-	return screenWidth - parseInt(layer.getStyle('border-right-width'))
+MainAssistant.prototype.getWidth = function (layer) {
+	return parseInt(layer.getStyle('width'))
 }
 MainAssistant.prototype.getShipPosition = function () {
 	return parseInt(ship.getStyle('left'));
 }
 MainAssistant.prototype.initShip = function () {
-	currWidth = this.getRightBound(layer[shipLayer]) - this.getLeftBound(layer[shipLayer]);
-	currPosition = this.getLeftBound(layer[shipLayer]) + Math.floor(currWidth / 2);
+	currWidth = this.getWidth(layer[shipLayer])
+	currPosition = this.getLeft(layer[shipLayer]) + Math.floor(currWidth / 2);
 	ship.setStyle({
 		left: (currPosition-6) + 'px'
 	})
