@@ -163,6 +163,13 @@ MainAssistant.prototype.fillLayer = function (start, finish){
 			width: prevWidth + 'px',
 			left: prevLeft + 'px'
 		});
+
+		obstical = '';
+		randObstical = Math.floor(Math.random() * 100);
+		if (randObstical >= 90 && randObstical <= 100)
+			for (y = 2; y < Math.floor((((100 - randObstical) * .1) * prevWidth)/13); y++)
+				obstical += 'M'
+		layer[x].update(obstical);
 	}
 }
 
@@ -186,6 +193,7 @@ MainAssistant.prototype.bumpUp = function () {
 		shipLayer = 1;
 	return currLastLayer;
 }
+
 MainAssistant.prototype.getTop = function (layer) {
 	return parseInt(layer.getStyle('top'));
 }
@@ -201,6 +209,7 @@ MainAssistant.prototype.checkWidth = function (num) {
 	}
 	return num;
 }
+
 MainAssistant.prototype.checkLeft = function (num, inWidth) {
 	if (num + inWidth >= screenWidth) {
 		adjLeftDistribution++;
@@ -220,19 +229,21 @@ MainAssistant.prototype.deactivate = function(event) {
 MainAssistant.prototype.getLeft = function (layer) {
 	return parseInt(layer.getStyle('left'))
 }
+
 MainAssistant.prototype.getWidth = function (layer) {
 	return parseInt(layer.getStyle('width'))
 }
+
 MainAssistant.prototype.getShipPosition = function () {
 	return parseInt(ship.getStyle('left'));
 }
+
 MainAssistant.prototype.initShip = function () {
 	currWidth = this.getWidth(layer[shipLayer])
 	currPosition = this.getLeft(layer[shipLayer]) + Math.floor(currWidth / 2);
-	ship.setStyle({
-		left: (currPosition-6) + 'px'
-	})
+	ship.setStyle({ left: (currPosition-6) + 'px' })
 }
+
 MainAssistant.prototype.cleanup = function(event) {
 	this.controller.stageController.setWindowProperties({blockScreenTimeout: false});
 	this.controller.stopListening(document, 'acceleration', this.doMoveShip.bindAsEventListener(this));
@@ -245,6 +256,7 @@ MainAssistant.prototype.tapGoButton = function() {
 	goButton.addClassName('hidden');
 	this.go();
 }
+
 MainAssistant.prototype.stop = function () {
 	moveable = false;
 	this.controller.stageController.setWindowProperties({blockScreenTimeout: false});
