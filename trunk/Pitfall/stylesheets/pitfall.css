@@ -1,3 +1,14 @@
+.hidden { display: none }
+
+#appHeader { z-index: 5 }
+#clock {
+	z-index: 6;
+	position: absolute;
+	top: 1px;
+	left: 15px;
+	color: #e0e0e0;
+}
+
 #goButton {
 	position: absolute;
 	z-index: 5;
@@ -18,4 +29,12 @@
 	-webkit-transition-property: top;
 	-webkit-transition-duration: .25s;
 }
-.hidden { display: none }
+
+#bottomInfo {
+	background-color: red;
+	position: absolute;
+	top: 295px;
+}
+.bottom {
+	float: left;
+}
