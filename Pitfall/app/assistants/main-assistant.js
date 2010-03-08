@@ -18,7 +18,7 @@ MainAssistant.prototype.setup = function(){
 	shipLayer = Math.floor(screenHeight / 20) - 11;
 	lastLayer = Math.floor(screenHeight / 20) + 3;
 	moveable = true;
-	level = 0;
+	level = 1;
 	score = 0;
 	multiplier = 0;
 
@@ -85,6 +85,7 @@ MainAssistant.prototype.doGo = function() {
 	else
 		this.stop();
 }
+
 /*
  * Accelerometer function
  */
@@ -125,11 +126,13 @@ MainAssistant.prototype.moveShip = function (direction, magnitude) {
 		left: position + 'px'
 	})
 }
+
 MainAssistant.prototype.updateScore = function () {
 	elements.level.update('Level: ' + level++);
 	elements.score.update('Score: ' + (level * 250));
-	elements.multiplier.update('Multiplier:' + 0)
+	elements.multiplier.update('Multiplier: ' + 0)
 }
+
 MainAssistant.prototype.collision = function () {
 	position = this.getShipPosition();
 	left = this.getLeft(layer[this.shipLayerLookAhead()]);
@@ -138,11 +141,13 @@ MainAssistant.prototype.collision = function () {
 		return false;
 	return true;
 }
+
 MainAssistant.prototype.shipLayerLookAhead = function () {
 	if (shipLayer + 1 > lastLayer)
 		return 1;
 	return shipLayer;
 }
+
 MainAssistant.prototype.fillLayer = function (start, finish){
 	for (x = start; x <= finish; x++) {
 		randWidth = Math.floor(Math.random()* widthRandomizer)
