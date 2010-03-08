@@ -4,12 +4,23 @@ function MainAssistant() {
 MainAssistant.prototype.setup = function(){
 	goButton = this.controller.get('goButton');
 	ship = this.controller.get('ship');
-	
-	
+	clock = this.controller.get('clock');
+	elements = {}
+	elements.level = this.controller.get('level');
+	elements.score = this.controller.get('score');
+	elements.multiplier = this.controller.get('multiplier');
+	 
+	/*
+	 * Variable setup
+	 */
 	screenWidth = Mojo.Environment.DeviceInfo.screenHeight;
 	screenHeight = Mojo.Environment.DeviceInfo.screenWidth;
 	shipLayer = Math.floor(screenHeight / 20) - 11;
 	lastLayer = Math.floor(screenHeight / 20) + 3;
+	moveable = true;
+	level = 0;
+	score = 0;
+	multiplier = 0;
 
 	goButton.setStyle({
 		top: (screenHeight * .7) + 'px',
@@ -21,6 +32,10 @@ MainAssistant.prototype.setup = function(){
 		layer[x] = this.controller.get('layer' + x);
 		layer[x].setStyle({ top: (20 * (x-2)) + 'px' })
 	}
+	elements.level.setStyle({ width: screenWidth / 3 + 'px'})
+	elements.score.setStyle({ width: screenWidth / 3 + 'px'})
+	elements.multiplier.setStyle({ width: screenWidth / 3 + 'px'})
+	
 		
 	// Go Button Widget
 	goButtonModel = {
@@ -42,7 +57,6 @@ MainAssistant.prototype.setup = function(){
  * Main Function
  */
 MainAssistant.prototype.activate = function(event) {
-	this.controller.stageController.setWindowProperties({blockScreenTimeout: true});
 	/*
 	 * Constraints
 	 */
@@ -59,7 +73,25 @@ MainAssistant.prototype.activate = function(event) {
 	this.initShip();
 }
 
+/*
+ * Iterative function
+ */
+MainAssistant.prototype.doGo = function() {
+	currLastLayer = this.bumpUp();
+	this.fillLayer(currLastLayer, currLastLayer)
+	this.updateScore();
+	if (!this.collision())
+		this.go();
+	else
+		this.stop();
+}
+/*
+ * Accelerometer function
+ */
 MainAssistant.prototype.doMoveShip = function(event) {
+	clock.update(Mojo.Format.formatDate(new Date(), { time: 'medium' }));
+	if (!moveable)
+		return;
 	if (event.accelY > .6)
 		this.moveShip('left', 3);
 	else if (event.accelY > .4)
@@ -93,23 +125,17 @@ MainAssistant.prototype.moveShip = function (direction, magnitude) {
 		left: position + 'px'
 	})
 }
-
-/*
- * Iterative function
- */
-MainAssistant.prototype.doGo = function() {
-	currLastLayer = this.bumpUp();
-	this.fillLayer(currLastLayer, currLastLayer)
-	if (!this.collision())
-		this.go();
+MainAssistant.prototype.updateScore = function () {
+	elements.level.update('Level: ' + level++);
+	elements.score.update('Score: ' + (level * 250));
+	elements.multiplier.update('Multiplier:' + 0)
 }
 MainAssistant.prototype.collision = function () {
 	position = this.getShipPosition();
 	left = this.getLeft(layer[this.shipLayerLookAhead()]);
 	width = this.getWidth(layer[this.shipLayerLookAhead()]);
-	if (left < position && (width+left) > position + 13)
+	if (left <= position && (width+left) >= position + 13)
 		return false;
-	goButton.removeClassName('hidden');
 	return true;
 }
 MainAssistant.prototype.shipLayerLookAhead = function () {
@@ -209,6 +235,13 @@ MainAssistant.prototype.cleanup = function(event) {
 }
 
 MainAssistant.prototype.tapGoButton = function() {
-	this.go();
+	moveable = true;
+	this.controller.stageController.setWindowProperties({blockScreenTimeout: true});
 	goButton.addClassName('hidden');
+	this.go();
+}
+MainAssistant.prototype.stop = function () {
+	moveable = false;
+	this.controller.stageController.setWindowProperties({blockScreenTimeout: false});
+	goButton.removeClassName('hidden');
 }
