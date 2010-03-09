@@ -1,3 +1,5 @@
+//myElems["myTitleDiv"] = this.controller.get("domElement")
+
 /*
  *	gpsDashboard environment
  */
