@@ -1,6 +1,11 @@
-.hidden { display: none }
-
-#appHeader { z-index: 5 }
+.hidden { display: none; }
+#testOutput {
+	z-index: 8;
+	margin-top: 50px;
+	margin-left: 20px;
+	background-color: white;
+}
+#appHeader { z-index: 5; }
 #clock {
 	z-index: 6;
 	position: absolute;
@@ -20,12 +25,13 @@
 	top: 59px;
 	width: 13px;
 	-webkit-transition-property: left;
-	-webkit-transition-duration: .25s;
+	-webkit-transition-duration: .5s;
 }
 .obstacle {
 	height: 20px;
 }
 .layer {
+	z-index: -1;
 	position: absolute;
 	height: 20px;
 	background-color: green;
