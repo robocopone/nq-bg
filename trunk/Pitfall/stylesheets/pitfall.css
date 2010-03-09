@@ -22,6 +22,9 @@
 	-webkit-transition-property: left;
 	-webkit-transition-duration: .25s;
 }
+.obstacle {
+	height: 20px;
+}
 .layer {
 	position: absolute;
 	height: 20px;

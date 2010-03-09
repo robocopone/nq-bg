@@ -28,8 +28,10 @@ MainAssistant.prototype.setup = function(){
 	})
 	
 	layer = {}
+	obstacle = {}
 	for (x = 1; x <= lastLayer; x++){
 		layer[x] = this.controller.get('layer' + x);
+		obstacle[x] = this.controller.get('obstacle' + x);
 		layer[x].setStyle({ top: (20 * (x-2)) + 'px' })
 	}
 	elements.level.setStyle({ width: screenWidth / 3 + 'px'})
@@ -93,50 +95,47 @@ MainAssistant.prototype.doMoveShip = function(event) {
 	clock.update(Mojo.Format.formatDate(new Date(), { time: 'medium' }));
 	if (!moveable)
 		return;
-	if (event.accelY > .6)
-		this.moveShip('left', 3);
-	else if (event.accelY > .4)
-		this.moveShip('left', 2);
-	else if (event.accelY > .2)
-		this.moveShip('left', 1);
-
-	if (event.accelY < -.6)
-		this.moveShip('right', 3);
-	else if (event.accelY < -.4)
-		this.moveShip('right', 2);
-	else if (event.accelY < -.2)
-		this.moveShip('right', 1);
+	if (event.accelY > .1)
+		this.moveShip('left', Math.pow(event.accelY * 10, 2))
+	if (event.accelY < -.1)
+		this.moveShip('right', Math.pow(event.accelY * 10, 2))  
 }
 
 MainAssistant.prototype.moveShip = function (direction, magnitude) {
 	position = this.getShipPosition();
 	leftBound = this.getLeft(layer[shipLayer]);
 	rightBound = leftBound + this.getWidth(layer[shipLayer]);
-	for (x = 0; x < magnitude; x++) {
+	for (x = 0; x < magnitude && (x == 0 || !(position == leftBound + 1 || position == rightBound - 14)); x++) {
 		if (direction == 'left' && position - 13 > leftBound)
-			position -= 13;
+			position -= 2;
 		else if (direction == 'left')
 			position = leftBound + 1;
 		else if (direction == 'right' && position + 13 + 13 < rightBound)
-			position += 13;
+			position += 2;
 		else if (direction == 'right')
 			position = rightBound - 14;
 	}
-	ship.setStyle({
-		left: position + 'px'
-	})
+	ship.setStyle({ left: position + 'px' })
 }
 
 MainAssistant.prototype.updateScore = function () {
 	elements.level.update('Level: ' + level++);
 	elements.score.update('Score: ' + (level * 250));
-	elements.multiplier.update('Multiplier: ' + 0)
+	elements.multiplier.update('Multiplier: ' + multiplier)
 }
 
 MainAssistant.prototype.collision = function () {
 	position = this.getShipPosition();
-	left = this.getLeft(layer[this.shipLayerLookAhead()]);
-	width = this.getWidth(layer[this.shipLayerLookAhead()]);
+	nextLayer = this.shipLayerLookAhead();
+	left = this.getLeft(layer[nextLayer]);
+	width = this.getWidth(layer[nextLayer]);
+
+	if (!obstacle[nextLayer].hasClassName('hidden')) {
+		obstaclePosition = this.getObstaclePosition(obstacle[nextLayer]) + left;
+		if (position > obstaclePosition - 9 && position < obstaclePosition + 6)
+			multiplier++;
+	}
+
 	if (left <= position && (width+left) >= position + 13)
 		return false;
 	return true;
@@ -164,12 +163,16 @@ MainAssistant.prototype.fillLayer = function (start, finish){
 			left: prevLeft + 'px'
 		});
 
-		obstical = '';
-		randObstical = Math.floor(Math.random() * 100);
-		if (randObstical >= 90 && randObstical <= 100)
-			for (y = 2; y < Math.floor((((100 - randObstical) * .1) * prevWidth)/13); y++)
-				obstical += 'M'
-		layer[x].update(obstical);
+		randObstacle = Math.floor(Math.random() * 100);
+		if (randObstacle <= 10) {
+			pos = Math.floor(randObstacle * .1 * prevWidth)
+			if (pos < 30)
+				pos = 30;
+			if (pos > prevWidth - 30)
+				pos = prevWidth - 30;
+			obstacle[x].setStyle({ marginLeft: pos + 'px' });
+			obstacle[x].removeClassName('hidden');
+		}
 	}
 }
 
@@ -179,6 +182,7 @@ MainAssistant.prototype.bumpUp = function () {
 		if (topp == -20) {
 			layer[x].addClassName('hidden');
 			layer[x].setStyle({ top: (lastLayer - 2) * 20 + 'px' })
+			obstacle[x].addClassName('hidden');
 			currLastLayer = x;
 		}
 		else if (topp == (lastLayer - 2) * 20) {
@@ -234,10 +238,13 @@ MainAssistant.prototype.getWidth = function (layer) {
 	return parseInt(layer.getStyle('width'))
 }
 
+MainAssistant.prototype.getObstaclePosition = function (layer) {
+	return parseInt(layer.getStyle('margin-left'))
+}
+
 MainAssistant.prototype.getShipPosition = function () {
 	return parseInt(ship.getStyle('left'));
 }
-
 MainAssistant.prototype.initShip = function () {
 	currWidth = this.getWidth(layer[shipLayer])
 	currPosition = this.getLeft(layer[shipLayer]) + Math.floor(currWidth / 2);
