@@ -27,11 +27,11 @@ var global = {
 MainAssistant.prototype.setup = function(){
 	var local = {}
 
-	local.screenWidth = Mojo.Environment.DeviceInfo.screenHeight;
+	global.screenWidth = Mojo.Environment.DeviceInfo.screenHeight;
 	local.screenHeight = Mojo.Environment.DeviceInfo.screenWidth;
 
-	layer.shipLayer = Math.floor(local.screenHeight / 20) - 11;
-	layer.lastLayer = Math.floor(local.screenHeight / 20) + 2;
+	global.shipLayer = Math.floor(local.screenHeight / 20) - 11;
+	global.lastLayer = Math.floor(local.screenHeight / 20) + 2;
 
 	/*
 	 * Handler & Element setup
@@ -42,30 +42,30 @@ MainAssistant.prototype.setup = function(){
 	elements.score = this.controller.get('score');
 	elements.multiplier = this.controller.get('multiplier');
 	
-	for (x = 1; x <= layer.lastLayer; x++){
+	for (var x= 1; x <= global.lastLayer; x++){
 		layer[x] = this.controller.get('layer' + x);
 		multiplier[x] = this.controller.get('multi' + x);
 		layer[x].setStyle({ top: (20 * (x-2)) + 'px' })
 	}
-	elements.level.setStyle({ width: local.screenWidth / 3 + 'px'})
-	elements.score.setStyle({ width: local.screenWidth / 3 + 'px'})
-	elements.multiplier.setStyle({ width: local.screenWidth / 3 + 'px'})
+	elements.level.setStyle({ width: global.screenWidth / 3 + 'px'})
+	elements.score.setStyle({ width: global.screenWidth / 3 + 'px'})
+	elements.multiplier.setStyle({ width: global.screenWidth / 3 + 'px'})
 	
-	global.prevLeft = Math.floor(local.screenWidth / 2) - 37;
+	global.prevLeft = Math.floor(global.screenWidth / 2) - 37;
 
 	// Go Button Widget
 	goButton.setStyle({
 		top: (local.screenHeight * .7) + 'px',
-		left: ((local.screenWidth / 2) - 50) + 'px' 
+		left: ((global.screenWidth / 2) - 50) + 'px' 
 	})
-	goButtonModel = {
+	local.goButtonModel = {
 		buttonLabel: 'Go!',
 		buttonClass: 'affirmative',
 		disabled: false
 	}
-	this.goButton = this.controller.setupWidget('goButton', atts = {
+	elements.goButton = this.controller.setupWidget('goButton', atts = {
 		type: Mojo.Widget.defaultButton
-	}, goButtonModel);
+	}, local.goButtonModel);
 	
 	this.go = Mojo.Function.debounce(undefined, this.doGo.bind(this), .25);
 
@@ -77,12 +77,12 @@ MainAssistant.prototype.setup = function(){
  * Main Function
  */
 MainAssistant.prototype.activate = function(event) {
-	this.fillLayer(1, layer.lastLayer);
+	this.fillLayer(1, global.lastLayer);
 	this.initShip();
 
 /*
 	time.start = new Date().getTime();	
-	for (x = 1; x < 50; x++) {
+	for (var x= 1; x < 50; x++) {
 		for (y = 1; y <= 16; y++) {
 			this.controller.get('layer' + y).getStyle('top')
 		}
@@ -96,7 +96,7 @@ MainAssistant.prototype.activate = function(event) {
  * Iterative function
  */
 MainAssistant.prototype.doGo = function() {
-	currLastLayer = this.bumpUp();
+	var currLastLayer = this.bumpUp();
 	this.fillLayer(currLastLayer, currLastLayer)
 	this.updateScore();
 	if (!this.collision()) 
@@ -119,21 +119,22 @@ MainAssistant.prototype.doMoveShip = function(event) {
 }
 
 MainAssistant.prototype.moveShip = function (direction, magnitude) {
-	position = this.getShipPosition();
-	leftBound = this.getLayerLeft(shipLayer);
-	rightBound = leftBound + this.getLayerWidth(shipLayer);
-	for (x = 0; x < magnitude && (x == 0 || !(position == leftBound + 1 || position == rightBound - 14)); x++) {
-		if (direction == 'left' && position - 13 > leftBound)
-			position -= 2;
+	var local = {}
+	local.position = this.getShipPosition();
+	local.leftBound = this.getLayerLeft(global.shipLayer);
+	local.rightBound = local.leftBound + this.getLayerWidth(global.shipLayer);
+	for (var x= 0; x < magnitude && (x == 0 || !(local.position == local.leftBound + 1 || local.position == local.rightBound - 14)); x++) {
+		if (direction == 'left' && local.position - 13 > local.leftBound)
+			local.position -= 2;
 		else if (direction == 'left')
-			position = leftBound + 1;
-		else if (direction == 'right' && position + 13 + 13 < rightBound)
-			position += 2;
+			local.position = local.leftBound + 1;
+		else if (direction == 'right' && local.position + 13 + 13 < local.rightBound)
+			local.position += 2;
 		else if (direction == 'right')
-			position = rightBound - 14;
-		this.checkMulti(shipLayer);
+			local.position = local.rightBound - 14;
+		this.checkMulti(global.shipLayer, local.position - local.leftBound);
 	}
-	elements.ship.setStyle({ left: position + 'px' })
+	elements.ship.setStyle({ left: local.position + 'px' })
 }
 
 MainAssistant.prototype.updateScore = function () {
@@ -141,84 +142,88 @@ MainAssistant.prototype.updateScore = function () {
 	elements.score.update('Score: ' + (global.level * 250));
 	elements.multiplier.update('Multiplier: ' + global.multiplier)
 }
-MainAssistant.prototype.checkMulti = function(layer) {
+MainAssistant.prototype.checkMulti = function(layer, position) {
 	if (!multiplier[layer].hasClassName('hidden')) {
-		multiPosition = this.getMultiPosition(layer) + left;
+		var multiPosition = this.getMultiPosition(layer);
 		if (position > multiPosition - 9 && position < multiPosition + 6) {
-			multiplier++;
+			global.multiplier++;
 			multiplier[layer].addClassName('hidden');
 		}
 	}
 }
 MainAssistant.prototype.collision = function () {
-	nextLayer = this.shipLayerLookAhead();
-	left = this.getLayerLeft(nextLayer);
-	width = this.getLayerWidth(nextLayer);
+	var local = {}
+	local.nextLayer = this.shipLayerLookAhead();
+	local.left = this.getLayerLeft(local.nextLayer);
+	local.width = this.getLayerWidth(local.nextLayer);
+	local.position = this.getShipPosition();
 
-	position = this.getShipPosition();
-	this.checkMulti(nextLayer);
+	this.checkMulti(local.nextLayer, local.position - local.left);
 	
-	if (left <= position && (width+left) >= position + 13)
+	if (local.left <= local.position && (local.width+local.left) >= local.position + 13)
 		return false;
+
 	return true;
 }
 
 MainAssistant.prototype.shipLayerLookAhead = function () {
-	if (shipLayer + 1 > layer.lastLayer)
+	if (global.shipLayer + 1 > global.lastLayer)
 		return 1;
-	return shipLayer;
+	return global.shipLayer;
 }
 
 MainAssistant.prototype.fillLayer = function (start, finish){
-	for (x = start; x <= finish; x++) {
-		randWidth = Math.floor(Math.random()* global.widthRandomizer)
-		randLeft = Math.floor(Math.random()* global.leftRandomizer)
-		if (randLeft % 20 < (10 + global.adjLeftDistribution))
-			randLeft *= -1;
-		if (randWidth % 20 < (10 + global.adjWidthDistribution))
-			randWidth *= -1;
+	var local = {}
+	for (var x = start; x <= finish; x++) {
+		local.randWidth = Math.floor(Math.random()* global.widthRandomizer)
+		local.randLeft = Math.floor(Math.random()* global.leftRandomizer)
+		if (local.randLeft % 20 < (10 + global.adjLeftDistribution))
+			local.randLeft *= -1;
+		if (local.randWidth % 20 < (10 + global.adjWidthDistribution))
+			local.randWidth *= -1;
 
-		global.prevWidth = this.checkWidth(global.prevWidth + randWidth);
-		global.prevLeft = this.checkLeft(global.prevLeft + randLeft, global.prevWidth);
+		global.prevWidth = this.checkWidth(global.prevWidth + local.randWidth);
+		global.prevLeft = this.checkLeft(global.prevLeft + local.randLeft, global.prevWidth);
 		layer[x].setStyle({
 			width: global.prevWidth + 'px',
 			left: global.prevLeft + 'px'
 		});
 
-		randMulti = Math.floor(Math.random() * 100);
-		if (randMulti <= 10) {
-			pos = Math.floor(randMulti * .1 * global.prevWidth)
-			if (pos < 30)
-				pos = 30;
-			if (pos > global.prevWidth - 30)
-				pos = global.prevWidth - 30;
-			multiplier[x].setStyle({ marginLeft: pos + 'px' });
+		local.randMulti = Math.floor(Math.random() * 100);
+		if (local.randMulti <= 10) {
+			local.position = Math.floor(local.randMulti * .1 * global.prevWidth)
+			if (local.position < 30)
+				local.position = 30;
+			if (local.position > global.prevWidth - 30)
+				local.position = global.prevWidth - 30;
+			multiplier[x].setStyle({ marginLeft: local.position + 'px' });
 			multiplier[x].removeClassName('hidden');
 		}
 	}
 }
 
 MainAssistant.prototype.bumpUp = function () {
-	for (x = 1; x <= layer.lastLayer; x++){
-		topp = this.getTop(layer[x]);
-		if (topp == -20) {
+	var local = {}
+	for (var x = 1; x <= global.lastLayer; x++){
+		local.top = this.getTop(layer[x]);
+		if (local.top == -20) {
 			layer[x].addClassName('hidden');
-			layer[x].setStyle({ top: (layer.lastLayer - 2) * 20 + 'px' })
+			layer[x].setStyle({ top: (global.lastLayer - 2) * 20 + 'px' })
 			if (!multiplier[x].hasClassName('hidden'))
 				multiplier[x].addClassName('hidden');
-			currLastLayer = x;
+			local.currLastLayer = x;
 		}
-		else if (topp == (layer.lastLayer - 2) * 20) {
+		else if (local.top == (global.lastLayer - 2) * 20) {
 			layer[x].removeClassName('hidden');
-			layer[x].setStyle({ top: (topp - 20) + 'px' })
+			layer[x].setStyle({ top: (local.top - 20) + 'px' })
 		}
 		else
-			layer[x].setStyle({ top: (topp - 20) + 'px' })
+			layer[x].setStyle({ top: (local.top - 20) + 'px' })
 	}
-	shipLayer++;
-	if (shipLayer > layer.lastLayer)
-		shipLayer = 1;
-	return currLastLayer;
+	global.shipLayer++;
+	if (global.shipLayer > global.lastLayer)
+		global.shipLayer = 1;
+	return local.currLastLayer;
 }
 
 MainAssistant.prototype.getTop = function (layer) {
@@ -238,9 +243,9 @@ MainAssistant.prototype.checkWidth = function (num) {
 }
 
 MainAssistant.prototype.checkLeft = function (num, inWidth) {
-	if (num + inWidth >= screenWidth) {
+	if (num + inWidth >= global.screenWidth) {
 		global.adjLeftDistribution++;
-		return screenWidth - inWidth;
+		return global.screenWidth - inWidth;
 	}
 	if (num <= 0) {
 		global.adjLeftDistribution--;
@@ -269,8 +274,8 @@ MainAssistant.prototype.getShipPosition = function () {
 	return parseInt(elements.ship.getStyle('left'));
 }
 MainAssistant.prototype.initShip = function () {
-	currWidth = this.getLayerWidth(shipLayer)
-	currPosition = this.getLayerLeft(shipLayer) + Math.floor(currWidth / 2);
+	var currWidth = this.getLayerWidth(global.shipLayer)
+	var currPosition = this.getLayerLeft(global.shipLayer) + Math.floor(currWidth / 2);
 	elements.ship.setStyle({ left: (currPosition-6) + 'px' })
 }
 
