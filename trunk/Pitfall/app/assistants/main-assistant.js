@@ -10,7 +10,7 @@ var time = {}
 var layer = {}
 var global = {
 	moveable: true,
-	paused: false,
+	paused: true,
 	level: 1,
 	score: 0,
 	multiplier: 0,
@@ -19,11 +19,10 @@ var global = {
 	adjWidthDistribution: 0,
 	prevLeft: 0,
 	prevWidth: 75,
-	maxWidth: 300,
-	minWidth: 300,
+	maxWidth: 150,
+	minWidth: 100,
 	widthRandomizer: 25,
-	leftRandomizer: 50
-	
+	leftRandomizer: 50,
 }
 
 MainAssistant.prototype.setup = function(){
@@ -57,7 +56,6 @@ MainAssistant.prototype.setup = function(){
 	elements.multiplier.setStyle({ width: global.screenWidth / 3 + 'px'})
 	
 	global.prevLeft = Math.floor(global.screenWidth / 2) - 37;
-//	this.controller.get('testOutput').update((((global.shipLayer-2) * 20) - 1) + 'px')
 	elements.ship.setStyle({ top: (((global.shipLayer-2) * 20) - 1) + 'px' })
 
 	elements.goButton.setStyle({
@@ -74,9 +72,9 @@ MainAssistant.prototype.setup = function(){
 		type: Mojo.Widget.defaultButton
 	}, local.goButtonModel);
 	
-	this.go = Mojo.Function.debounce(undefined, this.doGo.bind(this), .15);
+	this.go = Mojo.Function.debounce(undefined, this.doGo.bind(this), .25);
 
-	this.controller.listen(document, 'acceleration', this.doMoveShip.bindAsEventListener(this));
+	this.controller.listen(document, 'acceleration', this.checkAccel.bindAsEventListener(this));
 	this.controller.listen(elements.goButton, Mojo.Event.tap, this.tapGoButton.bindAsEventListener(this));
 	this.controller.listen(elements.pause, Mojo.Event.tap, this.pause.bindAsEventListener(this));
 }
@@ -93,34 +91,40 @@ MainAssistant.prototype.activate = function(event) {
 /*
  * Iterative function
  */
-MainAssistant.prototype.doGo = function() {
-	var currLastLayer = this.bumpUp();
-	this.fillLayer(currLastLayer, currLastLayer)
-	this.updateScore();
-	if (!this.collision() && !global.paused) 
-		this.go();
-	else if (global.paused)
+MainAssistant.prototype.doGo = function(){
+	if (!global.paused) {
+		var currLastLayer = this.bumpUp();
+		this.fillLayer(currLastLayer, currLastLayer)
+		this.updateScore();
+		if (!this.collision()) 
+			this.go();
+		else 
+			this.stop('collision')
+	}
+	else 
 		this.stop('paused');
-	else
-		this.stop('collision')
 }
 
 /*
  * Accelerometer function
  */
-var start;
-var finish;
-MainAssistant.prototype.doMoveShip = function(event) {
-	finish = new Date().getTime();
-	this.controller.get('testOutput').update(finish - start + 'ms')
-	elements.clock.update(Mojo.Format.formatDate(new Date(), { time: 'medium' }));
-	if (!global.moveable)
-		return;
-	if (event.accelY > .1)
-		this.moveShip('left', Math.pow(event.accelY * 10, 2))
-	if (event.accelY < -.1)
-		this.moveShip('right', Math.pow(event.accelY * 10, 2))  
-	start = new Date().getTime();
+MainAssistant.prototype.checkAccel = function(event){
+	global.accelTimingFinish = new Date().getTime();
+	var deltaT = global.accelTimingFinish - global.accelTimingStart
+	if (deltaT > 100 && deltaT < 1000) {
+		elements.clock.update(Mojo.Format.formatDate( new Date(), { time: 'medium' } ) );
+		if (!global.moveable) 
+			return;
+		if (event.accelY > .1) 
+			this.moveShip('left', Math.pow(event.accelY * 10, 2))
+		if (event.accelY < -.1) 
+			this.moveShip('right', Math.pow(event.accelY * 10, 2))
+		global.accelTimingStart = new Date().getTime();
+	}
+	else if (deltaT >= 250) {
+		global.paused = true;
+	}
+	
 }
 
 MainAssistant.prototype.moveShip = function (direction, magnitude) {
@@ -271,8 +275,11 @@ MainAssistant.prototype.checkLeft = function (num, inWidth) {
 	return num;
 }
 
-MainAssistant.prototype.deactivate = function(event) {
-	this.controller.stageController.setWindowProperties({blockScreenTimeout: false});
+MainAssistant.prototype.deactivate = function(event){
+	this.controller.stageController.setWindowProperties({
+		blockScreenTimeout: false,
+		fastAccelerometer: false
+	});
 }
 
 MainAssistant.prototype.getLayerLeft = function (inLayer) {
@@ -297,22 +304,32 @@ MainAssistant.prototype.initShip = function () {
 }
 
 MainAssistant.prototype.cleanup = function(event) {
-	this.controller.stageController.setWindowProperties({blockScreenTimeout: false});
-	this.controller.stopListening(document, 'acceleration', this.doMoveShip.bindAsEventListener(this));
+	this.controller.stageController.setWindowProperties({
+		blockScreenTimeout: false,
+		fastAccelerometer: false
+	});
+	this.controller.stopListening(document, 'acceleration', this.checkAccel.bindAsEventListener(this));
 	this.controller.stopListening(elements.goButton, Mojo.Event.tap, this.tapGoButton.bindAsEventListener(this));
 	this.controller.stopListening(elements.pause, Mojo.Event.tap, this.pause.bindAsEventListener(this));
 }
 
 MainAssistant.prototype.tapGoButton = function() {
+	global.accelTimingStart = new Date().getTime();
 	global.moveable = true;
 	global.paused = false;
-	this.controller.stageController.setWindowProperties({blockScreenTimeout: true});
+	this.controller.stageController.setWindowProperties({
+		blockScreenTimeout: true,
+		fastAccelerometer: true
+	});
 	elements.goButton.addClassName('hidden');
 	this.go();
 }
 
 MainAssistant.prototype.stop = function (state) {
-	this.controller.stageController.setWindowProperties({blockScreenTimeout: false});
+	this.controller.stageController.setWindowProperties({
+		blockScreenTimeout: false,
+		fastAccelerometer: true
+	});
 	elements.goButton.removeClassName('hidden');
 	global.moveable = false;
 	if (state == 'paused') {
