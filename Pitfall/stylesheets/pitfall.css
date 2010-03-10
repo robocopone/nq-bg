@@ -1,4 +1,4 @@
-.hidden { opacity: 0 }
+.hidden { display: none; }
 #pause {
 	position: absolute;
 	left: 0px;
@@ -31,7 +31,7 @@
 	position: absolute;
 	width: 13px;
 	-webkit-transition-property: left;
-	-webkit-transition-duration: .5s;
+	-webkit-transition-duration: .1s;
 }
 .multi {
 	position: absolute;
@@ -40,7 +40,6 @@
 .trail {
 	position: absolute;
 	float: left;
-	opacity: 1;
 	-webkit-transition-property: top;
 	-webkit-transition-duration: 3s;
 }
