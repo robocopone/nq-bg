@@ -13,13 +13,19 @@
 	left: 15px;
 	color: #e0e0e0;
 }
-#pause {
+.fullScreen {
 	position: absolute;
 	left: 0px;
 	top: 0px;
-	z-index: 9;
 	height: 320px;
 	width: 480px;
+}
+#pause {
+	z-index: 9;
+}
+#background {
+	z-index: -9;
+	background-color: black;
 }
 #goButton {
 	position: absolute;
@@ -39,7 +45,7 @@
 	z-index: -1;
 	position: absolute;
 	height: 20px;
-	background-color: green;
+	background-color: white;
 	-webkit-transition-property: top;
 	-webkit-transition-duration: .25s;
 }
@@ -63,8 +69,16 @@
 .bottom {
 	float: left;
 }
+.hit {
+	color: red;
+}
 #bottomInfo {
-	background-color: red;
+	background-color: black;
+	color: white;
 	position: absolute;
 	top: 295px;
+}
+
+#score {
+	
 }

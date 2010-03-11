@@ -3,5 +3,9 @@
     {
         "scenes": "main",
         "source": "app/assistants/main-assistant.js"
+    },
+    {
+        "scenes": "scoring",
+        "source": "app/assistants/scoring-assistant.js"
     }
 ]
