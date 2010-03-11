@@ -177,6 +177,7 @@ MainAssistant.prototype.checkObstacleCollision = function(layer, position) {
 		var obstaclePosition = this.getObstaclePosition(layer);
 		if (position > obstaclePosition - 8 && position < obstaclePosition + 5) {
 			global.multiplier = 1;
+			obstacle[layer].addClassName('hit');
 		}
 	}
 }
@@ -249,6 +250,7 @@ MainAssistant.prototype.bumpUp = function () {
 			layer[x].setStyle({ top: (global.lastLayer - 2) * 20 + 'px' })
 			trail[x].addClassName('hidden')
 			obstacle[x].addClassName('hidden');
+			obstacle[x].removeClassName('hit');
 			multiplier[x].addClassName('hidden');
 			local.currLastLayer = x;
 		}
@@ -365,6 +367,10 @@ MainAssistant.prototype.stop = function (state) {
 	if (state == 'paused') {
 	}
 	if (state == 'collision') {
+		this.controller.stageController.pushScene({
+			name: "scoring",
+			transition: Mojo.Transition.crossFade
+		})
 	}
 }
 
