@@ -7,5 +7,9 @@
     {
         "scenes": "scoring",
         "source": "app/assistants/scoring-assistant.js"
+    },
+    {
+        "scenes": "nameDialog",
+        "source": "app/assistants/nameDialog-assistant.js"
     }
 ]

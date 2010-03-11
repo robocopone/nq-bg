@@ -10,11 +10,13 @@ var obstacle = {}
 var time = {}
 var layer = {}
 var global = {
+	name: "",
 	moveable: true,
 	paused: true,
 	doDot: false,
 	level: 1,
 	score: 0,
+	scores: {},
 	multiplier: 1,
 
 	adjLeftDistribution: 0,
@@ -27,14 +29,57 @@ var global = {
 	leftRandomizer: 50,
 }
 
+var freefallCookie = ({
+	initialize: function() {
+		this.cookieData = new Mojo.Model.Cookie("netBradleyGraberFreeFall");
+		var storedData = this.cookieData.get();
+		if (storedData && storedData.version == "1.0.0") {
+			global.scores = storedData.scores;
+			global.name = storedData.name;
+		}
+		this.storeCookie();
+	},
+	storeCookie: function() {
+		this.cookieData.put({  
+			version: "1.0.0",
+			scores: global.scores,
+			name: global.name
+		})		
+	}
+});
+
+MainAssistant.prototype.initGame = function () {
+	var local = {}	
+	global.shipLayer = Math.floor(global.screenHeight / 20) - 10;
+
+	for (var x = 1; x <= global.lastLayer; x++){
+		layer[x].setStyle({ top: (20 * (x-2)) + 'px' })
+		layer[x].removeClassName('hidden')
+		multiplier[x].addClassName('hidden');
+		trail[x].addClassName('hidden');
+		obstacle[x].addClassName('hidden');
+	}
+
+	doDot = false;
+	global.score = 0;
+	global.multiplier = 1;
+	global.level = 0;
+	
+	global.prevLeft = Math.floor(global.screenWidth / 2) - 37;
+	global.prevWidth = 75;
+	elements.ship.setStyle({ top: (((global.shipLayer-2) * 20) - 1) + 'px' })
+
+	this.fillLayer(1, global.lastLayer);
+	this.initShip();
+}
+
 MainAssistant.prototype.setup = function(){
+	freefallCookie.initialize();
 	var local = {}
 
 	global.screenWidth = Mojo.Environment.DeviceInfo.screenHeight;
-	local.screenHeight = Mojo.Environment.DeviceInfo.screenWidth;
-
-	global.shipLayer = Math.floor(local.screenHeight / 20) - 10;
-	global.lastLayer = Math.floor(local.screenHeight / 20) + 2;
+	global.screenHeight = Mojo.Environment.DeviceInfo.screenWidth;
+	global.lastLayer = Math.floor(global.screenHeight / 20) + 2;
 
 	/*
 	 * Handler & Element setup
@@ -52,17 +97,14 @@ MainAssistant.prototype.setup = function(){
 		multiplier[x] = this.controller.get('multi' + x);
 		trail[x] = this.controller.get('trail' + x);
 		obstacle[x] = this.controller.get('obstacle' + x);
-		layer[x].setStyle({ top: (20 * (x-2)) + 'px' })
 	}
 	elements.level.setStyle({ width: global.screenWidth * (3/10) + 'px'})
 	elements.score.setStyle({ width: global.screenWidth * (4/10) + 'px'})
 	elements.multiplier.setStyle({ width: global.screenWidth * (3/10) + 'px'})
 	
-	global.prevLeft = Math.floor(global.screenWidth / 2) - 37;
-	elements.ship.setStyle({ top: (((global.shipLayer-2) * 20) - 1) + 'px' })
 
 	elements.goButton.setStyle({
-		top: (local.screenHeight * .7) + 'px',
+		top: (global.screenHeight * .7) + 'px',
 		left: ((global.screenWidth / 2) - 50) + 'px' 
 	})
 	// Go Button Widget
@@ -86,9 +128,7 @@ MainAssistant.prototype.setup = function(){
  * Main Function
  */
 MainAssistant.prototype.activate = function(event) {
-	this.fillLayer(1, global.lastLayer);
-	this.initShip();
-
+	this.initGame();
 }
 
 /*
@@ -336,6 +376,7 @@ MainAssistant.prototype.initShip = function () {
 }
 
 MainAssistant.prototype.cleanup = function(event) {
+	freefallCookie.storeCookie();
 	this.controller.stageController.setWindowProperties({
 		blockScreenTimeout: false,
 		fastAccelerometer: false
@@ -357,6 +398,10 @@ MainAssistant.prototype.tapGoButton = function() {
 	this.go();
 }
 
+MainAssistant.prototype.pause = function () {
+	global.paused = true;
+}
+
 MainAssistant.prototype.stop = function (state) {
 	this.controller.stageController.setWindowProperties({
 		blockScreenTimeout: false,
@@ -367,13 +412,69 @@ MainAssistant.prototype.stop = function (state) {
 	if (state == 'paused') {
 	}
 	if (state == 'collision') {
+		global.savedScore = global.score;
+		for (var x = 1; x <= 10; x++) {
+			if (global.scores[x] && global.score > global.scores[x].score) {
+				this.bumpScores(x);
+				global.scoreSlot = x;
+				this.controller.showDialog({
+					template: 'nameDialog/nameDialog-scene',
+					assistant: new doDialog(this)
+				});
+				break;
+			}
+			else if (!global.scores[x]) {
+				global.scoreSlot = x;
+				this.controller.showDialog({
+					template: 'nameDialog/nameDialog-scene',
+					assistant: new doDialog(this)
+				});
+				break;
+			}
+		}
+		this.initGame();
+	}
+}
+
+MainAssistant.prototype.bumpScores = function (num) {
+	if (global.scores[num + 1]) {
+		this.bumpScores(num + 1)
+		global.scores[num + 1] = global.scores[num]
+	}
+	else
+		global.scores[num + 1] = global.scores[num]
+}
+
+var doDialog = Class.create({
+	initialize: function(sceneAssistant) {
+		this.sceneAssistant = sceneAssistant;
+		this.controller = sceneAssistant.controller;
+	},
+	
+	setup : function(widget) {
+		this.widget = widget;
+		this.name = {
+			value: global.name
+		};
+		this.controller.setupWidget("username", {} ,this.name);		
+
+		this.controller.get('dialogOkButton').addEventListener(Mojo.Event.tap, this.okPressed.bindAsEventListener(this));
+		this.controller.get('dialogCancelButton').addEventListener(Mojo.Event.tap, this.cancelPressed.bindAsEventListener(this));
+	},
+	
+	okPressed: function() {
+		global.name = this.name.value;
+		global.scores[global.scoreSlot] = {}
+		global.scores[global.scoreSlot].name = this.name.value;
+		global.scores[global.scoreSlot].score = global.savedScore; 
 		this.controller.stageController.pushScene({
 			name: "scoring",
 			transition: Mojo.Transition.crossFade
 		})
-	}
-}
+		this.widget.mojo.close();
+	},
 
-MainAssistant.prototype.pause = function () {
-	global.paused = true;
-}
+	cancelPressed: function() {
+		this.widget.mojo.close();
+	}
+});
