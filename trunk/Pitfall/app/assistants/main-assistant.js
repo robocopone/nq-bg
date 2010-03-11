@@ -5,15 +5,17 @@ var elements = {}
 var	layer = {}
 var	multiplier = {}
 var trail = {}
+var obstacle = {}
 
 var time = {}
 var layer = {}
 var global = {
 	moveable: true,
 	paused: true,
+	doDot: false,
 	level: 1,
 	score: 0,
-	multiplier: 0,
+	multiplier: 1,
 
 	adjLeftDistribution: 0,
 	adjWidthDistribution: 0,
@@ -49,11 +51,12 @@ MainAssistant.prototype.setup = function(){
 		layer[x] = this.controller.get('layer' + x);
 		multiplier[x] = this.controller.get('multi' + x);
 		trail[x] = this.controller.get('trail' + x);
+		obstacle[x] = this.controller.get('obstacle' + x);
 		layer[x].setStyle({ top: (20 * (x-2)) + 'px' })
 	}
-	elements.level.setStyle({ width: global.screenWidth / 3 + 'px'})
-	elements.score.setStyle({ width: global.screenWidth / 3 + 'px'})
-	elements.multiplier.setStyle({ width: global.screenWidth / 3 + 'px'})
+	elements.level.setStyle({ width: global.screenWidth * (3/10) + 'px'})
+	elements.score.setStyle({ width: global.screenWidth * (4/10) + 'px'})
+	elements.multiplier.setStyle({ width: global.screenWidth * (3/10) + 'px'})
 	
 	global.prevLeft = Math.floor(global.screenWidth / 2) - 37;
 	elements.ship.setStyle({ top: (((global.shipLayer-2) * 20) - 1) + 'px' })
@@ -145,6 +148,7 @@ MainAssistant.prototype.moveShip = function (direction, magnitude) {
 		else if (direction == 'right')
 			local.position = local.rightBound - 14;
 		this.checkMulti(global.shipLayer, local.position - local.leftBound);
+		this.checkObstacleCollision(global.shipLayer, local.position - local.leftBound);
 	}
 	elements.ship.setStyle({ left: local.position + 'px' })
 	global.moving = false;
@@ -152,7 +156,11 @@ MainAssistant.prototype.moveShip = function (direction, magnitude) {
 
 MainAssistant.prototype.updateScore = function () {
 	elements.level.update('Level: ' + global.level++);
-	elements.score.update('Score: ' + (global.level * 250));
+	global.score = global.score + (250 * global.multiplier);
+	if (global.score < 100000000)
+		elements.score.update('Score: ' + Mojo.Format.formatNumber(global.score));
+	else
+		elements.score.update('Score:' + Mojo.Format.formatNumber(global.score));
 	elements.multiplier.update('Multiplier: ' + global.multiplier)
 }
 MainAssistant.prototype.checkMulti = function(layer, position) {
@@ -164,6 +172,14 @@ MainAssistant.prototype.checkMulti = function(layer, position) {
 		}
 	}
 }
+MainAssistant.prototype.checkObstacleCollision = function(layer, position) {
+	if (!obstacle[layer].hasClassName('hidden')) {
+		var obstaclePosition = this.getObstaclePosition(layer);
+		if (position > obstaclePosition - 8 && position < obstaclePosition + 5) {
+			global.multiplier = 1;
+		}
+	}
+}
 MainAssistant.prototype.collision = function () {
 	var local = {}
 	local.left = this.getLayerLeft(global.shipLayer);
@@ -171,8 +187,9 @@ MainAssistant.prototype.collision = function () {
 	local.position = this.getShipPosition();
 
 	this.checkMulti(global.shipLayer, local.position - local.left);
-	
-	if (local.left <= local.position && (local.width+local.left) >= local.position + 13)
+	this.checkObstacleCollision(global.shipLayer, local.position - local.left)
+			
+	if (local.left <= local.position && (local.width+local.left) >= local.position + 13) 
 		return false;
 
 	return true;
@@ -211,6 +228,15 @@ MainAssistant.prototype.fillLayer = function (start, finish){
 			multiplier[x].setStyle({ left: local.position + 'px' });
 			multiplier[x].removeClassName('hidden');
 		}
+		else if (local.randMulti > 10 && local.randMulti <= 20) {
+			local.position = Math.floor(local.randMulti * .05 * global.prevWidth)
+			if (local.position < 50)
+				local.position = 50;
+			if (local.position > global.prevWidth - 50)
+				local.position = global.prevWidth - 50;
+			obstacle[x].setStyle({ left: local.position + 'px' });
+			obstacle[x].removeClassName('hidden');
+		}
 	}
 }
 
@@ -221,10 +247,10 @@ MainAssistant.prototype.bumpUp = function () {
 		if (local.top == -20) {
 			layer[x].addClassName('hidden');
 			layer[x].setStyle({ top: (global.lastLayer - 2) * 20 + 'px' })
-			if (!multiplier[x].hasClassName('hidden'))
-				multiplier[x].addClassName('hidden');
-			local.currLastLayer = x;
 			trail[x].addClassName('hidden')
+			obstacle[x].addClassName('hidden');
+			multiplier[x].addClassName('hidden');
+			local.currLastLayer = x;
 		}
 		else if (local.top == (global.lastLayer - 2) * 20) {
 			layer[x].removeClassName('hidden');
@@ -232,7 +258,7 @@ MainAssistant.prototype.bumpUp = function () {
 		}
 		else
 			layer[x].setStyle({ top: (local.top - 20) + 'px' })
-		if (x == this.shipLayerLookBehind())
+		if (x == this.shipLayerLookBehind() && global.doDot)
 			trail[this.shipLayerLookBehind()].removeClassName('hidden')
 	}
 
@@ -240,6 +266,7 @@ MainAssistant.prototype.bumpUp = function () {
 	global.lock = true;
 	local.position = this.getShipPosition() - this.getLayerLeft(global.shipLayer) + 4;
 	trail[global.shipLayer].setStyle({ left: local.position + 'px' })
+	global.doDot = true;
 	global.shipLayer++;
 	if (global.shipLayer > global.lastLayer)
 		global.shipLayer = 1;
@@ -293,6 +320,9 @@ MainAssistant.prototype.getLayerWidth = function (inLayer) {
 MainAssistant.prototype.getMultiPosition = function (inLayer) {
 	return parseInt(multiplier[inLayer].getStyle('left'))
 }
+MainAssistant.prototype.getObstaclePosition = function (inLayer) {
+	return parseInt(obstacle[inLayer].getStyle('left'))
+}
 
 MainAssistant.prototype.getShipPosition = function () {
 	return parseInt(elements.ship.getStyle('left'));
@@ -333,7 +363,6 @@ MainAssistant.prototype.stop = function (state) {
 	elements.goButton.removeClassName('hidden');
 	global.moveable = false;
 	if (state == 'paused') {
-		
 	}
 	if (state == 'collision') {
 	}
