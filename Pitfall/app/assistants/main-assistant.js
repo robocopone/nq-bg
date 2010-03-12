@@ -77,11 +77,11 @@ MainAssistant.prototype.initGame = function () {
 MainAssistant.prototype.setup = function(){
 	freefallCookie.initialize();
 	var local = {}
-
+	
 	global.screenWidth = Mojo.Environment.DeviceInfo.screenHeight;
 	global.screenHeight = Mojo.Environment.DeviceInfo.screenWidth;
 	global.lastLayer = Math.floor(global.screenHeight / 20) + 2;
-
+	
 	/*
 	 * Handler & Element setup
 	 */
@@ -93,20 +93,27 @@ MainAssistant.prototype.setup = function(){
 	elements.pause = this.controller.get('pause');
 	elements.goButton = this.controller.get('goButton')
 	elements.appHeader = this.controller.get('appHeader')
+	elements.display = this.controller.get('display')
 	
-	for (var x= 1; x <= global.lastLayer; x++){
+	for (var x = 1; x <= global.lastLayer; x++) {
 		layer[x] = this.controller.get('layer' + x);
 		multiplier[x] = this.controller.get('multi' + x);
 		trail[x] = this.controller.get('trail' + x);
 		obstacle[x] = this.controller.get('obstacle' + x);
 	}
-	elements.level.setStyle({ width: global.screenWidth * (3/10) + 'px'})
-	elements.score.setStyle({ width: global.screenWidth * (4/10) + 'px'})
-	elements.multiplier.setStyle({ width: global.screenWidth * (3/10) + 'px'})
+	elements.level.setStyle({ width: global.screenWidth * (3 / 10) + 'px' })
+	elements.score.setStyle({ width: global.screenWidth * (4 / 10) + 'px' })
+	elements.multiplier.setStyle({ width: global.screenWidth * (3 / 10) + 'px' })
 	
+	elements.display.setStyle({
+		height: global.screenHeight / 2 + 'px',
+		width: global.screenWidth * .7 + 'px',
+		top: global.screenHeight * 3 / 16 + 'px',
+		left: (global.screenWidth * .15) - 10 + 'px'
+	})
 
 	elements.goButton.setStyle({
-		top: (global.screenHeight * .7) + 'px',
+		top: (global.screenHeight * .75) + 'px',
 		left: ((global.screenWidth / 2) - 50) + 'px' 
 	})
 	// Go Button Widget
@@ -399,6 +406,7 @@ MainAssistant.prototype.tapGoButton = function() {
 		fastAccelerometer: true
 	});
 	elements.goButton.addClassName('hidden');
+	elements.display.addClassName('hidden');
 	this.go();
 }
 
