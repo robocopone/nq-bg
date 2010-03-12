@@ -4,10 +4,23 @@
 	background-color: white;
 }
 
+
+#display {
+	z-index: 5;
+	position: absolute;
+	background-color: white;
+	border: solid;
+	border-color: red;
+	border-width: 10px;
+}
+#highScoresButton {
+
+}
+
 .hidden { display: none; }
-#appHeader { z-index: 10; }
+#appHeader { z-index: 5; }
 #clock {
-	z-index: 6;
+	z-index: 5;
 	position: absolute;
 	top: 1px;
 	left: 15px;
@@ -21,7 +34,7 @@
 	width: 480px;
 }
 #pause {
-	z-index: 9;
+	z-index: 4;
 }
 #background {
 	z-index: -9;
@@ -29,11 +42,12 @@
 }
 #goButton {
 	position: absolute;
-	z-index: 10;
+	z-index: 5;
 	width: 100px;
 }
 
 #ship {
+	z-index: 1;
 	color: red;
 	position: absolute;
 	width: 13px;
