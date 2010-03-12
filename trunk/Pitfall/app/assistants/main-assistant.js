@@ -16,7 +16,7 @@ var global = {
 	doDot: false,
 	level: 1,
 	score: 0,
-	scores: {},
+	scores: [],
 	multiplier: 1,
 
 	adjLeftDistribution: 0,
@@ -34,15 +34,16 @@ var freefallCookie = ({
 		this.cookieData = new Mojo.Model.Cookie("netBradleyGraberFreeFall");
 		var storedData = this.cookieData.get();
 		if (storedData && storedData.version == "1.0.0") {
-			global.scores = storedData.scores;
+			global.scores = storedData.scores.slice(0);
 			global.name = storedData.name;
 		}
 		this.storeCookie();
 	},
 	storeCookie: function() {
+		var tmpScores = global.scores.slice(0)
 		this.cookieData.put({  
 			version: "1.0.0",
-			scores: global.scores,
+			scores: tmpScores,
 			name: global.name
 		})		
 	}
@@ -91,6 +92,7 @@ MainAssistant.prototype.setup = function(){
 	elements.multiplier = this.controller.get('multiplier');
 	elements.pause = this.controller.get('pause');
 	elements.goButton = this.controller.get('goButton')
+	elements.appHeader = this.controller.get('appHeader')
 	
 	for (var x= 1; x <= global.lastLayer; x++){
 		layer[x] = this.controller.get('layer' + x);
@@ -119,6 +121,7 @@ MainAssistant.prototype.setup = function(){
 	
 	this.go = Mojo.Function.debounce(undefined, this.doGo.bind(this), .25);
 
+	this.controller.listen(elements.appHeader,Mojo.Event.tap, this.nav.bindAsEventListener(this));
 	this.controller.listen(document, 'acceleration', this.checkAccel.bindAsEventListener(this));
 	this.controller.listen(elements.goButton, Mojo.Event.tap, this.tapGoButton.bindAsEventListener(this));
 	this.controller.listen(elements.pause, Mojo.Event.tap, this.pause.bindAsEventListener(this));
@@ -381,6 +384,7 @@ MainAssistant.prototype.cleanup = function(event) {
 		blockScreenTimeout: false,
 		fastAccelerometer: false
 	});
+	this.controller.stopListening(elements.appHeader,Mojo.Event.tap, this.nav.bindAsEventListener(this));
 	this.controller.stopListening(document, 'acceleration', this.checkAccel.bindAsEventListener(this));
 	this.controller.stopListening(elements.goButton, Mojo.Event.tap, this.tapGoButton.bindAsEventListener(this));
 	this.controller.stopListening(elements.pause, Mojo.Event.tap, this.pause.bindAsEventListener(this));
@@ -433,6 +437,41 @@ MainAssistant.prototype.stop = function (state) {
 			}
 		}
 		this.initGame();
+	}
+}
+
+/*
+ * Popup menu for record keeping
+ */
+MainAssistant.prototype.nav = function () {
+	this.controller.popupSubmenu({
+		onChoose: this.navHandler,
+		placeNear: elements.appHeader,
+		items: [{
+			label: 'Top Scores',
+			command: 'topScores'
+		}]
+	});
+}
+MainAssistant.prototype.navHandler = function(command) {
+	if (command == 'topScores')
+		this.controller.stageController.pushScene({
+			name: "scoring",
+			transition: Mojo.Transition.crossFade
+		})
+	if (command == 'toggle') {
+		if (elements.speedometer.hasClassName('hidden')) {
+			elements.currentInfo.addClassName('hidden');
+			elements.tripInfo.addClassName('hidden');
+			elements.addressInfo.addClassName('hidden');
+			elements.speedometer.removeClassName('hidden');
+		}
+		else {
+			elements.currentInfo.removeClassName('hidden');
+			elements.tripInfo.removeClassName('hidden');
+			elements.addressInfo.removeClassName('hidden');
+			elements.speedometer.addClassName('hidden');
+		}
 	}
 }
 

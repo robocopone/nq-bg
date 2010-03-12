@@ -5,7 +5,7 @@
 }
 
 .hidden { display: none; }
-#appHeader { z-index: 5; }
+#appHeader { z-index: 10; }
 #clock {
 	z-index: 6;
 	position: absolute;
@@ -79,7 +79,23 @@
 	top: 295px;
 }
 
-
-#name {
-	margin: auto;
+#scoreTable {
+	width: 75%;
+	margin-left: auto;
+	margin-right: auto;
+}
+.head {
+	float: left;
+	width: 50%;
+	text-align: center;
+}
+.name {
+	text-align: center;
+	float: left;
+	width: 50%;
+}
+.score {
+	text-align: center;
+	float: left;
+	width: 50%;
 }
