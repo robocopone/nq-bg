@@ -199,7 +199,7 @@ MainAssistant.prototype.moveShip = function (direction, magnitude) {
 
 MainAssistant.prototype.updateScore = function () {
 	elements.level.update('Level: ' + global.level++);
-	global.score = global.score + (250 * global.multiplier);
+	global.score = global.score + (25 * global.multiplier);
 	if (global.score < 100000000)
 		elements.score.update('Score: ' + Mojo.Format.formatNumber(global.score));
 	else
@@ -495,6 +495,7 @@ var doDialog = Class.create({
 		this.name = {
 			value: global.name
 		};
+		this.controller.get('newHighScore').update(global.savedScore)
 		this.controller.setupWidget("username", {} ,this.name);		
 
 		this.controller.get('dialogOkButton').addEventListener(Mojo.Event.tap, this.okPressed.bindAsEventListener(this));
@@ -506,6 +507,7 @@ var doDialog = Class.create({
 		global.scores[global.scoreSlot] = {}
 		global.scores[global.scoreSlot].name = this.name.value;
 		global.scores[global.scoreSlot].score = global.savedScore; 
+		global.scores[global.scoreSlot].date = Mojo.Format.formatDate( new Date(), { date: 'medium' } ); 
 		this.controller.stageController.pushScene({
 			name: "scoring",
 			transition: Mojo.Transition.crossFade
