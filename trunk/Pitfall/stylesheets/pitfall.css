@@ -86,16 +86,16 @@
 }
 .head {
 	float: left;
-	width: 50%;
+	width: 33%;
 	text-align: center;
 }
 .name {
 	text-align: center;
 	float: left;
-	width: 50%;
+	width: 33%;
 }
 .score {
 	text-align: center;
 	float: left;
-	width: 50%;
+	width: 33%;
 }
