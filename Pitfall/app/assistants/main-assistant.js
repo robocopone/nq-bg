@@ -14,6 +14,7 @@ var global = {
 	moveable: true,
 	paused: true,
 	doDot: false,
+	difficulty: 'Easy',
 	level: 1,
 	score: 0,
 	scores: [],
@@ -36,6 +37,7 @@ var freefallCookie = ({
 		if (storedData && storedData.version == "1.0.0") {
 			global.scores = storedData.scores.slice(0);
 			global.name = storedData.name;
+			global.difficulty = storedData.difficulty;
 		}
 		this.storeCookie();
 	},
@@ -44,7 +46,8 @@ var freefallCookie = ({
 		this.cookieData.put({  
 			version: "1.0.0",
 			scores: tmpScores,
-			name: global.name
+			name: global.name,
+			difficulty: global.difficulty
 		})		
 	}
 });
@@ -76,6 +79,12 @@ MainAssistant.prototype.initGame = function () {
 
 MainAssistant.prototype.setup = function(){
 	freefallCookie.initialize();
+
+	if (global.difficulty == 'Easy')
+		global.difficultyButtonClass = 'affirmative'
+	if (global.difficulty == 'Hard')
+		global.difficultyButtonClass = 'negative'
+	
 	var local = {}
 	
 	global.screenWidth = Mojo.Environment.DeviceInfo.screenHeight;
@@ -92,6 +101,7 @@ MainAssistant.prototype.setup = function(){
 	elements.multiplier = this.controller.get('multiplier');
 	elements.pause = this.controller.get('pause');
 	elements.goButton = this.controller.get('goButton')
+	elements.difficultyButton = this.controller.get('difficultyButton')
 	elements.highScoresButton = this.controller.get('highScoresButton')
 	elements.supportButton = this.controller.get('supportButton')
 	elements.hideButton = this.controller.get('hideButton')
@@ -135,6 +145,16 @@ MainAssistant.prototype.setup = function(){
 		type: Mojo.Widget.defaultButton
 	}, local.hideButtonModel);
 
+	// Difficulty Button Widget
+	global.difficultyButtonModel = {
+		buttonLabel: global.difficulty,
+		buttonClass: global.difficultyButtonClass,
+		disabled: false
+	}
+	this.controller.setupWidget('difficultyButton', atts = {
+		type: Mojo.Widget.defaultButton
+	}, global.difficultyButtonModel);
+
 	// High Score Button Widget
 	local.highScoreButtonModel = {
 		buttonLabel: 'High Scores',
@@ -165,13 +185,15 @@ MainAssistant.prototype.setup = function(){
 		type: Mojo.Widget.defaultButton
 	}, local.goButtonModel);
 	
-	this.go = Mojo.Function.debounce(undefined, this.doGo.bind(this), .25);
+	this.goEasy = Mojo.Function.debounce(undefined, this.doGo.bind(this), .5);
+	this.goHard = Mojo.Function.debounce(undefined, this.doGo.bind(this), .25);
 
 	this.controller.listen(elements.appHeader,Mojo.Event.tap, this.nav.bindAsEventListener(this));
 	this.controller.listen(document, 'acceleration', this.checkAccel.bindAsEventListener(this));
 	this.controller.listen(elements.goButton, Mojo.Event.tap, this.tapGoButton.bindAsEventListener(this));
 	this.controller.listen(elements.highScoresButton, Mojo.Event.tap, this.tapHighScoresButton.bindAsEventListener(this));
 	this.controller.listen(elements.hideButton, Mojo.Event.tap, this.tapHideButton.bindAsEventListener(this));
+	this.controller.listen(elements.difficultyButton, Mojo.Event.tap, this.tapDifficultyButton.bindAsEventListener(this));
 	this.controller.listen(elements.supportButton, Mojo.Event.tap, this.tapSupportButton.bindAsEventListener(this));
 	this.controller.listen(elements.pause, Mojo.Event.tap, this.pause.bindAsEventListener(this));
 
@@ -192,8 +214,12 @@ MainAssistant.prototype.doGo = function(){
 		var currLastLayer = this.bumpUp();
 		this.fillLayer(currLastLayer, currLastLayer)
 		this.updateScore();
-		if (!this.collision()) 
-			this.go();
+		if (!this.collision()) {
+			if (global.difficulty == 'Easy') 
+				this.goEasy();
+			if (global.difficulty == 'Hard') 
+				this.goHard();
+		}
 		else 
 			this.stop('collision')
 	}
@@ -434,6 +460,7 @@ MainAssistant.prototype.cleanup = function(event) {
 		fastAccelerometer: false
 	});
 
+	this.controller.stopListening(elements.difficultyButton, Mojo.Event.tap, this.tapDifficultyButton.bindAsEventListener(this));
 	this.controller.stopListening(elements.hideButton, Mojo.Event.tap, this.tapHideButton.bindAsEventListener(this));
 	this.controller.stopListening(elements.supportButton, Mojo.Event.tap, this.tapSupportButton.bindAsEventListener(this));
 	this.controller.stopListening(elements.appHeader,Mojo.Event.tap, this.nav.bindAsEventListener(this));
@@ -442,6 +469,20 @@ MainAssistant.prototype.cleanup = function(event) {
 	this.controller.stopListening(elements.pause, Mojo.Event.tap, this.pause.bindAsEventListener(this));
 	this.controller.stopListening(elements.highScoresButton, Mojo.Event.tap, this.tapHighScoresButton.bindAsEventListener(this));
 	freefallCookie.storeCookie();
+}
+
+MainAssistant.prototype.tapDifficultyButton = function(){
+	if (global.difficulty == 'Easy') {
+		global.difficulty == 'Hard'
+		global.difficultyButtonClass = 'negative'
+		this.controller.modelChanged(global.difficultyButtonModel, this);
+	}
+	else if (global.difficulty == 'Hard') {
+		global.difficulty == 'Easy'
+		global.difficultyButtonClass = 'affirmative'
+		this.controller.modelChanged(global.difficultyButtonModel, this);
+	}
+	this.controller.get('testOutput').update(global.difficulty)
 }
 
 MainAssistant.prototype.tapHideButton = function(){
@@ -468,7 +509,10 @@ MainAssistant.prototype.tapGoButton = function() {
 	});
 	elements.display.addClassName('hidden');
 	elements.lowerDisplay.addClassName('hidden');
-	this.go();
+	if (global.difficulty == 'Easy') 
+		this.goEasy();
+	if (global.difficulty == 'Hard') 
+		this.goHard();
 }
 
 MainAssistant.prototype.pause = function () {
