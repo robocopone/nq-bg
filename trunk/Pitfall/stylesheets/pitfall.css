@@ -1,8 +1,3 @@
-#testOutput {
-	z-index: 8;
-	margin-top: 140px;
-	background-color: white;
-}
 
 
 #display {
@@ -13,21 +8,33 @@
 	border-color: red;
 	border-width: 10px;
 }
+#testOutput {
+	z-index: 7;
+	margin-top: 40px;
+	background-color: white;
+}
 #displayText {
 	margin-top: 15px;
 	text-align: center;
 }
 #supportButton {
-	margin-left: 15%;
+	margin-top: 4%;
+	margin-left: 8%;
+	float: left;
+	width: 28%;
+}
+#difficultyButton {
 	margin-top: 4%;
 	float: left;
-	width: 35%;
+	width: 28%;
 }
 #hideButton {
 	margin-top: 4%;
 	float: left;
-	width: 35%;
+	width: 28%;
 }
+
+
 #highScoresButton {
 	z-index: 5;
 	position: absolute;
