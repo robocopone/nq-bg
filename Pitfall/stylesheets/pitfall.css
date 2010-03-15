@@ -6,15 +6,37 @@
 
 
 #display {
-	z-index: 5;
+	z-index: 6;
 	position: absolute;
 	background-color: white;
 	border: solid;
 	border-color: red;
 	border-width: 10px;
 }
+#displayText {
+	margin-top: 15px;
+	text-align: center;
+}
+#supportButton {
+	margin-left: 15%;
+	margin-top: 4%;
+	float: left;
+	width: 35%;
+}
+#hideButton {
+	margin-top: 4%;
+	float: left;
+	width: 35%;
+}
 #highScoresButton {
-
+	z-index: 5;
+	position: absolute;
+	width: 150px;
+}
+#goButton {
+	z-index: 5;
+	position: absolute;
+	width: 150px;
 }
 
 .hidden { display: none; }
@@ -39,11 +61,6 @@
 #background {
 	z-index: -9;
 	background-color: black;
-}
-#goButton {
-	position: absolute;
-	z-index: 5;
-	width: 100px;
 }
 
 #ship {

@@ -92,8 +92,12 @@ MainAssistant.prototype.setup = function(){
 	elements.multiplier = this.controller.get('multiplier');
 	elements.pause = this.controller.get('pause');
 	elements.goButton = this.controller.get('goButton')
+	elements.highScoresButton = this.controller.get('highScoresButton')
+	elements.supportButton = this.controller.get('supportButton')
+	elements.hideButton = this.controller.get('hideButton')
 	elements.appHeader = this.controller.get('appHeader')
 	elements.display = this.controller.get('display')
+	elements.lowerDisplay = this.controller.get('lowerDisplay')
 	
 	for (var x = 1; x <= global.lastLayer; x++) {
 		layer[x] = this.controller.get('layer' + x);
@@ -106,16 +110,51 @@ MainAssistant.prototype.setup = function(){
 	elements.multiplier.setStyle({ width: global.screenWidth * (3 / 10) + 'px' })
 	
 	elements.display.setStyle({
-		height: global.screenHeight / 2 + 'px',
-		width: global.screenWidth * .7 + 'px',
-		top: global.screenHeight * 3 / 16 + 'px',
-		left: (global.screenWidth * .15) - 10 + 'px'
+		height: global.screenHeight * .6 + 'px',
+		width: global.screenWidth * .8 + 'px',
+		top: global.screenHeight * .2 + 'px',
+		left: (global.screenWidth * .1) - 10 + 'px'
 	})
-
+	
 	elements.goButton.setStyle({
 		top: (global.screenHeight * .75) + 'px',
-		left: ((global.screenWidth / 2) - 50) + 'px' 
+		left: (global.screenWidth / 2) - 150 + 'px'
 	})
+	elements.highScoresButton.setStyle({
+		top: (global.screenHeight * .75) + 'px',
+		left: (global.screenWidth / 2) + 0 + 'px'
+	})
+
+	// Hide Button Widget
+	local.hideButtonModel = {
+		buttonLabel: 'Hide',
+		buttonClass: 'affirmative',
+		disabled: false
+	}
+	this.controller.setupWidget('hideButton', atts = {
+		type: Mojo.Widget.defaultButton
+	}, local.hideButtonModel);
+
+	// High Score Button Widget
+	local.highScoreButtonModel = {
+		buttonLabel: 'High Scores',
+		buttonClass: 'affirmative',
+		disabled: false
+	}
+	this.controller.setupWidget('highScoresButton', atts = {
+		type: Mojo.Widget.defaultButton
+	}, local.highScoreButtonModel);
+
+	// Support Button Widget
+	local.supportButtonModel = {
+		buttonLabel: 'Support',
+		buttonClass: 'affirmative',
+		disabled: false
+	}
+	this.controller.setupWidget('supportButton', atts = {
+		type: Mojo.Widget.defaultButton
+	}, local.supportButtonModel);
+
 	// Go Button Widget
 	local.goButtonModel = {
 		buttonLabel: 'Go!',
@@ -131,14 +170,18 @@ MainAssistant.prototype.setup = function(){
 	this.controller.listen(elements.appHeader,Mojo.Event.tap, this.nav.bindAsEventListener(this));
 	this.controller.listen(document, 'acceleration', this.checkAccel.bindAsEventListener(this));
 	this.controller.listen(elements.goButton, Mojo.Event.tap, this.tapGoButton.bindAsEventListener(this));
+	this.controller.listen(elements.highScoresButton, Mojo.Event.tap, this.tapHighScoresButton.bindAsEventListener(this));
+	this.controller.listen(elements.hideButton, Mojo.Event.tap, this.tapHideButton.bindAsEventListener(this));
+	this.controller.listen(elements.supportButton, Mojo.Event.tap, this.tapSupportButton.bindAsEventListener(this));
 	this.controller.listen(elements.pause, Mojo.Event.tap, this.pause.bindAsEventListener(this));
+
+	this.initGame();
 }
 
 /*
  * Main Function
  */
 MainAssistant.prototype.activate = function(event) {
-	this.initGame();
 }
 
 /*
@@ -386,15 +429,33 @@ MainAssistant.prototype.initShip = function () {
 }
 
 MainAssistant.prototype.cleanup = function(event) {
-	freefallCookie.storeCookie();
 	this.controller.stageController.setWindowProperties({
 		blockScreenTimeout: false,
 		fastAccelerometer: false
 	});
+
+	this.controller.stopListening(elements.hideButton, Mojo.Event.tap, this.tapHideButton.bindAsEventListener(this));
+	this.controller.stopListening(elements.supportButton, Mojo.Event.tap, this.tapSupportButton.bindAsEventListener(this));
 	this.controller.stopListening(elements.appHeader,Mojo.Event.tap, this.nav.bindAsEventListener(this));
 	this.controller.stopListening(document, 'acceleration', this.checkAccel.bindAsEventListener(this));
 	this.controller.stopListening(elements.goButton, Mojo.Event.tap, this.tapGoButton.bindAsEventListener(this));
 	this.controller.stopListening(elements.pause, Mojo.Event.tap, this.pause.bindAsEventListener(this));
+	this.controller.stopListening(elements.highScoresButton, Mojo.Event.tap, this.tapHighScoresButton.bindAsEventListener(this));
+	freefallCookie.storeCookie();
+}
+
+MainAssistant.prototype.tapHideButton = function(){
+	display.addClassName('hidden')
+}
+
+MainAssistant.prototype.tapSupportButton = function(){
+	Mojo.Controller.stageController.pushAppSupportInfoScene();
+}
+MainAssistant.prototype.tapHighScoresButton = function(){
+	this.controller.stageController.pushScene({
+		name: "scoring",
+		transition: Mojo.Transition.crossFade
+	})
 }
 
 MainAssistant.prototype.tapGoButton = function() {
@@ -405,8 +466,8 @@ MainAssistant.prototype.tapGoButton = function() {
 		blockScreenTimeout: true,
 		fastAccelerometer: true
 	});
-	elements.goButton.addClassName('hidden');
 	elements.display.addClassName('hidden');
+	elements.lowerDisplay.addClassName('hidden');
 	this.go();
 }
 
@@ -419,7 +480,7 @@ MainAssistant.prototype.stop = function (state) {
 		blockScreenTimeout: false,
 		fastAccelerometer: true
 	});
-	elements.goButton.removeClassName('hidden');
+	elements.lowerDisplay.removeClassName('hidden');
 	global.moveable = false;
 	if (state == 'paused') {
 	}
@@ -452,35 +513,9 @@ MainAssistant.prototype.stop = function (state) {
  * Popup menu for record keeping
  */
 MainAssistant.prototype.nav = function () {
-	this.controller.popupSubmenu({
-		onChoose: this.navHandler,
-		placeNear: elements.appHeader,
-		items: [{
-			label: 'Top Scores',
-			command: 'topScores'
-		}]
-	});
-}
-MainAssistant.prototype.navHandler = function(command) {
-	if (command == 'topScores')
-		this.controller.stageController.pushScene({
-			name: "scoring",
-			transition: Mojo.Transition.crossFade
-		})
-	if (command == 'toggle') {
-		if (elements.speedometer.hasClassName('hidden')) {
-			elements.currentInfo.addClassName('hidden');
-			elements.tripInfo.addClassName('hidden');
-			elements.addressInfo.addClassName('hidden');
-			elements.speedometer.removeClassName('hidden');
-		}
-		else {
-			elements.currentInfo.removeClassName('hidden');
-			elements.tripInfo.removeClassName('hidden');
-			elements.addressInfo.removeClassName('hidden');
-			elements.speedometer.addClassName('hidden');
-		}
-	}
+	global.paused = true;
+	elements.display.removeClassName('hidden')
+	elements.lowerDisplay.removeClassName('hidden')
 }
 
 MainAssistant.prototype.bumpScores = function (num) {
