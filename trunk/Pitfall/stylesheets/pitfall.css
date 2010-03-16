@@ -1,5 +1,3 @@
-
-
 #display {
 	z-index: 6;
 	position: absolute;
@@ -46,7 +44,10 @@
 	width: 150px;
 }
 
-.hidden { display: none; }
+.hidden {
+	display: none;
+}
+
 #appHeader { z-index: 5; }
 #clock {
 	z-index: 5;
