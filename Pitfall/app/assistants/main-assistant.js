@@ -54,7 +54,9 @@ var freefallCookie = ({
 
 MainAssistant.prototype.initGame = function () {
 	var local = {}	
+
 	global.shipLayer = Math.floor(global.screenHeight / 20) - 10;
+	elements.ship.setStyle({ top: (((global.shipLayer-2) * 20) - 1) + 'px' })
 
 	for (var x = 1; x <= global.lastLayer; x++){
 		layer[x].setStyle({ top: (20 * (x-2)) + 'px' })
@@ -64,14 +66,13 @@ MainAssistant.prototype.initGame = function () {
 		obstacle[x].addClassName('hidden');
 	}
 
-	doDot = false;
+	global.doDot = false;
 	global.score = 0;
 	global.multiplier = 1;
 	global.level = 0;
 	
 	global.prevLeft = Math.floor(global.screenWidth / 2) - 37;
 	global.prevWidth = 75;
-	elements.ship.setStyle({ top: (((global.shipLayer-2) * 20) - 1) + 'px' })
 
 	this.fillLayer(1, global.lastLayer);
 	this.initShip();
@@ -145,14 +146,14 @@ MainAssistant.prototype.setup = function(){
 		local.difficultyButtonClass = 'affirmative'
 	if (global.difficulty == 'Hard')
 		local.difficultyButtonClass = 'negative'
-	this.difficultyButtonModel = {
+	global.difficultyButtonModel = {
 		buttonLabel: global.difficulty,
 		buttonClass: local.difficultyButtonClass,
 		disabled: false
 	}
 	this.controller.setupWidget('difficultyButton', atts = {
 		type: Mojo.Widget.defaultButton
-	}, this.difficultyButtonModel);
+	}, global.difficultyButtonModel);
 
 	// High Score Button Widget
 	local.highScoreButtonModel = {
@@ -477,15 +478,15 @@ MainAssistant.prototype.cleanup = function(event) {
 MainAssistant.prototype.tapDifficultyButton = function(){
 	if (global.difficulty == 'Easy') {
 		global.difficulty = 'Hard';
-		this.difficultyButtonModel.buttonLabel = 'Hard';
-		this.difficultyButtonModel.buttonClass = 'negative';
-		this.controller.modelChanged(this.difficultyButtonModel, this);
+		global.difficultyButtonModel.buttonLabel = 'Hard';
+		global.difficultyButtonModel.buttonClass = 'negative';
+		this.controller.modelChanged(global.difficultyButtonModel, this);
 	}
 	else if (global.difficulty == 'Hard') {
 		global.difficulty = 'Easy';
-		this.difficultyButtonModel.buttonLabel = 'Easy';
-		this.difficultyButtonModel.buttonClass = 'affirmative';
-		this.controller.modelChanged(this.difficultyButtonModel, this);
+		global.difficultyButtonModel.buttonLabel = 'Easy';
+		global.difficultyButtonModel.buttonClass = 'affirmative';
+		this.controller.modelChanged(global.difficultyButtonModel, this);
 	}
 }
 
@@ -562,7 +563,10 @@ MainAssistant.prototype.stop = function (state) {
  */
 MainAssistant.prototype.nav = function () {
 	global.paused = true;
-	elements.display.removeClassName('hidden')
+	if (elements.display.hasClassName('hidden'))
+		elements.display.removeClassName('hidden')
+	else
+		elements.display.addClassName('hidden')
 	elements.lowerDisplay.removeClassName('hidden')
 }
 
