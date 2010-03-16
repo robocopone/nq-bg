@@ -80,11 +80,6 @@ MainAssistant.prototype.initGame = function () {
 MainAssistant.prototype.setup = function(){
 	freefallCookie.initialize();
 
-	if (global.difficulty == 'Easy')
-		global.difficultyButtonClass = 'affirmative'
-	if (global.difficulty == 'Hard')
-		global.difficultyButtonClass = 'negative'
-	
 	var local = {}
 	
 	global.screenWidth = Mojo.Environment.DeviceInfo.screenHeight;
@@ -146,14 +141,18 @@ MainAssistant.prototype.setup = function(){
 	}, local.hideButtonModel);
 
 	// Difficulty Button Widget
-	global.difficultyButtonModel = {
+	if (global.difficulty == 'Easy')
+		local.difficultyButtonClass = 'affirmative'
+	if (global.difficulty == 'Hard')
+		local.difficultyButtonClass = 'negative'
+	this.difficultyButtonModel = {
 		buttonLabel: global.difficulty,
-		buttonClass: global.difficultyButtonClass,
+		buttonClass: local.difficultyButtonClass,
 		disabled: false
 	}
 	this.controller.setupWidget('difficultyButton', atts = {
 		type: Mojo.Widget.defaultButton
-	}, global.difficultyButtonModel);
+	}, this.difficultyButtonModel);
 
 	// High Score Button Widget
 	local.highScoreButtonModel = {
@@ -275,7 +274,11 @@ MainAssistant.prototype.moveShip = function (direction, magnitude) {
 
 MainAssistant.prototype.updateScore = function () {
 	elements.level.update('Level: ' + global.level++);
-	global.score = global.score + (25 * global.multiplier);
+	if (global.difficulty == 'Easy')
+		global.score = global.score + (25 * global.multiplier);
+	else if (global.difficulty == 'Hard')
+		global.score = global.score + (50 * global.multiplier);
+		
 	if (global.score < 100000000)
 		elements.score.update('Score: ' + Mojo.Format.formatNumber(global.score));
 	else
@@ -473,16 +476,17 @@ MainAssistant.prototype.cleanup = function(event) {
 
 MainAssistant.prototype.tapDifficultyButton = function(){
 	if (global.difficulty == 'Easy') {
-		global.difficulty == 'Hard'
-		global.difficultyButtonClass = 'negative'
-		this.controller.modelChanged(global.difficultyButtonModel, this);
+		global.difficulty = 'Hard';
+		this.difficultyButtonModel.buttonLabel = 'Hard';
+		this.difficultyButtonModel.buttonClass = 'negative';
+		this.controller.modelChanged(this.difficultyButtonModel, this);
 	}
 	else if (global.difficulty == 'Hard') {
-		global.difficulty == 'Easy'
-		global.difficultyButtonClass = 'affirmative'
-		this.controller.modelChanged(global.difficultyButtonModel, this);
+		global.difficulty = 'Easy';
+		this.difficultyButtonModel.buttonLabel = 'Easy';
+		this.difficultyButtonModel.buttonClass = 'affirmative';
+		this.controller.modelChanged(this.difficultyButtonModel, this);
 	}
-	this.controller.get('testOutput').update(global.difficulty)
 }
 
 MainAssistant.prototype.tapHideButton = function(){
