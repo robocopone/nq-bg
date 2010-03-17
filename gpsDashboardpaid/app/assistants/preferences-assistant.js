@@ -365,6 +365,9 @@ PreferencesAssistant.prototype.changeBacklightSelector = function(event){
 	gpsDashboard.cookie.storeCookie();
 }
 PreferencesAssistant.prototype.activate = function(event) {
+	this.controller.get('prefDrawer').removeClassName('hidden')
+	this.controller.get('dispDrawer').removeClassName('hidden')
+	this.controller.get('dashDrawer').removeClassName('hidden')
 }
 
 PreferencesAssistant.prototype.deactivate = function(event) {
