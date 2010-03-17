@@ -196,6 +196,7 @@ MainAssistant.prototype.setup = function(){
 	this.controller.listen(elements.difficultyButton, Mojo.Event.tap, this.tapDifficultyButton.bindAsEventListener(this));
 	this.controller.listen(elements.supportButton, Mojo.Event.tap, this.tapSupportButton.bindAsEventListener(this));
 	this.controller.listen(elements.pause, Mojo.Event.tap, this.pause.bindAsEventListener(this));
+	
 
 	this.initGame();
 }
