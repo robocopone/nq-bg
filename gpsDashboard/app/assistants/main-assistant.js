@@ -14,6 +14,7 @@ gpsDashboard.maxError = 10;						// Max error in meters
 gpsDashboard.heading = 1;
 gpsDashboard.initialRun = true;
 
+var elements = {}
 /*
  * Stores and recalls data stored between sessions
  */
@@ -64,6 +65,8 @@ MainAssistant.prototype.setup = function(){
 		this.controller.stageController.setWindowOrientation("free");
 	this.controller.listen(document, 'orientationchange', this.handleOrientation.bindAsEventListener(this));
 	
+	elements.tripDuration = this.controller.get('tripDuration');
+
 	// Hides the dashboard
 	this.controller.get('address').addClassName('hidden');
 	this.controller.get('currentInfo').addClassName('hidden');
@@ -144,6 +147,7 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 	this.controller.get('speed').update(this.speed(event));
 	this.controller.get('heading').update(this.heading(event));
 	this.controller.get('altitude').update(this.altitude(event));
+	elements.tripDuration.update(this.tripDuration());
 
 	if (event.errorCode == 0 && event.horizAccuracy <= gpsDashboard.maxError) {
 		this.controller.get('avgSpeed').update(this.avgSpeed(event));
@@ -614,4 +618,24 @@ MainAssistant.prototype.doInitialChoice = function(choice) {
 		gpsDashboard.initialRun = false;
 		gpsDashboard.cookie.storeCookie();
 	}
+}
+
+function pad(number, length) {
+    var str = '' + number;
+    while (str.length < length) {
+        str = '0' + str;
+    }
+    return str;
+}
+
+MainAssistant.prototype.tripDuration = function () {
+	a = gpsDashboard.tripometer.time;
+	var days = Math.floor(a / 86400);
+	var hours=Math.floor(a / 3600) - (days * 24); 
+	var minutes=Math.floor(a / 60) - (days * 1440) - (hours * 60); 
+	var seconds=Math.floor(a % 60); 
+
+	if (days > 0)
+		return pad(days, 2) + ":" + pad(hours, 2) + ":" + pad(minutes,2)+ ":" + pad(seconds, 2);
+	return pad(hours, 2) + ":" + pad(minutes,2) + ":" + pad(seconds, 2);
 }

@@ -68,9 +68,23 @@
 #currentInfo 			{ height: 78px; }
 #currentInfo.landscape	{ height: 35px; }
 
+
+/*
+ * Title bar for the Trip info box
+ */
+#tripTitle { float: left; }
+#tripDuration {
+	text-align: right;
+	margin-right: 20px;
+	margin-top: 1px;
+	font-size: small;
+	float: right;
+}
+
 /*
  * Trip info Display
  */
+
 #tripInfo{
 	letter-spacing: .1em;
 	height: 90px;
