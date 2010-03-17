@@ -123,9 +123,19 @@
 	margin-left: auto;
 	margin-right: auto;
 }
-.head {
+.nameHead {
 	float: left;
-	width: 33%;
+	width: 38%;
+	text-align: center;
+}
+.scoreHead {
+	float: left;
+	width: 28%;
+	text-align: center;
+}
+.dateHead {
+	float: left;
+	width: 31%;
 	text-align: center;
 }
 .name {
