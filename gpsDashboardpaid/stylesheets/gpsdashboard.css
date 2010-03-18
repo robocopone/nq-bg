@@ -171,6 +171,7 @@
 	width: 20px;
 	height: 5px;
 	background-color: black;
+	-webkit-transition-duration: 1s;
 }
 
 .needle {
@@ -179,6 +180,7 @@
 	top: 117px;
 	left: 49px;
 	-webkit-transform-origin: right;
+	-webkit-transition-duration: 1s;
 	background-color: green;
 }
 
@@ -196,6 +198,7 @@
 	left: 48px;
 	width: 107px;
 	height: 8px;
+	-webkit-transition-duration: 1s;
 	-webkit-transform-origin: right;
 }
 #border.dark {border-color: #393e43;}
