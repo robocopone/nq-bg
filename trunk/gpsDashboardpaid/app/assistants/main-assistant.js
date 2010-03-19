@@ -135,6 +135,7 @@ MainAssistant.prototype.setup = function(){
 
 	elements.currentInfo = this.controller.get('currentInfo');	
 	elements.currentTitle = this.controller.get('currentTitle');
+	elements.tripTitle = this.controller.get('tripTitle');
 	elements.topSpeedHead = this.controller.get('topSpeedHead');
 	elements.speedHead = this.controller.get('speedHead')
 	elements.topSpeed = this.controller.get('topSpeed');
@@ -166,6 +167,7 @@ MainAssistant.prototype.setup = function(){
 	
 	// Localizable stuff
 	elements.currentTitle.update($L("Current Information"))
+	elements.tripTitle.update($L("Trip Information"))
 	elements.topSpeedHead.update($L("Top:"))
 	elements.speedHead.update($L("Speed:"))
 	elements.altHead.update($L("Altitude:"))
