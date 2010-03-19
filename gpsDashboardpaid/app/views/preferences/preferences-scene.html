@@ -1,6 +1,6 @@
 <div class="palm-header">
 	<div class="icon"></div>
-	<div class="palm-header-wrapper title center" >Preferences</div>
+	<div id="prefTitle" class="palm-header-wrapper title center">Preferences</div>
 </div>
 
 <div id="palm-header-spacer" class="palm-header-spacer"></div>
@@ -9,7 +9,7 @@
 <table class="palm-divider collapsible" x-mojo-touch-feedback="delayed">
   <tr>
       <td class="left"></td>
-      <td class="label">Preferences</td>
+      <td id="prefHead" class="label">Preferences</td>
       <td class="line" width="100%"></td>
       <td><div id="prefDivider" class="palm-arrow-closed arrow_button"></div></td>
       <td class="right"></td>
@@ -19,7 +19,7 @@
 <!-- Preferences Drawer --->
 <div x-mojo-element="Drawer" class="hidden" id="prefDrawer"> 
 	<div class="palm-group">
-		<div class="palm-group-title">Options</div>
+		<div id="prefGroupHead" class="palm-group-title">Options</div>
 		<div class="palm-list">
 			<div class="palm-row first" x-mojo-touch-feedback="delayed">
 				<div class="palm-row-wrapper">
@@ -49,7 +49,7 @@
 <table class="palm-divider collapsible" x-mojo-touch-feedback="delayed">
   <tr>
       <td class="left"></td>
-      <td class="label">Display Prefs</td>
+      <td id="dispPrefsHead" class="label">Display Prefs</td>
       <td class="line" width="100%"></td>
       <td><div id="dispDivider" class="palm-arrow-closed arrow_button"></div></td>
       <td class="right"></td>
@@ -59,7 +59,7 @@
 <!-- Display Preferences Drawer --->
 <div x-mojo-element="Drawer" class="hidden" id="dispDrawer"> 
 	<div class="palm-group">
-		<div class="palm-group-title">Options</div>
+		<div id="dispPrefGroupHead" class="palm-group-title">Options</div>
 		<div class="palm-list">
 			<div class="palm-row first" x-mojo-touch-feedback="delayed">
 				<div class="palm-row-wrapper">
@@ -94,7 +94,7 @@
 <table class="palm-divider collapsible" x-mojo-touch-feedback="delayed">
   <tr>
       <td class="left"></td>
-      <td class="label">Dashboard Prefs</td>
+      <td id="dashPrefsHead" class="label">Dashboard Prefs</td>
       <td class="line" width="100%"></td>
       <td><div id="dashDivider" class="palm-arrow-closed arrow_button"></div></td>
       <td class="right"></td>
