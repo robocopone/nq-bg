@@ -145,6 +145,11 @@ MainAssistant.prototype.setup = function(){
 	elements.altitude = this.controller.get('altitude');
 	
 	elements.tripInfo = this.controller.get('tripInfo');
+	elements.tripAvgSpeedHead = this.controller.get('tripAvgSpeedHead')
+	elements.tripDistTraveledHead = this.controller.get('tripDistTraveledHead')
+	elements.tripDistFromInitHead = this.controller.get('tripDistFromInitHead')
+	elements.tripLifetimeHead = this.controller.get('tripLifetimeHead')
+
 	elements.tripDuration = this.controller.get('tripDuration');
 	elements.lowAccuracy = this.controller.get('lowAccuracy');
 	elements.horizAccuracy = this.controller.get('horizAccuracy');
@@ -166,6 +171,11 @@ MainAssistant.prototype.setup = function(){
 	
 	
 	// Localizable stuff
+	elements.tripAvgSpeedHead.update($L("Average Speed:"))
+	elements.tripDistTraveledHead.update($L("Dist. Traveled:"))
+	elements.tripDistFromInitHead.update($L("Dist. from First Pos.:"))
+	elements.tripLifetimeHead.update($L("Lifetime Distance:"))
+
 	elements.currentTitle.update($L("Current Information"))
 	elements.tripTitle.update($L("Trip Information"))
 	elements.topSpeedHead.update($L("Top:"))

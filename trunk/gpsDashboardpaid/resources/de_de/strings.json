@@ -8,9 +8,9 @@
 	
 	"Trip Information": "Reise Informationen",
 	"Average Speed:": "Durchschnittsgeschw.:",
-	"Distance Traveled:": "Zurückgelegter Weg:",
+	"Dist. Traveled:": "Zurückgelegter Weg:",
 	"Dist. from First Pos.:": "Strecke vom Startp.:",
-	"Lifetime Distance": "Gesamtstrecke",
+	"Lifetime Distance:": "Gesamtstrecke",
 	"Get Address": "Adresse Anzeigen",
 	
 	"Preferences": "Einstellungen",
@@ -24,7 +24,7 @@
 	"Reset Average Speed": "Durchschnittsgeschw. zurücksetzen",
 	"Reset Distance Traveled": "Zurückg. Weg Zurücksetzen",
 	"Reset Initial Position": "Startposition Zurücksetzen",
-	"Average Speed": "Durchschn. Geschw.",
+	"Avg. Speed": "Durchschn. Geschw.",
 	"Display Prefs": "Einstellungen anzeigen",
 	"Light": "Hell",
 	"Dark": "Dunkel",

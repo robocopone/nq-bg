@@ -127,15 +127,15 @@ PreferencesAssistant.prototype.setup = function(){
 
 	//On startup pref
 	this.controller.setupWidget("startupPref", attr = {
-		label: "On Startup",
+		label: $L("On Startup"),
 		choices: [{
-			label: "Always Reset Trip Information",
+			label: $L("Always Reset Trip Information"),
 			value: 'always'
 		}, {
-			label: "Never Reset Trip Information",
+			label: $L("Never Reset Trip Information"),
 			value: 'never'
 		}, {
-			label: "Ask Each Time",
+			label: $L("Ask Each Time"),
 			value: 'ask'
 		}, ],
 	}, model = {
@@ -145,12 +145,12 @@ PreferencesAssistant.prototype.setup = function(){
 
 	//Theme Selector Widget
 	this.controller.setupWidget("themeSelector", attr = {
-		label: "Theme",
+		label: $L("Theme"),
 		choices: [{
-			label: "Light",
+			label: $L("Light"),
 			value: 'light'
 		}, {
-			label: "Dark",
+			label: $L("Dark"),
 			value: 'dark'
 		}, ],
 	}, model = {
@@ -160,12 +160,12 @@ PreferencesAssistant.prototype.setup = function(){
 	
 	//Units Selector Widget
 	this.controller.setupWidget("unitsSelector", attr = {
-		label: "Units",
+		label: $L("Units"),
 		choices: [{
-			label: "Miles/Feet",
+			label: $L("Miles/Feet"),
 			value: 1
 		}, {
-			label: "Kilometers/Meters",
+			label: $L("Kilometers/Meters"),
 			value: 2
 		}, ],
 	}, model = {
@@ -176,12 +176,12 @@ PreferencesAssistant.prototype.setup = function(){
 	
 	//Backlight Selector Widget
 	this.controller.setupWidget("backlightSelector", attr = {
-		label: "Backlight",
+		label: $L("Backlight"),
 		choices: [{
-			label: "Always On",
+			label: $L("Always On"),
 			value: 1
 		}, {
-			label: "Device Settings",
+			label: $L("Device Settings"),
 			value: 2
 		}, ],
 	}, model = {
@@ -191,12 +191,12 @@ PreferencesAssistant.prototype.setup = function(){
 
 	//Avg Speed Widget
 	this.controller.setupWidget("avgSpeedPref", attr = {
-		label: "Avg. Speed",
+		label: $L("Avg. Speed"),
 		choices: [{
-			label: "Use Dist. from Initial",
+			label: $L("Use Dist. from Initial"),
 			value: 1
 		}, {
-			label: "Use Dist Traveled",
+			label: $L("Use Dist Traveled"),
 			value: 2
 		}, ],
 	}, model = {
@@ -206,12 +206,12 @@ PreferencesAssistant.prototype.setup = function(){
 	
 	//headingPref Widget
 	this.controller.setupWidget("headingPref", attr = {
-		label: "Heading",
+		label: $L("Heading"),
 		choices: [{
-			label: "N/S/E/W",
+			label: $L("N/S/E/W"),
 			value: 1
 		}, {
-			label: "Degrees",
+			label: $L("Degrees"),
 			value: 2
 		}, ],
 	}, model = {
@@ -221,24 +221,24 @@ PreferencesAssistant.prototype.setup = function(){
 
 	//Shake pref widget
 	this.controller.setupWidget("shakePref", attr = {
-		label: "When Shook",
+		label: $L("When Shook"),
 		choices: [{
-			label: "Reset All",
+			label: $L("Reset All"),
 			value: 'all'
 		}, {
-			label: "Reset None",
+			label: $L("Reset None"),
 			value: 'none'
 		}, {
-			label: "Reset Top Speed",
+			label: $L("Reset Top Speed"),
 			value: 'topSpeed'
 		}, {
-			label: "Reset Average Speed",
+			label: $L("Reset Average Speed"),
 			value: 'avgSpeed'
 		}, {
-			label: "Reset Distance Traveled",
+			label: $L("Reset Distance Traveled"),
 			value: 'distTraveled'
 		}, {
-			label: "Reset Initial Position",
+			label: $L("Reset Initial Position"),
 			value: 'initPosition'
 		}, ],
 	}, model = {
@@ -248,12 +248,12 @@ PreferencesAssistant.prototype.setup = function(){
 
 	//coloredSpeedPref Selector Widget
 	this.controller.setupWidget("coloredSpeedPref", attr = {
-		label: "Colored Speed",
+		label: $L("Colored Speed"),
 		choices: [{
-			label: "Based on Avg Speed",
+			label: $L("Based on Avg Speed"),
 			value: 'true'
 		}, {
-			label: "Off",
+			label: $L("Off"),
 			value: 'false'
 		},],
 	}, model = {
@@ -263,21 +263,21 @@ PreferencesAssistant.prototype.setup = function(){
 
 	//Max Error Selector Widget
 	this.controller.setupWidget("maxErrorPrefSelector", attr = {
-		label: "Max Error",
+		label: $L("Max Error"),
 		choices: [{
-			label: "5 meters",
+			label: $L("5 meters"),
 			value: 5
 		}, {
-			label: "10 meters",
+			label: $L("10 meters"),
 			value: 10
 		}, {
-			label: "15 meters",
+			label: $L("15 meters"),
 			value: 15
 		}, {
-			label: "20 meters",
+			label: $L("20 meters"),
 			value: 20
 		}, {
-			label: "30 meters",
+			label: $L("30 meters"),
 			value: 30
 		},],
 	}, model = {
