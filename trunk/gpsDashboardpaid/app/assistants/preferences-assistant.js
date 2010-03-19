@@ -50,6 +50,14 @@ PreferencesAssistant.prototype.prefTapped = function () {
 }
 
 PreferencesAssistant.prototype.setup = function(){
+	this.controller.get('prefTitle').update($L("Preferences"))
+	this.controller.get('prefHead').update($L("Preferences"))
+	this.controller.get('prefGroupHead').update($L("Preferences"))
+	this.controller.get('dispPrefsHead').update($L("Display Prefs"))
+	this.controller.get('dispPrefGroupHead').update($L("Display Prefs"))
+	this.controller.get('dashPrefsHead').update($L("Dashboard Prefs"))
+
+
 	this.controller.listen("prefDivider", Mojo.Event.tap, this.prefTapped.bindAsEventListener(this));
 	this.controller.listen("dispDivider", Mojo.Event.tap, this.dispTapped.bindAsEventListener(this));
 	this.controller.listen("dashDivider", Mojo.Event.tap, this.dashTapped.bindAsEventListener(this));

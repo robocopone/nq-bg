@@ -134,6 +134,9 @@ MainAssistant.prototype.setup = function(){
 	elements.initialDisplay = this.controller.get('initialDisplay');
 
 	elements.currentInfo = this.controller.get('currentInfo');	
+	elements.currentTitle = this.controller.get('currentTitle');
+	elements.topSpeedHead = this.controller.get('topSpeedHead');
+	elements.speedHead = this.controller.get('speedHead')
 	elements.topSpeed = this.controller.get('topSpeed');
 	elements.speed = this.controller.get('speed');
 	elements.heading = this.controller.get('heading');
@@ -161,6 +164,11 @@ MainAssistant.prototype.setup = function(){
 	elements.speedometerHeading = this.controller.get('speedometerHeading');
 	
 	
+	// Localizable stuff
+	elements.currentTitle.update($L("Current Information"))
+	elements.topSpeedHead.update($L("Top:"))
+	elements.speedHead.update($L("Speed:"))
+	elements.altHead.update($L("Altitude:"))
 	
 	gpsDashboard.cookie.initialize();
 	
@@ -181,7 +189,7 @@ MainAssistant.prototype.setup = function(){
 
 	// Address button widget
 	this.addressButtonModel = {
-		buttonLabel: 'Get Address',
+		buttonLabel: $L("Get Address"),
 		buttonClass: 'affirmative',
 		disabled: true
 	}
@@ -537,7 +545,7 @@ MainAssistant.prototype.altitude = function(event){
 	if (event.vertAccuracy == 0 || event.vertAccuracy > gpsDashboard.maxError)
 		return "&nbsp;";
 	if (gpsDashboard.units == 1)
-		return (event.altitude * 3.2808399).toFixed(0) + " feet";
+		return (event.altitude * 3.2808399).toFixed(0) + " ft";
 	if (gpsDashboard.units == 2)
 		return event.altitude.toFixed(0) + " m";
 }
@@ -820,7 +828,7 @@ MainAssistant.prototype.handleOrientation = function( event ) {
 		elements.speedometer.addClassName('landscape');
 		this.controller.get('speedLimit').addClassName('landscape');
 		this.controller.get('reverse').addClassName('landscape');
-		elements.altHead.update('Alt:')
+		elements.altHead.update($L("Alt:"))
 		elements.altHead.addClassName('landscape');
 		elements.altitude.addClassName('landscape');
 	}	

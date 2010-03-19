@@ -1,4 +1,15 @@
 {
-	"Yes": "S�",
+	"Yes": "Sí",
 	"No": "No",
+	"Current Information": "Información actual",
+	"Top:": "todo:",
+	"Speed:": "todo:",
+	"Altitude:": "Altitud:",
+	"Alt:": "Alt:",
+
+	"Get Address": "Obtener la Dirección",
+	
+	"Preferences": "Preferencias",
+	"Display Prefs": "todo",
+	"Dashboard Prefs": "todo",
 }
