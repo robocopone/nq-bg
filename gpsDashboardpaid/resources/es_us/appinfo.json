@@ -1,0 +1,18 @@
+{
+	"id": "net.bradleygraber.gpsdashboardplus",
+	"version": "1.4.1",
+	"vendor": "Bradley Graber",
+	"type": "web",
+	"main": "../../index.html",
+	"title": "gpsDashboard+ Spanish",
+	"icon": "../../icon.png",
+	"noDeprecatedStyles": "true",
+	"copyright": "Copyright 2010 Bradley Graber",
+	"support": 
+	{	"url": "http://www.bradleygraber.net/gpsDashboard",
+		"email": { "address": "bradgraber@gmail.com",
+					"subject": "Inquiry"
+				 },
+		"phone": "812-488-2068"
+	}
+}
