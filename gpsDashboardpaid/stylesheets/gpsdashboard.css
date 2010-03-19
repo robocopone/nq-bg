@@ -52,7 +52,7 @@
  */
 #currentTitle { float: left; }
 #topSpeedHead {
-	float: left;
+	float: right;
 	font-size: small;
 	width: 20%;
 	margin-right: 3px;
@@ -62,7 +62,7 @@
 #topSpeed {
 	margin-top: 1px;
 	font-size: small;
-	float: left;
+	float: right;
 	width: 58px;
 }
 
