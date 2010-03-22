@@ -165,6 +165,7 @@ MainAssistant.prototype.setup = function(){
 	elements.address2 = this.controller.get('address2');
 	
 	elements.speedometer = this.controller.get('speedometer');
+	elements.speedLimit = this.controller.get('speedLimit');
 	elements.scaledSpeedometer = this.controller.get('scaledSpeedometer');
 	elements.speedometerSpeed = this.controller.get('speedometerSpeed');
 	elements.speedometerHeading = this.controller.get('speedometerHeading');
@@ -210,15 +211,8 @@ MainAssistant.prototype.setup = function(){
 	}, this.addressButtonModel);
 
 	// Heads up button.
-	this.controller.setupWidget('reverse', this.atts = {
-	}, this.model = {
-		buttonLabel: 'Reverse (Heads-Up Mode)',
-		buttonClass: 'normal',
-		disabled: false
-	});
-	
 	this.controller.setupWidget('speedLimit', {
-		label: 'Speed Limit',
+		label: $L("Speed Limit"),
 		modelProperty: 'value',
 		min: 15,
 		max: 160,
@@ -227,6 +221,13 @@ MainAssistant.prototype.setup = function(){
 		value: gpsDashboard.speedLimit
 	});
 
+	this.controller.setupWidget('reverse', this.atts = {
+	}, this.model = {
+		buttonLabel: $L("Reverse (Heads-Up Mode)"),
+		buttonClass: 'normal',
+		disabled: false
+	});
+	
 	this.controller.listen(elements.document, 'orientationchange', this.handleOrientation.bindAsEventListener(this));
 	this.controller.listen(elements.document, 'shakestart', this.handleShake.bindAsEventListener(this));
 
@@ -516,37 +517,37 @@ MainAssistant.prototype.heading = function(event){
 		
 	if ((event.heading >= 348.75 && event.heading <= 360) ||
 		(event.heading >= 0 && event.heading < 11.25)		) 
-		return "N";
+		return $L("N");
 	if (event.heading >= 11.25 && event.heading < 33.75) 
-		return "NNE";
+		return $L("NNE");
 	if (event.heading >= 33.75 && event.heading < 56.25) 
-		return "NE";
+		return $L("NE");
 	if (event.heading >= 56.25 && event.heading < 78.75) 
-		return "ENE";
+		return $L("ENE");
 	if (event.heading >= 78.75 && event.heading < 101.25) 
-		return "E";
+		return $L("E");
 	if (event.heading >= 101.25 && event.heading < 123.75) 
-		return "ESE";
+		return $L("ESE");
 	if (event.heading >= 123.75 && event.heading < 146.25) 
-		return "SE";
+		return $L("SE");
 	if (event.heading >= 146.25 && event.heading < 168.75) 
-		return "SSE";
+		return $L("SSE");
 	if (event.heading >= 168.75 && event.heading < 191.25) 
-		return "S";
+		return $L("S");
 	if (event.heading >= 191.25 && event.heading < 213.75) 
-		return "SSW";
+		return $L("SSW");
 	if (event.heading >= 213.75 && event.heading < 236.25) 
-		return "SW";
+		return $L("SW");
 	if (event.heading >= 236.25 && event.heading < 258.75) 
-		return "WSW";
+		return $L("WSW");
 	if (event.heading >= 258.75 && event.heading < 281.25) 
-		return "W";
+		return $L("W");
 	if (event.heading >= 281.25 && event.heading < 303.75) 
-		return "WNW";
+		return $L("WNW");
 	if (event.heading >= 303.75 && event.heading < 326.25) 
-		return "NW";
+		return $L("NW");
 	if (event.heading >= 326.25 && event.heading < 348.75) 
-		return "NNW";
+		return $L("NNW");
 }
 
 /*
