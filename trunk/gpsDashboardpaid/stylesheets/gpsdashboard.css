@@ -237,9 +237,10 @@
 }
 
 #speedLimit {
+	background-color: blue;
 	position: absolute;
-	left: 65px;
-	top: 260px;
+	top: 300px;
+	width: 320px;
 }
 #speedLimit.landscape {
 	position: absolute;
@@ -248,7 +249,7 @@
 }
 #reverse {
 	position: absolute;
-	top: 320px;
+	top: 360px;
 	left: 28px;
 }
 #reverse.landscape {

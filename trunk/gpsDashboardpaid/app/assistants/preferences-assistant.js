@@ -56,6 +56,15 @@ PreferencesAssistant.prototype.setup = function(){
 	this.controller.get('dispPrefsHead').update($L("Display Prefs"))
 	this.controller.get('dispPrefGroupHead').update($L("Display Prefs"))
 	this.controller.get('dashPrefsHead').update($L("Dashboard Prefs"))
+	this.controller.get('dashPrefGroupHead').update($L("Dashboard View (First 3 Displayed)"))
+
+	this.controller.get('dashPrefGroupAvgSpeed').update($L("Average Speed"))
+	this.controller.get('dashPrefGroupTopSpeed').update($L("Top Speed"))
+	this.controller.get('dashPrefGroupDistTraveled').update($L("Distance Traveled"))
+	this.controller.get('dashPrefGroupDistFromInit').update($L("Dist from Initial Position"))
+	this.controller.get('dashPrefGroupLifeDist').update($L("Lifetime Distance"))
+	this.controller.get('dashPrefGroupTripDuration').update($L("Trip Duration"))
+	
 
 
 	this.controller.listen("prefDivider", Mojo.Event.tap, this.prefTapped.bindAsEventListener(this));
@@ -248,7 +257,7 @@ PreferencesAssistant.prototype.setup = function(){
 
 	//coloredSpeedPref Selector Widget
 	this.controller.setupWidget("coloredSpeedPref", attr = {
-		label: $L("Colored Speed"),
+		label: $L("Speed Color"),
 		choices: [{
 			label: $L("Based on Avg Speed"),
 			value: 'true'
