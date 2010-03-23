@@ -4,7 +4,7 @@
 
 	"Current Information": "Aktuelle Info",
 	"Top:": "Max:",
-	"Speed:": "Speed:",
+	"Speed:": "Geschwindigkeit:",
 	"NNE": "NNO", "NE": "NO", "ENE": "ONO", "E": "O", "ESE": "OSO", "SE": "SO", "SSE": "SSO",
 	"Altitude:": "Höhe:", 
 	
@@ -22,7 +22,7 @@
 			"Never Reset Trip Information": "Reise Informationen nie zurücksetzen",
 			"Ask Each Time": "Jedes Mal Nachfragen",
 		"Max Error": "Max Fehler",
-		"When Shook": "When Shook",
+		"When Shook": "Wenn Schüttelte",
 			"Reset None": "Nichts Zurücksetzen",
 			"Reset All": "Alles Zurücksetzen",
 			"Reset Top Speed": "Höchstgeschw. Zurücksetzen",
