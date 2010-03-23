@@ -236,26 +236,19 @@
 	background-color: #393e43;
 }
 
-#speedLimit {
-	background-color: blue;
+#speedWrapper {
 	position: absolute;
-	top: 300px;
-	width: 320px;
-}
-#speedLimit.landscape {
-	position: absolute;
-	left: 145px;
 	top: 270px;
 }
+
 #reverse {
 	position: absolute;
-	top: 360px;
+	top: 340px;
 	left: 28px;
 }
 #reverse.landscape {
 	position: absolute;
 	left: 115px;
-	top: 310px;
 }
 
 .label { font-size: 80%; }
