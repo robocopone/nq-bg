@@ -165,7 +165,7 @@ MainAssistant.prototype.setup = function(){
 	elements.address2 = this.controller.get('address2');
 	
 	elements.speedometer = this.controller.get('speedometer');
-	elements.speedLimit = this.controller.get('speedLimit');
+	elements.speedWrapper = this.controller.get('speedWrapper');
 	elements.scaledSpeedometer = this.controller.get('scaledSpeedometer');
 	elements.speedometerSpeed = this.controller.get('speedometerSpeed');
 	elements.speedometerHeading = this.controller.get('speedometerHeading');
@@ -184,10 +184,13 @@ MainAssistant.prototype.setup = function(){
 	elements.altHead.update($L("Altitude:"))
 	
 	gpsDashboard.cookie.initialize();
-	
+
+	gpsDashboard.screenHeight = Mojo.Environment.DeviceInfo.screenHeight;
+	gpsDashboard.screenWidth = Mojo.Environment.DeviceInfo.screenWidth;
+
 	// Allow landscape mode if screen height >= 480 (Pre only)
 	if (this.controller.stageController.setWindowOrientation &&
-	Mojo.Environment.DeviceInfo.screenHeight >= 480) 
+	gpsDashboard.screenHeight >= 480) 
 		this.controller.stageController.setWindowOrientation("free");
 	
 	// Scrim and activity spinner
@@ -839,11 +842,11 @@ MainAssistant.prototype.handleOrientation = function( event ) {
 		elements.initialDisplay.addClassName('landscape');
 		elements.clock.removeClassName('hidden');
 		elements.speedometer.addClassName('landscape');
-		this.controller.get('speedLimit').addClassName('landscape');
 		this.controller.get('reverse').addClassName('landscape');
 		elements.altHead.update($L("Alt:"))
 		elements.altHead.addClassName('landscape');
 		elements.altitude.addClassName('landscape');
+		this.centerSpeedLimit();
 	}	
 	if (event.position == 2 || event.position == 3) {
 		elements.currentInfo.removeClassName('landscape');
@@ -852,11 +855,11 @@ MainAssistant.prototype.handleOrientation = function( event ) {
 		elements.initialDisplay.removeClassName('landscape');
 		elements.clock.addClassName('hidden');
 		elements.speedometer.removeClassName('landscape');
-		this.controller.get('speedLimit').removeClassName('landscape');
 		this.controller.get('reverse').removeClassName('landscape');
 		elements.altHead.update('Altitude:')
 		elements.altHead.removeClassName('landscape');
 		elements.altitude.removeClassName('landscape');
+		this.centerSpeedLimit();
 	}
 }
 
@@ -983,6 +986,7 @@ MainAssistant.prototype.nav = function () {
 	});
 }
 MainAssistant.prototype.navHandler = function(command) {
+	var local = {}
 	if (command == 'recordKeeping')
 		this.controller.stageController.pushScene('records');
 	if (command == 'toggle') {
@@ -991,6 +995,7 @@ MainAssistant.prototype.navHandler = function(command) {
 			elements.tripInfo.addClassName('hidden');
 			elements.addressInfo.addClassName('hidden');
 			elements.speedometer.removeClassName('hidden');
+			this.centerSpeedLimit();
 		}
 		else {
 			elements.currentInfo.removeClassName('hidden');
@@ -1001,6 +1006,18 @@ MainAssistant.prototype.navHandler = function(command) {
 	}
 }
 
+MainAssistant.prototype.centerSpeedLimit = function(){
+	var local = {}
+	local.width = parseInt(elements.speedWrapper.getStyle('width'))
+	if (!gpsDashboard.speedLimitWidth)
+		gpsDashboard.speedLimitWidth = local.width;
+	if (!elements.speedometer.hasClassName('landscape')) 
+		local.left = (gpsDashboard.screenWidth / 2) - (local.width / 2)
+	else 
+		local.left = (gpsDashboard.screenHeight / 2) - (local.width / 2)
+	elements.speedWrapper.setStyle({ left: local.left + 'px', width: gpsDashboard.speedLimitWidth + 1 + 'px' })
+}
+
 MainAssistant.prototype.speedLimit = function (event) {
 	gpsDashboard.speedLimit = event.value;
 }
@@ -1008,10 +1025,12 @@ MainAssistant.prototype.speedLimit = function (event) {
  * Lights up the speedometer
  */
 MainAssistant.prototype.setSpeedometer = function(event) {
+	var local = {}
 	if (event.velocity != 0 && elements.speedometerSpeed.hasClassName('hidden'))
 		elements.speedometerSpeed.removeClassName('hidden');
 	if (event.velocity == 0 && !(elements.speedometerSpeed.hasClassName('hidden')))
 		elements.speedometerSpeed.addClassName('hidden');
+
 
 	if (gpsDashboard.theme == 'light')
 		speedImg = 'speedImgLight';
