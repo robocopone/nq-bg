@@ -1,10 +1,10 @@
 {
-	"id": "net.bradleygraber.freefall",
+	"id": "net.bradleygraber.freefallfree",
 	"version": "1.0.0",
 	"vendor": "Bradley Graber",
 	"type": "web",
 	"main": "index.html",
-	"title": "Freefall!",
+	"title": "Freefall! Free",
 	"icon": "icon.png",
 	"noDeprecatedStyles": "true",
 	"copyright": "Copyright 2010 Bradley Graber",
