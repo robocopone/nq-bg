@@ -106,6 +106,7 @@ MainAssistant.prototype.setup = function(){
 	elements.appHeader = this.controller.get('appHeader')
 	elements.display = this.controller.get('display')
 	elements.lowerDisplay = this.controller.get('lowerDisplay')
+	elements.buyButton = this.controller.get('buyButton')
 	
 	for (var x = 1; x <= global.lastLayer; x++) {
 		layer[x] = this.controller.get('layer' + x);
@@ -187,9 +188,20 @@ MainAssistant.prototype.setup = function(){
 		type: Mojo.Widget.defaultButton
 	}, local.goButtonModel);
 	
+	// Go Button Widget
+	local.buyButtonModel = {
+		buttonLabel: 'Buy FreeFall!',
+		buttonClass: 'affirmative',
+		disabled: false
+	}
+	this.controller.setupWidget('buyButton', atts = {
+		type: Mojo.Widget.defaultButton
+	}, local.buyButtonModel);
+
 	this.goEasy = Mojo.Function.debounce(undefined, this.doGo.bind(this), .5);
 	this.goHard = Mojo.Function.debounce(undefined, this.doGo.bind(this), .25);
 
+	this.controller.listen(elements.buyButton, Mojo.Event.tap, this.tapBuyButton.bindAsEventListener(this))
 	this.controller.listen(elements.appHeader,Mojo.Event.tap, this.nav.bindAsEventListener(this));
 	this.controller.listen(document, 'acceleration', this.checkAccel.bindAsEventListener(this));
 	this.controller.listen(elements.goButton, Mojo.Event.tap, this.tapGoButton.bindAsEventListener(this));
@@ -214,8 +226,13 @@ MainAssistant.prototype.activate = function(event) {
 		global.locked = true;
 	
 	if (global.locked) {
+		elements.difficultyButton.addClassName('hidden')
+		elements.hideButton.addClassName('hidden')
+		elements.buyButton.removeClassName('hidden')
+		elements.display.removeClassName('hidden')
 		global.hideButtonModel.disabled = true;
 		this.controller.modelChanged(global.hideButtonModel, this);
+		this.controller.get('displayText').update("Free time has expired.  <BR /> Please purchase FreeFall! for $.99 <BR /> in the App Catalog")		
 	}
 }
 
@@ -471,12 +488,25 @@ MainAssistant.prototype.initShip = function () {
 	elements.ship.setStyle({ left: (currPosition-6) + 'px' })
 }
 
+MainAssistant.prototype.tapBuyButton = function() { 
+	this.controller.serviceRequest("palm://com.palm.applicationManager", {
+		method: "open",
+		parameters: {
+			id: 'com.palm.app.browser',
+			params: {
+				target: "http://www.bradleygraber.net/gpsDashboard"
+			}
+		}
+	});
+}
+
 MainAssistant.prototype.cleanup = function(event) {
 	this.controller.stageController.setWindowProperties({
 		blockScreenTimeout: false,
 		fastAccelerometer: false
 	});
 
+	this.controller.stopListening(elements.buyButton, Mojo.Event.tap, this.tapBuyButton.bindAsEventListener(this))
 	this.controller.stopListening(elements.difficultyButton, Mojo.Event.tap, this.tapDifficultyButton.bindAsEventListener(this));
 	this.controller.stopListening(elements.hideButton, Mojo.Event.tap, this.tapHideButton.bindAsEventListener(this));
 	this.controller.stopListening(elements.supportButton, Mojo.Event.tap, this.tapSupportButton.bindAsEventListener(this));
