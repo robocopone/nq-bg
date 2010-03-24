@@ -10,6 +10,7 @@ var obstacle = {}
 var time = {}
 var layer = {}
 var global = {
+	initialDate: new Date().getTime(),
 	name: "",
 	moveable: true,
 	paused: true,
@@ -38,13 +39,16 @@ var freefallCookie = ({
 			global.scores = storedData.scores.slice(0);
 			global.name = storedData.name;
 			global.difficulty = storedData.difficulty;
+			global.initialDate = storedData.initialDate;
 		}
+			
 		this.storeCookie();
 	},
 	storeCookie: function() {
 		var tmpScores = global.scores.slice(0)
-		this.cookieData.put({  
+		this.cookieData.put({
 			version: "1.0.0",
+			initialDate: global.initialDate,
 			scores: tmpScores,
 			name: global.name,
 			difficulty: global.difficulty
@@ -53,8 +57,6 @@ var freefallCookie = ({
 });
 
 MainAssistant.prototype.initGame = function () {
-	var local = {}	
-
 	global.shipLayer = Math.floor(global.screenHeight / 20) - 10;
 	elements.ship.setStyle({ top: (((global.shipLayer-2) * 20) - 1) + 'px' })
 
@@ -116,7 +118,7 @@ MainAssistant.prototype.setup = function(){
 	elements.multiplier.setStyle({ width: global.screenWidth * (3 / 10) + 'px' })
 	
 	elements.display.setStyle({
-		height: global.screenHeight * .6 + 'px',
+		height: global.screenHeight * .65 + 'px',
 		width: global.screenWidth * .8 + 'px',
 		top: global.screenHeight * .2 + 'px',
 		left: (global.screenWidth * .1) - 10 + 'px'
@@ -132,14 +134,14 @@ MainAssistant.prototype.setup = function(){
 	})
 
 	// Hide Button Widget
-	local.hideButtonModel = {
+	global.hideButtonModel = {
 		buttonLabel: 'Hide',
 		buttonClass: 'affirmative',
 		disabled: false
 	}
 	this.controller.setupWidget('hideButton', atts = {
 		type: Mojo.Widget.defaultButton
-	}, local.hideButtonModel);
+	}, global.hideButtonModel);
 
 	// Difficulty Button Widget
 	if (global.difficulty == 'Easy')
@@ -205,6 +207,16 @@ MainAssistant.prototype.setup = function(){
  * Main Function
  */
 MainAssistant.prototype.activate = function(event) {
+	var local = {}	
+	local.currentDate = new Date().getTime();
+	this.controller.get('timeRemaining').update("Free Time Remaining: " + (14 - (local.currentDate - global.initialDate) / 1000 / 60 / 60 / 24).toFixed(0) + " days")		
+	if ((local.currentDate - global.initialDate) / 1000 / 60 / 60 / 24 > 14)
+		global.locked = true;
+	
+	if (global.locked) {
+		global.hideButtonModel.disabled = true;
+		this.controller.modelChanged(global.hideButtonModel, this);
+	}
 }
 
 /*
@@ -563,6 +575,8 @@ MainAssistant.prototype.stop = function (state) {
  * Popup menu for record keeping
  */
 MainAssistant.prototype.nav = function () {
+	if (global.locked)
+		return;
 	global.paused = true;
 	if (elements.display.hasClassName('hidden'))
 		elements.display.removeClassName('hidden')
