@@ -87,7 +87,7 @@
 	margin-right: 5px;
 }
 .data {
-	width: 88px;
+	width: 82px;
 	margin-right: 5px;
 	margin-bottom: 5px;
 	float: left;
@@ -130,7 +130,7 @@
 }
 #tripInfo.landscape {
 	margin-right: 0;
-	width: 52%;
+	width: 53%;
 	float: left;
 }
 
@@ -139,7 +139,7 @@
  */
 #addressInfo.landscape {
 	font-size: medium;
-	width: 39%;
+	width: 38%;
 	float: left;
 }
 #address { margin-top: 5px; }
