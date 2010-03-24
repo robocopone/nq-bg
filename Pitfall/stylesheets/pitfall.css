@@ -32,6 +32,11 @@
 	float: left;
 	width: 27%;
 }
+#buyButton {
+	margin-top: 4%;
+	float: left;
+	width: 57%;
+}
 
 
 #highScoresButton {
