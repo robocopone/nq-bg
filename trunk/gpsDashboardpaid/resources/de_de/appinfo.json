@@ -4,7 +4,7 @@
 	"vendor": "Bradley Graber",
 	"type": "web",
 	"main": "../../index.html",
-	"title": "gpsDashboard+ German",
+	"title": "gpsDashboard+",
 	"icon": "../../icon.png",
 	"noDeprecatedStyles": "true",
 	"copyright": "Copyright 2010 Bradley Graber",
