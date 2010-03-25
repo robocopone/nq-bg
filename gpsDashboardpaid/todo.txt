@@ -1,13 +1,3 @@
-1.3.0
-Pedestrian mode
-Automatic resets preference
-Help
-Divs as graphical representations
+Spanish free landscape is broken, but isn't in paid
 
-*add alltime resets
-*check vertical accuracy
-*Limit accuracy on alltime records
-*Shake for resets with pref
-*Indicate higher or lower than avg speed with pref
-*Records Scene
-*Trip duration
+put altitude on it's own line so it won't fucking go up so fucking high
