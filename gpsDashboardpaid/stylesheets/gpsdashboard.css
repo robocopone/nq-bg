@@ -259,14 +259,28 @@
 	top: 270px;
 }
 
-#reverse {
+#hideSpeedLimitLine {
+	position: absolute;
+	top: 342px;
+	height: 10px;
+	width: 320px;
+	z-index: 3;
+	background-color: #e4e4e2;
+}
+#hideSpeedLimitLine.dark {
+	background-color: #393e43;
+}
+
+#reverseWrapper {
 	position: absolute;
 	top: 340px;
-	left: 28px;
+	width: 320px;
+	z-index: 4;
+}
+#reverse {
+	text-align: center;
 }
 #reverse.landscape {
-	position: absolute;
-	left: 115px;
 }
 
 .label { font-size: 80%; }

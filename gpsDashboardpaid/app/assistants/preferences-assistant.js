@@ -344,6 +344,7 @@ PreferencesAssistant.prototype.changeThemeSelector = function (event) {
 		$$('body')[0].addClassName('palm-dark');
 		$$('body')[0].removeClassName('palm-default');
 		this.controller.get('border').addClassName('dark');
+		this.controller.get('hideSpeedLimitLine').addClassName('dark')
 		this.controller.get('speedometerSpeed').addClassName('dark');
 		this.controller.get('speedImgDark').removeClassName('hidden');
 		this.controller.get('speedImgLight').addClassName('hidden');
@@ -352,6 +353,7 @@ PreferencesAssistant.prototype.changeThemeSelector = function (event) {
 		$$('body')[0].removeClassName('palm-dark');
 		$$('body')[0].addClassName('palm-default');
 		this.controller.get('border').removeClassName('dark');
+		this.controller.get('hideSpeedLimitLine').removeClassName('dark')
 		this.controller.get('speedometerSpeed').removeClassName('dark');
 		this.controller.get('speedImgDark').addClassName('hidden');
 		this.controller.get('speedImgLight').removeClassName('hidden');
