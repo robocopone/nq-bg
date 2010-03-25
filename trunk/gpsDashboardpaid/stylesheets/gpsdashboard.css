@@ -109,7 +109,7 @@
 }
 
 #speedHead	{ margin-top: 15px }
-#speedUnit	{ margin-top: 15px; margin-right: 10px}
+#speedUnit	{ margin-top: 15px; margin-right: 10px; width: 45px;}
 #speed		{ text-align: right; font-size: 170%; width: auto; }
 
 #speed.red		{ color: red; }
