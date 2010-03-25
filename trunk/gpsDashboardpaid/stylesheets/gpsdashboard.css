@@ -222,26 +222,33 @@
 	left: 133px;
 	top: 70px;
 }
-
+#speedometerSpeedValue {
+	font-size: 170%;
+	float: left;
+}
+#speedometerSpeedUnit {
+	float: left;
+	margin-top: 15px;
+	margin-left: 5px;
+}
 #speedometerSpeed.w10 {
-	left: 107px;
-	width: 106px; 
+	left: 115px;
+	width: 91px; 
 }
 #speedometerSpeed.w100 {
-	left: 98px;
-	width: 123px;
+	left: 105px;
+	width: 109px;
 }
 #speedometerSpeed.w1000 {
-	left: 87px;
-	width: 142px;
+	left: 95px;
+	width: 128px;
 }
 #speedometerSpeed {
 	background-color: #e4e4e2;
-	font-size: 155%;
 	position: absolute;
 	top: 98px;
-	left: 115px;
-	width: 90px;
+	left: 122px;
+	width: 73px;
 }
 #speedometerSpeed.dark {
 	background-color: #393e43;

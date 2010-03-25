@@ -169,6 +169,8 @@ MainAssistant.prototype.setup = function(){
 	elements.speedWrapper = this.controller.get('speedWrapper');
 	elements.scaledSpeedometer = this.controller.get('scaledSpeedometer');
 	elements.speedometerSpeed = this.controller.get('speedometerSpeed');
+	elements.speedometerSpeedValue = this.controller.get('speedometerSpeedValue')
+	elements.speedometerSpeedUnit = this.controller.get('speedometerSpeedUnit')
 	elements.speedometerHeading = this.controller.get('speedometerHeading');
 	
 	
@@ -278,19 +280,18 @@ MainAssistant.prototype.activate = function(event) {
 		}
 	);
 }
-//speed = 0;
-//dir = 'up';
+speed = 0;
+dir = 'up';
 MainAssistant.prototype.handleServiceResponse = function(event){
-//	if (speed > 70)
-//		dir = 'down';
-//	if (speed <= 0)
-//		dir = 'up';
-//	if (dir == 'up')
-//		event.velocity = speed += 5;
-//	else
-//		event.velocity = speed -= 5;
-	event.velocity = 1000;
-	
+	if (speed > 700)
+		dir = 'down';
+	if (speed <= 0)
+		dir = 'up';
+	if (dir == 'up')
+		event.velocity = speed += 50;
+	else
+		event.velocity = speed -= 50;
+
 	if (gpsDashboard.stage)
 		scenes = gpsDashboard.stage.getScenes();
 
@@ -348,7 +349,7 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 	}
 
 	elements.speed.update(this.speed(event));
-	elements.speedometerSpeed.update(this.speed(event));
+	elements.speedometerSpeedValue.update(this.speed(event));
 	elements.heading.update(this.heading(event));
 	elements.speedometerHeading.update(this.heading(event));
 	if (gpsDashboard.processSpeedometer && !elements.speedometer.hasClassName('hidden'))
@@ -490,10 +491,12 @@ MainAssistant.prototype.speed = function(event){
 		
 	if (gpsDashboard.units == 1) {
 		elements.speedUnit.update("mph")
+		elements.speedometerSpeedUnit.update("mph")
 		return (event.velocity * 2.23693629).toFixed(0);
 	}
 	if (gpsDashboard.units == 2) {
 		elements.speedUnit.update("km/h")
+		elements.speedometerSpeedUnit.update("km/h")
 		return (event.velocity * 3.6).toFixed(0);
 	}
 }
