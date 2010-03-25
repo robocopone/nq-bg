@@ -140,6 +140,7 @@ MainAssistant.prototype.setup = function(){
 	elements.speedHead = this.controller.get('speedHead')
 	elements.topSpeed = this.controller.get('topSpeed');
 	elements.speed = this.controller.get('speed');
+	elements.speedUnit = this.controller.get('speedUnit');
 	elements.heading = this.controller.get('heading');
 	elements.altHead = this.controller.get('altHead');
 	elements.altitude = this.controller.get('altitude');
@@ -288,7 +289,8 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 //		event.velocity = speed += 5;
 //	else
 //		event.velocity = speed -= 5;
-
+	event.velocity = 1000;
+	
 	if (gpsDashboard.stage)
 		scenes = gpsDashboard.stage.getScenes();
 
@@ -486,10 +488,14 @@ MainAssistant.prototype.speed = function(event){
 		elements.speed.removeClassName('green');
 	}
 		
-	if (gpsDashboard.units == 1)
-		return (event.velocity * 2.23693629).toFixed(0) + " mph";
-	if (gpsDashboard.units == 2)
-		return (event.velocity * 3.6).toFixed(0) + " km/h";
+	if (gpsDashboard.units == 1) {
+		elements.speedUnit.update("mph")
+		return (event.velocity * 2.23693629).toFixed(0);
+	}
+	if (gpsDashboard.units == 2) {
+		elements.speedUnit.update("km/h")
+		return (event.velocity * 3.6).toFixed(0);
+	}
 }
 
 /*
@@ -977,10 +983,10 @@ MainAssistant.prototype.nav = function () {
 		onChoose: this.navHandler,
 		placeNear: this.controller.get('appHeader'),
 		items: [{
-			label: 'Toggle Display',
+			label: $L("Toggle Display"),
 			command: 'toggle'
 		},{
-			label: 'Record Keeping',
+			label: $L("Record Keeping"),
 			command: 'recordKeeping',
 		}]
 	});
