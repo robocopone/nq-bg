@@ -285,14 +285,14 @@ MainAssistant.prototype.activate = function(event) {
 //speed = 0;
 //dir = 'up';
 MainAssistant.prototype.handleServiceResponse = function(event){
-//	if (speed > 2)
+//	if (speed > 700)
 //		dir = 'down';
 //	if (speed <= 0)
 //		dir = 'up';
 //	if (dir == 'up')
-//		event.velocity = speed += 1;
+//		event.velocity = speed += 50;
 //	else
-//		event.velocity = speed -= 1;
+//		event.velocity = speed -= 50;
 
 
 	if (gpsDashboard.stage)
