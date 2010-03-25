@@ -472,8 +472,10 @@ MainAssistant.prototype.recordCheck = function (event) {
  */
 MainAssistant.prototype.speed = function(event){
 	//return "0000 mph" //remove
-	if (event.velocity == 0) 
+	if (event.velocity == 0) {
+		elements.speedometerSpeedUnit.update("&nbsp;")
 		return "&nbsp;";
+	}
 	avg = gpsDashboard.avgSpeed.dist / gpsDashboard.avgSpeed.time * 1000;
 
 	if (gpsDashboard.coloredSpeedPref == 'true') {
