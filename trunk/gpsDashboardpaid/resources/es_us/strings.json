@@ -57,6 +57,9 @@
 			"Trip Duration": "Duración del Viaje",
 
 	"Speed Limit": "Límite de velocidad",
+
+	"Toggle Display": "Muestra u Oculta",
+	"Reverse (Heads-Up Mode)": "Reverse (Heads-Up Mode)",
 	
 	"Record Keeping": "Mantenimiento de Registros",
 	"Tap to Map the Location": "Toque en el registro para el mapa de ubicación.",

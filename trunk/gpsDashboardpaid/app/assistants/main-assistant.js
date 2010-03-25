@@ -172,6 +172,7 @@ MainAssistant.prototype.setup = function(){
 	elements.speedometerSpeedValue = this.controller.get('speedometerSpeedValue')
 	elements.speedometerSpeedUnit = this.controller.get('speedometerSpeedUnit')
 	elements.speedometerHeading = this.controller.get('speedometerHeading');
+	elements.reverse = this.controller.get('reverse')
 	
 	
 	// Localizable stuff
@@ -238,7 +239,7 @@ MainAssistant.prototype.setup = function(){
 	this.controller.listen(elements.document, 'shakestart', this.handleShake.bindAsEventListener(this));
 
 	this.controller.listen(elements.addressButton, Mojo.Event.tap, this.getAddress.bindAsEventListener(this));
-	this.controller.listen(this.controller.get('reverse'), Mojo.Event.tap, this.reverse.bindAsEventListener(this));
+	this.controller.listen(elements.reverse, Mojo.Event.tap, this.reverse.bindAsEventListener(this));
 	this.controller.listen(elements.currentInfo,Mojo.Event.tap, this.resets.bindAsEventListener(this));
 	this.controller.listen(elements.tripInfo,Mojo.Event.tap, this.resets.bindAsEventListener(this));
 	this.controller.listen(this.controller.get('appHeader'),Mojo.Event.tap, this.nav.bindAsEventListener(this));
@@ -259,6 +260,7 @@ MainAssistant.prototype.setup = function(){
 		$$('body')[0].removeClassName('palm-default');
 		this.controller.get('border').addClassName('dark');
 		elements.speedometerSpeed.addClassName('dark');
+		this.controller.get('hideSpeedLimitLine').addClassName('dark')
 		this.controller.get('speedImgDark').removeClassName('hidden');
 		this.controller.get('speedImgLight').addClassName('hidden');
 	}
@@ -756,7 +758,7 @@ MainAssistant.prototype.cleanup = function(event){
 	this.controller.stopListening(elements.document, 'orientationchange', this.handleOrientation.bindAsEventListener(this));
 	this.controller.stopListening(elements.document, 'shakestart', this.handleShake.bindAsEventListener(this));
 
-	this.controller.stopListening(this.controller.get('reverse'), Mojo.Event.tap, this.reverse.bindAsEventListener(this));
+	this.controller.stopListening(elements.reverse, Mojo.Event.tap, this.reverse.bindAsEventListener(this));
 	this.controller.stopListening(elements.addressButton, Mojo.Event.tap, this.getAddress.bindAsEventListener(this));
 	this.controller.stopListening(elements.tripInfo,Mojo.Event.tap, this.resets.bindAsEventListener(this));
 	this.controller.stopListening(elements.currentInfo,Mojo.Event.tap, this.resets.bindAsEventListener(this));
@@ -851,7 +853,7 @@ MainAssistant.prototype.handleOrientation = function( event ) {
 		elements.initialDisplay.addClassName('landscape');
 		elements.clock.removeClassName('hidden');
 		elements.speedometer.addClassName('landscape');
-		this.controller.get('reverse').addClassName('landscape');
+		elements.reverse.addClassName('landscape');
 		elements.altHead.update($L("Alt:"))
 		elements.altHead.addClassName('landscape');
 		elements.altitude.addClassName('landscape');
@@ -864,7 +866,7 @@ MainAssistant.prototype.handleOrientation = function( event ) {
 		elements.initialDisplay.removeClassName('landscape');
 		elements.clock.addClassName('hidden');
 		elements.speedometer.removeClassName('landscape');
-		this.controller.get('reverse').removeClassName('landscape');
+		elements.reverse.removeClassName('landscape');
 		elements.altHead.update('Altitude:')
 		elements.altHead.removeClassName('landscape');
 		elements.altitude.removeClassName('landscape');
@@ -1018,6 +1020,7 @@ MainAssistant.prototype.navHandler = function(command) {
 MainAssistant.prototype.centerSpeedLimit = function(){
 	var local = {}
 	local.width = parseInt(elements.speedWrapper.getStyle('width'))
+	
 	if (!gpsDashboard.speedLimitWidth)
 		gpsDashboard.speedLimitWidth = local.width;
 	if (!elements.speedometer.hasClassName('landscape')) 
