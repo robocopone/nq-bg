@@ -147,7 +147,7 @@ MainAssistant.prototype.activate = function(event) {
 }
 
 MainAssistant.prototype.handleServiceResponse = function(event){
-	event.velocity = 100;
+	event.velocity = 1000;
 	if (!gpsDashboard.initialLoc && event.horizAccuracy <= gpsDashboard.maxError) 
 		gpsDashboard.initialLoc = event;
 
@@ -524,7 +524,7 @@ MainAssistant.prototype.handleOrientation = function( event ) {
 		this.controller.get('tripInfo').addClassName('landscape');
 		this.controller.get('addressInfo').addClassName('landscape');
 		this.controller.get('initialDisplay').addClassName('landscape');
-		this.controller.get('altHead').update('Alt:');
+		this.controller.get('altHead').update($('Alt:'));
 		this.controller.get('altHead').addClassName('landscape');
 		this.controller.get('altitude').addClassName('landscape');
 	}	
@@ -533,7 +533,7 @@ MainAssistant.prototype.handleOrientation = function( event ) {
 		this.controller.get('tripInfo').removeClassName('landscape');
 		this.controller.get('addressInfo').removeClassName('landscape');
 		this.controller.get('initialDisplay').removeClassName('landscape');
-		this.controller.get('altHead').update('Altitude:');
+		this.controller.get('altHead').update($L('Altitude:'));
 		this.controller.get('altHead').removeClassName('landscape');
 		this.controller.get('altitude').removeClassName('landscape');
 	}
