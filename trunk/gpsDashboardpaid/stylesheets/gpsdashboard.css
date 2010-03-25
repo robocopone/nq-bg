@@ -54,7 +54,6 @@
 #topSpeedHead {
 	float: right;
 	font-size: small;
-	width: 20%;
 	margin-right: 3px;
 	text-align: right;
 	margin-top: 1px;
@@ -63,7 +62,8 @@
 	margin-top: 1px;
 	font-size: small;
 	float: right;
-	width: 58px;
+	width: 60px;
+	margin-right: 8px;
 }
 
 /*
@@ -93,22 +93,24 @@
 	float: left;
 }
 #heading {
-	margin-top: 9px;
+	margin-top: 15px;
 	margin-bottom: 10px;
 	text-align: center;
 	width: 62px;
+	float: left;
 }
 
 #altHead.landscape {
-	margin-top: 9px; 
+	margin-top: 15px; 
 }
 #altitude 		{ width: 115px; }
 #altitude.landscape {
-	margin-top: 9px;
+	margin-top: 15px;
 }
 
-#speedHead	{ margin-top: 9px}
-#speed		{ font-size: 150%; width: 130px; }
+#speedHead	{ margin-top: 15px }
+#speedUnit	{ margin-top: 15px; margin-right: 10px}
+#speed		{ text-align: right; font-size: 170%; width: auto; }
 
 #speed.red		{ color: red; }
 #speed.green	{ color: green; }
@@ -116,13 +118,22 @@
 /*
  * Current info Display
  */
-#currentInfo 			{ height: 78px;}
-#currentInfo.landscape 	{ height: 30px;}
+#currentInfo { 
+	margin-left: 5px;
+	width: 86%;
+	height: 78px;
+}
+#currentInfo.landscape 	{
+	width: auto; 
+	height: 30px;
+}
 
 /*
  * Trip info Display
  */
 #tripInfo{
+	margin-left: 5px;
+	width: 86%;
 	letter-spacing: .1em;
 	height: 90px;
 	font-size: 77%;
