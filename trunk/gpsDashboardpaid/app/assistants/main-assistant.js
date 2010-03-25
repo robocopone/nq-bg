@@ -870,7 +870,7 @@ MainAssistant.prototype.handleOrientation = function( event ) {
 		elements.clock.addClassName('hidden');
 		elements.speedometer.removeClassName('landscape');
 		elements.reverse.removeClassName('landscape');
-		elements.altHead.update('Altitude:')
+		elements.altHead.update($L('Altitude:'))
 		elements.altHead.removeClassName('landscape');
 		elements.altitude.removeClassName('landscape');
 		this.centerSpeedLimit();
