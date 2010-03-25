@@ -57,4 +57,11 @@
 			"Trip Duration": "Duración del Viaje",
 
 	"Speed Limit": "Límite de velocidad",
+	
+	"Record Keeping": "Mantenimiento de Registros",
+	"Tap to Map the Location": "Toque en el registro para el mapa de ubicación.",
+	"Highest Elevation": "La Elevación Más Alta",
+	"Lowest Elevation": "La Elevación Más Baja",
+	"Resets": "Restablece",
+	"Choose one of the following options": "Elija una de las siguientes opciones",		
 }

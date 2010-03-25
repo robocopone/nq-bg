@@ -412,7 +412,7 @@ MainAssistant.prototype.calcSpeed = function( event ){
 	if (gpsDashboard.units == 1)
 		return (currSpeed * .621371192).toFixed(1) + " mph";
 	if (gpsDashboard.units == 2)
-		return currSpeed.toFixed(1) + " kph";
+		return currSpeed.toFixed(1) + " km/h";
 }
 
 /*
@@ -489,7 +489,7 @@ MainAssistant.prototype.speed = function(event){
 	if (gpsDashboard.units == 1)
 		return (event.velocity * 2.23693629).toFixed(0) + " mph";
 	if (gpsDashboard.units == 2)
-		return (event.velocity * 3.6).toFixed(0) + " kph";
+		return (event.velocity * 3.6).toFixed(0) + " km/h";
 }
 
 /*
@@ -504,7 +504,7 @@ MainAssistant.prototype.topSpeed = function (event) {
 	if (gpsDashboard.units == 1)
 		return (gpsDashboard.topSpeed * 2.23693629).toFixed(0) + " mph";
 	if (gpsDashboard.units == 2)
-		return (gpsDashboard.topSpeed * 3.6).toFixed(0) + " kph";
+		return (gpsDashboard.topSpeed * 3.6).toFixed(0) + " km/h";
 }
 
 /*
@@ -610,7 +610,7 @@ MainAssistant.prototype.avgSpeed = function(event){
 		if (gpsDashboard.units == 2) 
 			return (this.calcDist(gpsDashboard.initialLoc, event) /
 			this.calcTime(gpsDashboard.initialLoc, event) *
-			60 * 60).toFixed(1) + " kph";
+			60 * 60).toFixed(1) + " km/h";
 	}
 	else if (gpsDashboard.avgSpeedPref == 1 && !gpsDashboard.initialLoc)
 		return "&nbsp;";
@@ -623,7 +623,7 @@ MainAssistant.prototype.avgSpeed = function(event){
 		if (gpsDashboard.units == 2)
 			return (gpsDashboard.avgSpeed.dist /
 			gpsDashboard.avgSpeed.time *
-			60 * 60).toFixed(1) + " kph";
+			60 * 60).toFixed(1) + " km/h";
 	}
 	else
 		return "&nbsp;";
