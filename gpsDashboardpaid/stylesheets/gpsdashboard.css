@@ -232,22 +232,22 @@
 	margin-left: 5px;
 }
 #speedometerSpeed.w10 {
-	left: 115px;
+	left: 123px;
 	width: 91px; 
 }
 #speedometerSpeed.w100 {
-	left: 105px;
+	left: 115px;
 	width: 109px;
 }
 #speedometerSpeed.w1000 {
-	left: 95px;
+	left: 100px;
 	width: 128px;
 }
 #speedometerSpeed {
 	background-color: #e4e4e2;
 	position: absolute;
 	top: 98px;
-	left: 122px;
+	left: 128px;
 	width: 73px;
 }
 #speedometerSpeed.dark {
