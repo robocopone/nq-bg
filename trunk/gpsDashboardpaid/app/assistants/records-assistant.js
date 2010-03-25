@@ -2,11 +2,16 @@ function RecordsAssistant() {
 }
 
 RecordsAssistant.prototype.setup = function(){
+	this.controller.get('recordsHeader').update($L("Record Keeping"))
+	this.controller.get('tapAlert').update($L("Tap to Map the Location"))
+	this.controller.get('recordsTopSpeedHeading').update($L("Top Speed"))
+	this.controller.get('recordsHighElevationHeading').update($L("Highest Elevation"))
+	this.controller.get('recordsLowElevationHeading').update($L("Lowest Elevation"))
 
 	if (gpsDashboard.units == 1 && gpsDashboard.alltimeTopSpeed.data.velocity != 0)
 		this.controller.get('alltimeTopSpeed').update((gpsDashboard.alltimeTopSpeed.data.velocity * 2.23693629).toFixed(0) + $L(" mph"));
 	if (gpsDashboard.units == 2 && gpsDashboard.alltimeTopSpeed.data.velocity != 0) 
-		this.controller.get('alltimeTopSpeed').update((gpsDashboard.alltimeTopSpeed.data.velocity * 3.6).toFixed(0) + $L(" kph"));
+		this.controller.get('alltimeTopSpeed').update((gpsDashboard.alltimeTopSpeed.data.velocity * 3.6).toFixed(0) + $L(" km/h"));
 	
 	if (gpsDashboard.units == 1 && gpsDashboard.alltimeHigh.data.altitude != 0)
 		this.controller.get('alltimeHigh').update((gpsDashboard.alltimeHigh.data.altitude * 3.2808399).toFixed(0) + $L(" ft"));
@@ -29,7 +34,7 @@ RecordsAssistant.prototype.setup = function(){
 	this.controller.listen(this.controller.get('alltimeLowGroup'), Mojo.Event.tap, this.alltimeLowGroup.bindAsEventListener(this));
 	
 	this.controller.setupWidget('resets', this.atts = {}, this.model = {
-		buttonLabel: 'Resets',
+		buttonLabel: $L("Resets"),
 		buttonClass: 'negative',
 		disabled: false
 	});
@@ -42,15 +47,15 @@ RecordsAssistant.prototype.resets = function(){
 		title: $L("Resets"),
 		message: $L("Choose one of the following options"),
 		choices: [{
-			label: $L('Top Speed'),
+			label: $L("Top Speed"),
 			value: 'topSpeed',
 			type: 'negative'
 		}, {
-			label: $L('Highest Elevation'),
+			label: $L("Highest Elevation"),
 			value: 'alltimeHigh',
 			type: 'negative'
 		}, {
-			label: $L('Lowest Elevation'),
+			label: $L("Lowest Elevation"),
 			value: 'alltimeLow',
 			type: 'negative'
 		}, ]
