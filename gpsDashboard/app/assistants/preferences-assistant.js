@@ -85,7 +85,7 @@ PreferencesAssistant.prototype.setup = function(){
 		value: gpsDashboard.heading,
 		disabled: false
 	});
-
+	this.controller.get('prefHead').update($L("Preferences"))
 	this.controller.listen("unitsSelector", Mojo.Event.propertyChange, this.changeUnitsSelector.bindAsEventListener(this));
 	this.controller.listen("backlightSelector", Mojo.Event.propertyChange, this.changeBacklightSelector.bindAsEventListener(this));
 	this.controller.listen("avgSpeedPref", Mojo.Event.propertyChange, this.changeAvgSpeed.bindAsEventListener(this));
