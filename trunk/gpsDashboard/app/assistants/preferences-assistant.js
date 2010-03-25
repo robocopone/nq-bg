@@ -4,12 +4,12 @@ function PreferencesAssistant() {
 PreferencesAssistant.prototype.setup = function(){
 	//Units Selector Widget
 	this.controller.setupWidget("unitsSelector", attr = {
-		label: "Units",
+		label: $L("Units"),
 		choices: [{
-			label: "Miles/Feet",
+			label: $L("Miles/Feet"),
 			value: 1
 		}, {
-			label: "Kilometers/Meters",
+			label: $L("Kilometers/Meters"),
 			value: 2
 		}, ],
 	}, model = {
@@ -19,12 +19,12 @@ PreferencesAssistant.prototype.setup = function(){
 	
 	//Backlight Selector Widget
 	this.controller.setupWidget("backlightSelector", attr = {
-		label: "Backlight",
+		label: $L("Backlight"),
 		choices: [{
-			label: "Always On",
+			label: $L("Always On"),
 			value: 1
 		}, {
-			label: "Device Settings",
+			label: $L("Device Settings"),
 			value: 2
 		}, ],
 	}, model = {
@@ -34,12 +34,12 @@ PreferencesAssistant.prototype.setup = function(){
 
 	//Avg Speed Widget
 	this.controller.setupWidget("avgSpeedPref", attr = {
-		label: "Avg. Speed",
+		label: $L("Avg. Speed"),
 		choices: [{
-			label: "Use Dist. from Initial",
+			label: $L("Use Dist. from Initial"),
 			value: 1
 		}, {
-			label: "Use Dist Traveled",
+			label: $L("Use Dist Traveled"),
 			value: 2
 		}, ],
 	}, model = {
@@ -49,21 +49,21 @@ PreferencesAssistant.prototype.setup = function(){
 
 	//Max Error Selector Widget
 	this.controller.setupWidget("maxErrorPrefSelector", attr = {
-		label: "Max Error",
+		label: $L("Max Error"),
 		choices: [{
-			label: "5 meters",
+			label: $L("5 m"),
 			value: 5
 		}, {
-			label: "10 meters",
+			label: $L("10 m"),
 			value: 10
 		}, {
-			label: "15 meters",
+			label: $L("15 m"),
 			value: 15
 		}, {
-			label: "20 meters",
+			label: $L("20 m"),
 			value: 20
 		}, {
-			label: "30 meters",
+			label: $L("30 m"),
 			value: 30
 		},],
 	}, model = {
@@ -73,12 +73,12 @@ PreferencesAssistant.prototype.setup = function(){
 
 	//headingPref Selector Widget
 	this.controller.setupWidget("headingPref", attr = {
-		label: "Heading",
+		label: $L("Heading"),
 		choices: [{
-			label: "N/S/E/W",
+			label: $L("N/S/E/W"),
 			value: 1
 		}, {
-			label: "Degrees",
+			label: $L("Degrees"),
 			value: 2
 		},],
 	}, model = {

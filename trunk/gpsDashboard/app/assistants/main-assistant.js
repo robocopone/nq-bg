@@ -78,6 +78,8 @@ MainAssistant.prototype.setup = function(){
 	elements.topSpeedHead = this.controller.get('topSpeedHead');
 	elements.speedHead = this.controller.get('speedHead')
 	elements.altHead = this.controller.get('altHead');
+	
+	elements.addressHead = this.controller.get('addressHead')
 
 	// Localizable stuff
 	elements.tripAvgSpeedHead.update($L("Average Speed:"))
@@ -88,10 +90,11 @@ MainAssistant.prototype.setup = function(){
 	elements.currentTitle.update($L("Current Information"))
 	elements.tripTitle.update($L("Trip Information"))
 	elements.topSpeedHead.update($L("Top:"))
-/*
 	elements.speedHead.update($L("Speed:"))
 	elements.altHead.update($L("Altitude:"))
-*/
+
+	elements.addressHead.update($L("Address"))
+	
 	// Hides the dashboard
 	this.controller.get('address').addClassName('hidden');
 	this.controller.get('currentInfo').addClassName('hidden');
@@ -111,7 +114,7 @@ MainAssistant.prototype.setup = function(){
 	
 	// Address button widget
 	this.addressButtonModel = {				// Handles enabling the address
-		buttonLabel: 'Get Address',			// button
+		buttonLabel: $L('Get Address'),		// button
 		buttonClass: 'affirmative',
 		disabled: true
 	}
