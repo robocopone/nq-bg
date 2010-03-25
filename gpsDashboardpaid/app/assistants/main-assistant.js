@@ -285,14 +285,15 @@ MainAssistant.prototype.activate = function(event) {
 //speed = 0;
 //dir = 'up';
 MainAssistant.prototype.handleServiceResponse = function(event){
-//	if (speed > 700)
+//	if (speed > 2)
 //		dir = 'down';
 //	if (speed <= 0)
 //		dir = 'up';
 //	if (dir == 'up')
-//		event.velocity = speed += 50;
+//		event.velocity = speed += 1;
 //	else
-//		event.velocity = speed -= 50;
+//		event.velocity = speed -= 1;
+
 
 	if (gpsDashboard.stage)
 		scenes = gpsDashboard.stage.getScenes();
@@ -473,7 +474,7 @@ MainAssistant.prototype.recordCheck = function (event) {
 MainAssistant.prototype.speed = function(event){
 	//return "0000 mph" //remove
 	if (event.velocity == 0) {
-		elements.speedometerSpeedUnit.update("&nbsp;")
+		elements.speedUnit.update("&nbsp;")
 		return "&nbsp;";
 	}
 	avg = gpsDashboard.avgSpeed.dist / gpsDashboard.avgSpeed.time * 1000;
