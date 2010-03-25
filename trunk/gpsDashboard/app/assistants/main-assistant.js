@@ -66,7 +66,32 @@ MainAssistant.prototype.setup = function(){
 	this.controller.listen(document, 'orientationchange', this.handleOrientation.bindAsEventListener(this));
 	
 	elements.tripDuration = this.controller.get('tripDuration');
+	elements.speedUnit = this.controller.get('speedUnit')
 
+	elements.tripAvgSpeedHead = this.controller.get('tripAvgSpeedHead')
+	elements.tripDistTraveledHead = this.controller.get('tripDistTraveledHead')
+	elements.tripDistFromInitHead = this.controller.get('tripDistFromInitHead')
+	elements.tripLifetimeHead = this.controller.get('tripLifetimeHead')
+
+	elements.currentTitle = this.controller.get('currentTitle');
+	elements.tripTitle = this.controller.get('tripTitle');
+	elements.topSpeedHead = this.controller.get('topSpeedHead');
+	elements.speedHead = this.controller.get('speedHead')
+	elements.altHead = this.controller.get('altHead');
+
+	// Localizable stuff
+	elements.tripAvgSpeedHead.update($L("Average Speed:"))
+	elements.tripDistTraveledHead.update($L("Dist. Traveled:"))
+	elements.tripDistFromInitHead.update($L("Dist. from First Pos.:"))
+	elements.tripLifetimeHead.update($L("Lifetime Distance:"))
+
+	elements.currentTitle.update($L("Current Information"))
+	elements.tripTitle.update($L("Trip Information"))
+	elements.topSpeedHead.update($L("Top:"))
+/*
+	elements.speedHead.update($L("Speed:"))
+	elements.altHead.update($L("Altitude:"))
+*/
 	// Hides the dashboard
 	this.controller.get('address').addClassName('hidden');
 	this.controller.get('currentInfo').addClassName('hidden');
@@ -119,6 +144,7 @@ MainAssistant.prototype.activate = function(event) {
 }
 
 MainAssistant.prototype.handleServiceResponse = function(event){
+	event.velocity = 100;
 	if (!gpsDashboard.initialLoc && event.horizAccuracy <= gpsDashboard.maxError) 
 		gpsDashboard.initialLoc = event;
 
@@ -175,12 +201,19 @@ MainAssistant.prototype.handleServiceResponseError = function(event) {
  * Current speed display
  */
 MainAssistant.prototype.speed = function(event) {
-	if (event.velocity == 0)
+	if (event.velocity == 0) {
+		elements.speedUnit.update("&nbsp;")
 		return "&nbsp;";
-	if (gpsDashboard.units == 1)
-		return (event.velocity * 2.23693629).toFixed(0) + " mph";
-	if (gpsDashboard.units == 2)
-		return (event.velocity * 3.6).toFixed(0) + " kph";
+	}
+	
+	if (gpsDashboard.units == 1) {
+		elements.speedUnit.update("mph")
+		return (event.velocity * 2.23693629).toFixed(0);
+	}
+	if (gpsDashboard.units == 2) {
+		elements.speedUnit.update("km/h")
+		return (event.velocity * 3.6).toFixed(0);
+	}
 }
 
 /*
