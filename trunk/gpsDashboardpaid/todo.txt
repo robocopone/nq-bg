@@ -1,3 +1,2 @@
-Spanish free landscape is broken, but isn't in paid
-
-put altitude on it's own line so it won't fucking go up so fucking high
+Dashboard view, check "km/h"
+Translate low signal
