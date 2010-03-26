@@ -306,10 +306,28 @@ MainAssistant.prototype.altitude = function(event){
  * Trip average speed display
  */
 MainAssistant.prototype.avgSpeed = function(event){
-	if (gpsDashboard.prevLoc) {
-		gpsDashboard.avgSpeed.dist += this.calcDist(gpsDashboard.prevLoc, event);
-		gpsDashboard.avgSpeed.time += this.calcTime(gpsDashboard.prevLoc, event);
-	}
+	//return "000.0 km/h" //remove
+	
+	var local = {}
+
+	local.avgSpeed = parseInt(this.avgSpeedHelper(event));
+	
+	if (!local.avgSpeed > 0)
+		return "&nbsp;";
+		
+	if (local.avgSpeed < 1000)
+		local.prescision = 1
+	else
+		local.prescision = 0
+
+	if (gpsDashboard.units == 1 )
+		return local.avgSpeed.toFixed(local.prescision) + " mph"
+	else
+		return local.avgSpeed.toFixed(local.prescision) + " km/h";
+		
+}
+
+MainAssistant.prototype.avgSpeedHelper = function (event) {
 	if (gpsDashboard.avgSpeedPref == 1 && gpsDashboard.initialLoc) {
 		if (this.calcTime(gpsDashboard.initialLoc, event) == 0)
 			return "&nbsp;";
