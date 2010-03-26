@@ -130,6 +130,12 @@ MainAssistant.prototype.setup = function(){
 }
 
 MainAssistant.prototype.activate = function(event) {
+	var local = {}
+	local.orientation = this.controller.stageController.getWindowOrientation();
+	if (local.orientation == 'left' || local.orientation =='right')
+		this.handleOrientation({position: 4})
+
+	
 	if (gpsDashboard.backlight == 1)
 		this.controller.stageController.setWindowProperties({blockScreenTimeout: true});
 
@@ -148,6 +154,8 @@ MainAssistant.prototype.activate = function(event) {
 
 //speed = 0;
 //dir = 'up';
+//lati = 30
+//longi = 30
 MainAssistant.prototype.handleServiceResponse = function(event){
 //	if (speed > 250)
 //		dir = 'down';
@@ -157,6 +165,8 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 //		event.velocity = speed += 75;
 //	else
 //		event.velocity = speed -= 75;
+//	event.latitude = lati+=.00151
+//	event.longitude = longi+=.001
 
 	if (!gpsDashboard.initialLoc && event.horizAccuracy <= gpsDashboard.maxError) 
 		gpsDashboard.initialLoc = event;
@@ -294,6 +304,7 @@ MainAssistant.prototype.heading = function(event){
  * Current altitude display
  */
 MainAssistant.prototype.altitude = function(event){
+	//return "99999 ft"//remove
 	if (event.vertAccuracy == 0)
 		return "&nbsp;";
 	if (gpsDashboard.units == 1)
@@ -328,6 +339,11 @@ MainAssistant.prototype.avgSpeed = function(event){
 }
 
 MainAssistant.prototype.avgSpeedHelper = function (event) {
+	if (gpsDashboard.prevLoc) {
+		gpsDashboard.avgSpeed.dist += this.calcDist(gpsDashboard.prevLoc, event);
+		gpsDashboard.avgSpeed.time += this.calcTime(gpsDashboard.prevLoc, event);
+	}
+	
 	if (gpsDashboard.avgSpeedPref == 1 && gpsDashboard.initialLoc) {
 		if (this.calcTime(gpsDashboard.initialLoc, event) == 0)
 			return "&nbsp;";
@@ -364,11 +380,11 @@ MainAssistant.prototype.distTraveled = function( event ) {
 	if (gpsDashboard.prevLoc) {
 		gpsDashboard.tripometer.dist += this.calcDist(gpsDashboard.prevLoc, event);
 		gpsDashboard.tripometer.time += this.calcTime(gpsDashboard.prevLoc, event);
-		if (gpsDashboard.units == 1) 
-			return (gpsDashboard.tripometer.dist * 0.621371192).toFixed(1) + " mi";
-		if (gpsDashboard.units == 2) 
-			return gpsDashboard.tripometer.dist.toFixed(1) + " km";
 	}
+	if (gpsDashboard.units == 1) 
+		return (gpsDashboard.tripometer.dist * 0.621371192).toFixed(1) + " mi";
+	if (gpsDashboard.units == 2) 
+		return gpsDashboard.tripometer.dist.toFixed(1) + " km";
 	return "&nbsp;";
 }
 
@@ -552,7 +568,6 @@ MainAssistant.prototype.handleOrientation = function( event ) {
 		this.controller.get('tripInfo').addClassName('landscape');
 		this.controller.get('addressInfo').addClassName('landscape');
 		this.controller.get('initialDisplay').addClassName('landscape');
-		this.controller.get('altHead').update($L('Alt:'));
 		this.controller.get('altHead').addClassName('landscape');
 		this.controller.get('altitude').addClassName('landscape');
 	}	
@@ -561,7 +576,6 @@ MainAssistant.prototype.handleOrientation = function( event ) {
 		this.controller.get('tripInfo').removeClassName('landscape');
 		this.controller.get('addressInfo').removeClassName('landscape');
 		this.controller.get('initialDisplay').removeClassName('landscape');
-		this.controller.get('altHead').update($L('Altitude:'));
 		this.controller.get('altHead').removeClassName('landscape');
 		this.controller.get('altitude').removeClassName('landscape');
 	}
