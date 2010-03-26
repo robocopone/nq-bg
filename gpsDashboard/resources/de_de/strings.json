@@ -4,9 +4,9 @@
 
 	"Current Information": "Aktuelle Info",
 	"Top:": "Max:",
-	"Speed:": "Tempo",
+	"Speed:": "Tempo:",
 	"NNE": "NNO", "NE": "NO", "ENE": "ONO", "E": "O", "ESE": "OSO", "SE": "SO", "SSE": "SSO",
-	"Altitude:": "Höhe:", 
+	"Altitude:": "&nbsp;Höhe:", 
 	
 	"Trip Information": "Reise Informationen",
 	"Average Speed:": "Durchschnittsgeschw",
