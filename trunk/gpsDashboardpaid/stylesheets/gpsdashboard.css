@@ -104,7 +104,7 @@
 #altHead.landscape {
 	margin-top: 15px; 
 }
-#altitude 		{ width: 115px; }
+#altitude 		{ width: 73px; }
 #altitude.landscape {
 	margin-top: 15px;
 }
@@ -116,6 +116,7 @@
 #speed.red		{ color: red; }
 #speed.green	{ color: green; }
 
+#avgSpeed { width: 84px; }
 /*
  * Current info Display
  */
