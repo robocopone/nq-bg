@@ -60,10 +60,7 @@
 }
 
 
-#avgSpeed	{ width: 71px; }
-#distTraveled {	width: 100px; }
-#distFromInit {	width: 81px; }
-#lifeDist { width: 100px; }
+#avgSpeed	{ width: 84px; }
 
 /*
  * Current info Display
@@ -99,14 +96,14 @@
 #tripInfo{
 	margin-left: 5px;
 	width: 86%;
-	letter-spacing: .06em;
+	letter-spacing: .1em;
 	height: 90px;
 	font-size: 77%;
 	padding: 0px;
 }
 #tripInfo.landscape {
 	margin-right: 0;
-	width: 54%;
+	width: 53%;
 	float: left;
 }
 
@@ -115,7 +112,7 @@
  */
 #addressInfo.landscape {
 	font-size: medium;
-	width: 37%;
+	width: 38%;
 	float: left;
 }
 
