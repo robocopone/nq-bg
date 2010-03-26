@@ -160,6 +160,7 @@ MainAssistant.prototype.setup = function(){
 	elements.lifeDist = this.controller.get('lifeDist');
 	
 	elements.addressInfo = this.controller.get('addressInfo');
+	elements.addressHead = this.controller.get('addressHead')
 	elements.addressButton = this.controller.get('addressButton');
 	elements.address = this.controller.get('address');
 	elements.address1 = this.controller.get('address1');
@@ -186,6 +187,8 @@ MainAssistant.prototype.setup = function(){
 	elements.topSpeedHead.update($L("Top:"))
 	elements.speedHead.update($L("Speed:"))
 	elements.altHead.update($L("Altitude:"))
+	
+	elements.addressHead.update($L("Address"))
 	
 	gpsDashboard.cookie.initialize();
 
