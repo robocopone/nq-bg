@@ -40,16 +40,10 @@
 #speedUnit	{ margin-top: 15px; margin-right: 10px; width: 46px;}
 #speed		{ text-align: right; font-size: 170%; width: auto; }
 
-#altHead { margin-right: 8px;}
-#altHead.landscape {
-	margin-top: 15px; 
-}
-#altitude	{ 
-	width: 115px;
-}
-#altitude.landscape {
-	margin-top: 15px;
-}
+#altHead 			{ margin-right: 8px;}
+#altHead.landscape	{ margin-top: 15px; }
+#altitude			{ width: 73px; 	}
+#altitude.landscape { margin-top: 15px; }
 
 #heading {
 	margin-top: 15px;
