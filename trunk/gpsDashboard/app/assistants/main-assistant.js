@@ -146,8 +146,18 @@ MainAssistant.prototype.activate = function(event) {
 	);
 }
 
+speed = 0;
+dir = 'up';
 MainAssistant.prototype.handleServiceResponse = function(event){
-	event.velocity = 1000;
+	if (speed > 250)
+		dir = 'down';
+	if (speed <= 0)
+		dir = 'up';
+	if (dir == 'up')
+		event.velocity = speed += 75;
+	else
+		event.velocity = speed -= 75;
+
 	if (!gpsDashboard.initialLoc && event.horizAccuracy <= gpsDashboard.maxError) 
 		gpsDashboard.initialLoc = event;
 
@@ -231,7 +241,7 @@ MainAssistant.prototype.topSpeed = function (event) {
 	if (gpsDashboard.units == 1)
 		return (gpsDashboard.topSpeed * 2.23693629).toFixed(0) + " mph";
 	if (gpsDashboard.units == 2)
-		return (gpsDashboard.topSpeed * 3.6).toFixed(0) + " kph";
+		return (gpsDashboard.topSpeed * 3.6).toFixed(0) + " km/h";
 }
 
 
@@ -287,7 +297,7 @@ MainAssistant.prototype.altitude = function(event){
 	if (event.vertAccuracy == 0)
 		return "&nbsp;";
 	if (gpsDashboard.units == 1)
-		return (event.altitude * 3.2808399).toFixed(0) + " feet";
+		return (event.altitude * 3.2808399).toFixed(0) + " ft";
 	if (gpsDashboard.units == 2)
 		return event.altitude.toFixed(0) + " m";
 }
@@ -310,7 +320,7 @@ MainAssistant.prototype.avgSpeed = function(event){
 		if (gpsDashboard.units == 2) 
 			return (this.calcDist(gpsDashboard.initialLoc, event) /
 			this.calcTime(gpsDashboard.initialLoc, event) *
-			60 * 60).toFixed(1) + " kph";
+			60 * 60).toFixed(1) + " km/h";
 	}
 	else if (gpsDashboard.avgSpeedPref == 1 && !gpsDashboard.initialLoc)
 		return "&nbsp;";
@@ -323,7 +333,7 @@ MainAssistant.prototype.avgSpeed = function(event){
 		if (gpsDashboard.units == 2)
 			return (gpsDashboard.avgSpeed.dist /
 			gpsDashboard.avgSpeed.time *
-			60 * 60).toFixed(1) + " kph";
+			60 * 60).toFixed(1) + " km/h";
 	}
 	else
 		return "&nbsp;";
@@ -337,7 +347,7 @@ MainAssistant.prototype.distTraveled = function( event ) {
 		gpsDashboard.tripometer.dist += this.calcDist(gpsDashboard.prevLoc, event);
 		gpsDashboard.tripometer.time += this.calcTime(gpsDashboard.prevLoc, event);
 		if (gpsDashboard.units == 1) 
-			return (gpsDashboard.tripometer.dist * 0.621371192).toFixed(1) + " miles";
+			return (gpsDashboard.tripometer.dist * 0.621371192).toFixed(1) + " mi";
 		if (gpsDashboard.units == 2) 
 			return gpsDashboard.tripometer.dist.toFixed(1) + " km";
 	}
@@ -351,7 +361,7 @@ MainAssistant.prototype.distTraveled = function( event ) {
 MainAssistant.prototype.distFromInit = function( event ) {
 	if (gpsDashboard.initialLoc) {
 		if (gpsDashboard.units == 1) 
-			return (this.calcDist(event, gpsDashboard.initialLoc) * 0.621371192).toFixed(1) + " miles";
+			return (this.calcDist(event, gpsDashboard.initialLoc) * 0.621371192).toFixed(1) + " mi";
 		if (gpsDashboard.units == 2) 
 			return this.calcDist(event, gpsDashboard.initialLoc).toFixed(1) + " km";
 	}
@@ -365,7 +375,7 @@ MainAssistant.prototype.lifeDist = function(event){
 	if (gpsDashboard.prevLoc)
 		gpsDashboard.lifeDist += this.calcDist(event, gpsDashboard.prevLoc);
 	if (gpsDashboard.units == 1)
-		return (gpsDashboard.lifeDist * 0.621371192).toFixed(0) + " miles";
+		return (gpsDashboard.lifeDist * 0.621371192).toFixed(0) + " mi";
 	if (gpsDashboard.units == 2)
 		return gpsDashboard.lifeDist.toFixed(0) + " km";
 }
@@ -422,7 +432,7 @@ MainAssistant.prototype.calcSpeed = function( event ){
 	if (gpsDashboard.units == 1)
 		return (currSpeed * .621371192).toFixed(1) + " mph";
 	if (gpsDashboard.units == 2)
-		return currSpeed.toFixed(1) + " kph";
+		return currSpeed.toFixed(1) + " km/h";
 }
 
 MainAssistant.prototype.deactivate = function(event) {
@@ -524,7 +534,7 @@ MainAssistant.prototype.handleOrientation = function( event ) {
 		this.controller.get('tripInfo').addClassName('landscape');
 		this.controller.get('addressInfo').addClassName('landscape');
 		this.controller.get('initialDisplay').addClassName('landscape');
-		this.controller.get('altHead').update($('Alt:'));
+		this.controller.get('altHead').update($L('Alt:'));
 		this.controller.get('altHead').addClassName('landscape');
 		this.controller.get('altitude').addClassName('landscape');
 	}	
