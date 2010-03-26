@@ -287,6 +287,8 @@ MainAssistant.prototype.activate = function(event) {
 }
 //speed = 0;
 //dir = 'up';
+lati = 30
+longi = 30
 MainAssistant.prototype.handleServiceResponse = function(event){
 //	if (speed > 250)
 //		dir = 'down';
@@ -296,7 +298,8 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 //		event.velocity = speed += 75;
 //	else
 //		event.velocity = speed -= 75;
-
+	event.latitude = lati+=.00151
+	event.longitude = longi+=.001
 
 	if (gpsDashboard.stage)
 		scenes = gpsDashboard.stage.getScenes();
@@ -347,7 +350,10 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 	this.strengthBar(event);
 
 	if (gpsDashboard.stage) {
-		scenes[0].get('dashSpeed').update(this.speed(event));
+		if (gpsDashboard.units == 1)
+			scenes[0].get('dashSpeed').update(this.speed(event) + " mph");
+		else
+			scenes[0].get('dashSpeed').update(this.speed(event) + "km/h");
 		scenes[0].get('dashHeading').update(this.heading(event));
 		scenes[0].get('dashAltitude').update(this.altitude(event));
 		if (gpsDashboard.dashTripDuration)
@@ -475,7 +481,8 @@ MainAssistant.prototype.recordCheck = function (event) {
  * Current speed display
  */
 MainAssistant.prototype.speed = function(event){
-	//return "0000 mph" //remove
+	//elements.speedUnit.update("km/h")
+	//return "1000" //remove
 	if (event.velocity == 0) {
 		elements.speedUnit.update("&nbsp;")
 		return "&nbsp;";
@@ -574,7 +581,7 @@ MainAssistant.prototype.heading = function(event){
  * Current altitude display
  */
 MainAssistant.prototype.altitude = function(event){
-	//return "00000 feet";//remove
+	//return "00000 ft";//remove
 	if (event.vertAccuracy == 0 || event.vertAccuracy > gpsDashboard.maxError)
 		return "&nbsp;";
 	if (gpsDashboard.units == 1)
@@ -616,7 +623,28 @@ MainAssistant.prototype.calcAvgSpeed = function (event) {
 }
 
 MainAssistant.prototype.avgSpeed = function(event){
-	//return "000.0 mph" //remove
+	//return "000.0 km/h" //remove
+	
+	var local = {}
+
+	local.avgSpeed = parseInt(this.avgSpeedHelper(event));
+	
+	if (!local.avgSpeed > 0)
+		return "&nbsp;";
+		
+	if (local.avgSpeed < 1000)
+		local.prescision = 1
+	else
+		local.prescision = 0
+
+	if (gpsDashboard.units == 1 )
+		return local.avgSpeed.toFixed(local.prescision) + " mph"
+	else
+		return local.avgSpeed.toFixed(local.prescision) + " km/h";
+		
+}
+
+MainAssistant.prototype.avgSpeedHelper = function (event) {
 	if (gpsDashboard.avgSpeedPref == 1 && gpsDashboard.initialLoc) {
 		if (this.calcTime(gpsDashboard.initialLoc, event) == 0)
 			return "&nbsp;";
@@ -860,7 +888,6 @@ MainAssistant.prototype.handleOrientation = function( event ) {
 		elements.clock.removeClassName('hidden');
 		elements.speedometer.addClassName('landscape');
 		elements.reverse.addClassName('landscape');
-		elements.altHead.update($L("Alt:"))
 		elements.altHead.addClassName('landscape');
 		elements.altitude.addClassName('landscape');
 		this.centerSpeedLimit();
@@ -873,7 +900,6 @@ MainAssistant.prototype.handleOrientation = function( event ) {
 		elements.clock.addClassName('hidden');
 		elements.speedometer.removeClassName('landscape');
 		elements.reverse.removeClassName('landscape');
-		elements.altHead.update($L('Altitude:'))
 		elements.altHead.removeClassName('landscape');
 		elements.altitude.removeClassName('landscape');
 		this.centerSpeedLimit();
