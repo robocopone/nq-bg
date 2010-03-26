@@ -270,6 +270,11 @@ MainAssistant.prototype.setup = function(){
 }
 
 MainAssistant.prototype.activate = function(event) {
+	var local = {}
+	local.orientation = this.controller.stageController.getWindowOrientation();
+	if (local.orientation == 'left' || local.orientation =='right')
+		this.handleOrientation({position: 4})
+	
 	if (gpsDashboard.backlight == 1)
 		this.controller.stageController.setWindowProperties({blockScreenTimeout: true});
 
@@ -287,8 +292,8 @@ MainAssistant.prototype.activate = function(event) {
 }
 //speed = 0;
 //dir = 'up';
-lati = 30
-longi = 30
+//lati = 30
+//longi = 30
 MainAssistant.prototype.handleServiceResponse = function(event){
 //	if (speed > 250)
 //		dir = 'down';
@@ -298,8 +303,8 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 //		event.velocity = speed += 75;
 //	else
 //		event.velocity = speed -= 75;
-	event.latitude = lati+=.00151
-	event.longitude = longi+=.001
+//	event.latitude = lati+=.00151
+//	event.longitude = longi+=.001
 
 	if (gpsDashboard.stage)
 		scenes = gpsDashboard.stage.getScenes();
@@ -353,7 +358,7 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 		if (gpsDashboard.units == 1)
 			scenes[0].get('dashSpeed').update(this.speed(event) + " mph");
 		else
-			scenes[0].get('dashSpeed').update(this.speed(event) + "km/h");
+			scenes[0].get('dashSpeed').update(this.speed(event) + " km/h");
 		scenes[0].get('dashHeading').update(this.heading(event));
 		scenes[0].get('dashAltitude').update(this.altitude(event));
 		if (gpsDashboard.dashTripDuration)

@@ -100,14 +100,10 @@
 	float: left;
 }
 
-#altHead { margin-right: 8px;}
-#altHead.landscape {
-	margin-top: 15px; 
-}
-#altitude 		{ width: 73px; }
-#altitude.landscape {
-	margin-top: 15px;
-}
+#altHead			{ margin-right: 8px;}
+#altHead.landscape	{ margin-top: 15px; }
+#altitude			{ width: 73px; 		}
+#altitude.landscape { margin-top: 15px; }
 
 #speedHead	{ margin-top: 15px }
 #speedUnit	{ margin-top: 15px; margin-right: 10px; width: 46px;}
@@ -467,17 +463,13 @@
 	margin-left: 5px;
 	text-align: center;
 	float: left;
-	width: 100px;
+	width: 101px;
 }
 .dashboardHeading {
 	margin-left: 5px;
 	text-align: center;
 	float: left;
 	width: 55px;
-}
-#dashboard {
-	height: 320;
-	width: 480;
 }
 
 /*
