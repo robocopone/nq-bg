@@ -80,6 +80,7 @@ MainAssistant.prototype.setup = function(){
 	elements.altHead = this.controller.get('altHead');
 	
 	elements.addressHead = this.controller.get('addressHead')
+	elements.lowAccuracyNotice = this.controller.get('lowAccuracyNotice')
 
 	// Localizable stuff
 	elements.tripAvgSpeedHead.update($L("Average Speed:"))
@@ -94,6 +95,7 @@ MainAssistant.prototype.setup = function(){
 	elements.altHead.update($L("Altitude:"))
 
 	elements.addressHead.update($L("Address"))
+	elements.lowAccuracyNotice.update($L("Satellite strength is too low to gather accurate trip info. Be sure your phone has a clear view of the sky, or adjust Max Error in prefs"))
 	
 	// Hides the dashboard
 	this.controller.get('address').addClassName('hidden');
@@ -167,6 +169,8 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 //		event.velocity = speed -= 75;
 //	event.latitude = lati+=.00151
 //	event.longitude = longi+=.001
+	event.horizAccuracy = 1000;
+	event.errorCode = 8;
 
 	if (!gpsDashboard.initialLoc && event.horizAccuracy <= gpsDashboard.maxError) 
 		gpsDashboard.initialLoc = event;

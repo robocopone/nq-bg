@@ -67,5 +67,15 @@
 	"Highest Elevation": "La Elevación Más Alta",
 	"Lowest Elevation": "La Elevación Más Baja",
 	"Resets": "Restablece",
-	"Choose one of the following options": "Elija una de las siguientes opciones",		
+	"Choose one of the following options": "Elija una de las siguientes opciones",
+
+"Error: GPS Timed Out.<br />Please reset your phone.": "",
+"Error: Position Unavailable.<br />Please reset your phone.": "",
+"Unknown Error.<br />Please reset your phone.": "",
+"Check Location Services to ensure that GPS Fixes are turned on.<br />Location Services are on the third page of the launcher.": "",
+"Error: Location Services are Off.<br />Check Location Services on the third page of the launcher.": "",
+"Error: You have not accepted Location Services terms of service.<br />Check Location Services on the third page of the launcher.": "",
+"Error: Application has a pending message.<br />Please reset your phone.": "",
+"Error: Application is temporarily blacklisted.<br />Please reset your phone.": "",
+
 }
