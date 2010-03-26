@@ -63,7 +63,7 @@
 	font-size: small;
 	float: right;
 	width: 60px;
-	margin-right: 8px;
+	margin-right: 12px;
 }
 
 /*
@@ -100,6 +100,7 @@
 	float: left;
 }
 
+#altHead { margin-right: 8px;}
 #altHead.landscape {
 	margin-top: 15px; 
 }
@@ -125,7 +126,7 @@
 }
 #currentInfo.landscape 	{
 	width: auto; 
-	height: 30px;
+	height: 35px;
 }
 
 /*
