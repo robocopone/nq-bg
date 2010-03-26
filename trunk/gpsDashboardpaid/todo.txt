@@ -1,2 +1,2 @@
-Dashboard view, check "km/h"
 Translate low signal
+Translate Error messages
