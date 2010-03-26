@@ -146,17 +146,17 @@ MainAssistant.prototype.activate = function(event) {
 	);
 }
 
-speed = 0;
-dir = 'up';
+//speed = 0;
+//dir = 'up';
 MainAssistant.prototype.handleServiceResponse = function(event){
-	if (speed > 250)
-		dir = 'down';
-	if (speed <= 0)
-		dir = 'up';
-	if (dir == 'up')
-		event.velocity = speed += 75;
-	else
-		event.velocity = speed -= 75;
+//	if (speed > 250)
+//		dir = 'down';
+//	if (speed <= 0)
+//		dir = 'up';
+//	if (dir == 'up')
+//		event.velocity = speed += 75;
+//	else
+//		event.velocity = speed -= 75;
 
 	if (!gpsDashboard.initialLoc && event.horizAccuracy <= gpsDashboard.maxError) 
 		gpsDashboard.initialLoc = event;
