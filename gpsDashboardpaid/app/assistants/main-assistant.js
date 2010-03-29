@@ -360,9 +360,9 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 	this.strengthBar(event);
 
 	if (gpsDashboard.stage) {
-		if (gpsDashboard.units == 1)
+		if (gpsDashboard.units == 1 && event.velocity != 0)
 			scenes[0].get('dashSpeed').update(this.speed(event) + " mph");
-		else
+		else if (gpsDashboard.units == 2 && event.velocity != 0)
 			scenes[0].get('dashSpeed').update(this.speed(event) + " km/h");
 		scenes[0].get('dashHeading').update(this.heading(event));
 		scenes[0].get('dashAltitude').update(this.altitude(event));
@@ -759,6 +759,8 @@ MainAssistant.prototype.calcDist = function( point1, point2 ) {
 		 (0.09455 * Math.cos(3 * mLat)) + 
 		 (0.00012 * Math.cos(5 * mLat));
 	dist = Math.sqrt( Math.pow((K1 * dLat), 2) + Math.pow((K2 * dLon), 2) );
+	if (dist < .0004)
+		return 0;
 	return dist;
 }
 
@@ -1082,9 +1084,9 @@ MainAssistant.prototype.speedLimit = function (event) {
  */
 MainAssistant.prototype.setSpeedometer = function(event) {
 	var local = {}
-	if (event.velocity != 0 && elements.speedometerSpeed.hasClassName('hidden'))
+	if (event.velocity > .45)
 		elements.speedometerSpeed.removeClassName('hidden');
-	if (event.velocity == 0 && !(elements.speedometerSpeed.hasClassName('hidden')))
+	if (event.velocity <= .45)
 		elements.speedometerSpeed.addClassName('hidden');
 
 
