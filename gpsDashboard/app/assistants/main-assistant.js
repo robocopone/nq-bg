@@ -446,6 +446,8 @@ MainAssistant.prototype.calcDist = function( point1, point2 ) {
 		 (0.09455 * Math.cos(3 * mLat)) + 
 		 (0.00012 * Math.cos(5 * mLat));
 	dist = Math.sqrt( Math.pow((K1 * dLat), 2) + Math.pow((K2 * dLon), 2));
+	if (dist < .0004)
+		return 0;
 	return dist;
 }
 
