@@ -72,14 +72,15 @@
 	"Satellite strength is too low to gather accurate trip info. Be sure your phone has a clear view of the sky, or adjust Max Error in prefs":
 	"La puissance du signal satellite est trop faible pour recueillir des informations exactes.  Assurez-vous que votre téléphone dispose d'une vue dégagée du ciel.",
 
-	"Error: GPS Timed Out.<br />Please reset your phone.": "S'il vous plaît réinitialiser votre téléphone.",
-	"Error: Position Unavailable.<br />Please reset your phone.": "S'il vous plaît réinitialiser votre téléphone.",
-	"Unknown Error.<br />Please reset your phone.": "S'il vous plaît réinitialiser votre téléphone.",
+	"Error: GPS Timed Out.<br />Please reset your phone.": "Erreur: S'il vous plaît réinitialiser votre téléphone.",
+	"Error: Position Unavailable.<br />Please reset your phone.": "Erreur: S'il vous plaît réinitialiser votre téléphone.",
+	"Unknown Error.<br />Please reset your phone.": "Erreur: S'il vous plaît réinitialiser votre téléphone.",
 	"Check Location Services to ensure that GPS Fixes are turned on.<br />Location Services are on the third page of the launcher.": "Des services de vérification de positionnement de veiller à ce que le GPS est allumé.",
 	"Error: Location Services are Off.<br />Check Location Services on the third page of the launcher.": "Services de Positionnement sont éteints.",
 	"Error: You have not accepted Location Services terms of service.<br />Check Location Services on the third page of the launcher.": "Vous n'avez pas accepté les conditions d'utilisation des services de positionnement.",
-	"Error: Application has a pending message.<br />Please reset your phone.": "S'il vous plaît réinitialiser votre téléphone.",
-	"Error: Application is temporarily blacklisted.<br />Please reset your phone.": "S'il vous plaît réinitialiser votre téléphone.",
+	"Error: Application has a pending message.<br />Please reset your phone.": "Erreur: S'il vous plaît réinitialiser votre téléphone.",
+	"Error: Application is temporarily blacklisted.<br />Please reset your phone.": "Erreur: S'il vous plaît réinitialiser votre téléphone.",
+	"Error": "Erreur",
 	
 	"Would you like to see the features you get when you upgrade to gpsDashboard Plus?": "Aimeriez-vous voir les caractéristiques que vous obtenez lorsque vous passez à gpsDashboard+?",
 	"Yes (Opens a new browser)": "Oui (ouvre un nouveau navigateur).",
