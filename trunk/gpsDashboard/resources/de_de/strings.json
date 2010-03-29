@@ -64,9 +64,9 @@
 	"Reverse (Heads-Up Mode)": "Anzeige Spiegeln",
 
 	"Record Keeping": "Schriftgutverwaltung",
-	"Tap to Map the Location": "Toque en el registro para el mapa de ubicación.",
-	"Highest Elevation": "Höchste höhe",
-	"Lowest Elevation": "Niedrigster höhe",
+	"Tap to Map the Location": "Bildschirm antippen um die Position zu sehen.",
+	"Highest Elevation": "Höchste Erhebung",
+	"Lowest Elevation": "Niedrigster Erhebung",
 	"Resets": "Resets",
 	"Choose one of the following options": "Wählen Sie eine der folgenden Optionen",		
 
@@ -80,5 +80,12 @@
 	"Error: Location Services are Off.<br />Check Location Services on the third page of the launcher.": "Fehler: Standortbasierte Dienste sind ausgeschaltet.",
 	"Error: You have not accepted Location Services terms of service.<br />Check Location Services on the third page of the launcher.": "Fehler: Sie haben nicht akzeptiert die Nutzungsbedingungen von Standortbasierte Dienste.",
 	"Error: Application has a pending message.<br />Please reset your phone.": "Fehler: Die Anwendung steht bereits eine Nachricht.<br />Bitte starten Sie Ihr Telefon.",
-	"Error: Application is temporarily blacklisted.<br />Please reset your phone.": "Fehler: Bitte starten Sie Ihr Telefon.",	
+	"Error: Application is temporarily blacklisted.<br />Please reset your phone.": "Fehler: Bitte starten Sie Ihr Telefon.",
+	
+	"Would you like to see the features you get when you upgrade to gpsDashboard Plus?": "",
+	"Yes (Opens a new browser)": "",
+	"No, and never ask again": "",
+	
+	"Reset": "",
+	"Reset Trip Information?": "",
 }
