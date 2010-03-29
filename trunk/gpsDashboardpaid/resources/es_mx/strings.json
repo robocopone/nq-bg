@@ -67,5 +67,24 @@
 	"Highest Elevation": "La Elevación Más Alta",
 	"Lowest Elevation": "La Elevación Más Baja",
 	"Resets": "Restablece",
-	"Choose one of the following options": "Elija una de las siguientes opciones",		
+	"Choose one of the following options": "Elija una de las siguientes opciones",
+
+	"Satellite strength is too low to gather accurate trip info. Be sure your phone has a clear view of the sky, or adjust Max Error in prefs":
+	"La fuerza de la señal por satélite es demasiado bajo para obtener precisa viaje info.  Asegúrese de que su telé tiene una vista clara del cielo.",
+
+	"Error: GPS Timed Out.<br />Please reset your phone.": "Error: Por favor, reiniciar el teléfono.",
+	"Error: Position Unavailable.<br />Please reset your phone.": "Error: Por favor, reiniciar el teléfono.",
+	"Unknown Error.<br />Please reset your phone.": "Error: Por favor, reiniciar el teléfono.",
+	"Check Location Services to ensure that GPS Fixes are turned on.<br />Location Services are on the third page of the launcher.": "Error: Compruebe servicios de ubicación para asegurar que el GPS está encendido.",
+	"Error: Location Services are Off.<br />Check Location Services on the third page of the launcher.": "Error: Los servicios de localización están apagados.",
+	"Error: You have not accepted Location Services terms of service.<br />Check Location Services on the third page of the launcher.": "Error: Usted no ha aceptado las condiciones de uso para servicios de ubicación.",
+	"Error: Application has a pending message.<br />Please reset your phone.": "Error: Por favor, reiniciar el teléfono.",
+	"Error: Application is temporarily blacklisted.<br />Please reset your phone.": "Error: Por favor, reiniciar el teléfono.",
+	
+	"Would you like to see the features you get when you upgrade to gpsDashboard Plus?": "¿Te gustaría ver las características que se obtiene cuando se actualiza a gpsDashboard+?",
+	"Yes (Opens a new browser)": "Sí (Abre un nuevo navegador)",
+	"No, and never ask again": "No, y no volver a preguntar",
+	
+	"Reset": "Perdí",
+	"Reset Trip Information?": "Perdí mi Información sobre el trayecto?",
 }

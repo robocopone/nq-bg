@@ -68,4 +68,23 @@
 	"Lowest Elevation": "Più bassa altitudine",
 	"Resets": "Resets",
 	"Choose one of the following options": "Scegliere una delle seguenti opzioni",
+
+	"Satellite strength is too low to gather accurate trip info. Be sure your phone has a clear view of the sky, or adjust Max Error in prefs":
+	"La potenza del segnale è troppo basso per raccogliere informazioni precise sul viaggio.  Assicurarsi di avere una visione chiara del cielo.",
+
+	"Error: GPS Timed Out.<br />Please reset your phone.": "Errore:  Si prega di riavviare il dispositivo.",
+	"Error: Position Unavailable.<br />Please reset your phone.": "Errore:  Si prega di riavviare il dispositivo.",
+	"Unknown Error.<br />Please reset your phone.": "Errore:  Si prega di riavviare il dispositivo.",
+	"Check Location Services to ensure that GPS Fixes are turned on.<br />Location Services are on the third page of the launcher.": "Servizi di controllo di posizione al fine di garantire che il GPS è acceso.",
+	"Error: Location Services are Off.<br />Check Location Services on the third page of the launcher.": "Errore:  Servizi di Posizione sono spenti.",
+	"Error: You have not accepted Location Services terms of service.<br />Check Location Services on the third page of the launcher.": "Errore:  Non hai accettato i termini di utilizzo di Servizi di posizione.",
+	"Error: Application has a pending message.<br />Please reset your phone.": "Errore:  Si prega di riavviare il dispositivo.",
+	"Error: Application is temporarily blacklisted.<br />Please reset your phone.": "Errore:  Si prega di riavviare il dispositivo.",
+	
+	"Would you like to see the features you get when you upgrade to gpsDashboard Plus?": "Vuoi visualizzare le caratteristiche che si ottiene quando si esegue l'aggiornamento a gpsDashboard+?",
+	"Yes (Opens a new browser)": "Sì (apre una nuova finestra del browser)",
+	"No, and never ask again": "No, e non chiedere di nuovo",
+	
+	"Reset": "Reset",
+	"Reset Trip Information?": "Reset delle informazioni sul viaggio?",
 }
