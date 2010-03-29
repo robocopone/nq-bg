@@ -295,8 +295,8 @@ MainAssistant.prototype.activate = function(event) {
 }
 //speed = 0;
 //dir = 'up';
-//lati = 30
-//longi = 30
+lati = 30
+longi = 30
 MainAssistant.prototype.handleServiceResponse = function(event){
 //	if (speed > 250)
 //		dir = 'down';
@@ -306,8 +306,8 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 //		event.velocity = speed += 75;
 //	else
 //		event.velocity = speed -= 75;
-//	event.latitude = lati+=.00151
-//	event.longitude = longi+=.001
+	event.latitude = lati+=.00151
+	event.longitude = longi+=.001
 //	event.horizAccuracy = 1000;
 //	event.errorCode = 1;
 
@@ -637,7 +637,7 @@ MainAssistant.prototype.avgSpeed = function(event){
 	
 	var local = {}
 
-	local.avgSpeed = parseInt(this.avgSpeedHelper(event));
+	local.avgSpeed = parseFloat(this.avgSpeedHelper(event));
 	
 	if (!local.avgSpeed > 0)
 		return "&nbsp;";
