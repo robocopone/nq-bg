@@ -468,19 +468,19 @@ MainAssistant.prototype.strengthBar = function (event) {
  */
 MainAssistant.prototype.recordCheck = function (event) {
 	if (event.velocity > gpsDashboard.alltimeTopSpeed.data.velocity &&
-		event.horizAccuracy <= 5) {
+		event.horizAccuracy <= 5 && event.horizAccuracy > 0) {
 		gpsDashboard.alltimeTopSpeed.data = event;
 		gpsDashboard.alltimeTopSpeed.date =
 			Mojo.Format.formatDate(new Date(), { date: 'long' });
 	}
 	if (event.altitude > gpsDashboard.alltimeHigh.data.altitude &&
-		event.vertAccuracy <= 10 ) {
+		event.vertAccuracy <= 10 && event.vertAccuracy > 0) {
 		gpsDashboard.alltimeHigh.data = event;
 		gpsDashboard.alltimeHigh.date =
 			Mojo.Format.formatDate(new Date(), { date: 'long' });
 	}
 	if (event.altitude < gpsDashboard.alltimeLow.data.altitude &&
-		event.vertAccuracy <= 10 ) {
+		event.vertAccuracy <= 10 && event.vertAccuracy > 0) {
 		gpsDashboard.alltimeLow.data = event;
 		gpsDashboard.alltimeLow.date =
 			Mojo.Format.formatDate(new Date(), { date: 'long'});
