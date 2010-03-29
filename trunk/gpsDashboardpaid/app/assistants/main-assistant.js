@@ -365,7 +365,7 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 		else if (gpsDashboard.units == 2 && event.velocity != 0)
 			scenes[0].get('dashSpeed').update(this.speed(event) + " km/h");
 		else
-			scenes[0].get('dashSpeed').update(this.speed("&nbsp;"));
+			scenes[0].get('dashSpeed').update("&nbsp;");
 		
 		scenes[0].get('dashHeading').update(this.heading(event));
 		scenes[0].get('dashAltitude').update(this.altitude(event));
