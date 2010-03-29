@@ -649,6 +649,8 @@ MainAssistant.prototype.handleReverseResponseError = function(event){
 	this.controller.get('addressButton').mojo.deactivate();
 	this.controller.get('address').removeClassName('hidden');
 	elements.address1.update(event.errorCode);
+	if (event.errorCode == 1)
+		this.controller.get('address1').update($L("Error"))
 	if (event.errorCode == 6)
 		this.controller.get('address1').update($L("Error: You have not accepted Location Services terms of service.<br />Check Location Services on the third page of the launcher."));
 	if (event.errorCode == 7)
