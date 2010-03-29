@@ -295,8 +295,8 @@ MainAssistant.prototype.activate = function(event) {
 }
 //speed = 0;
 //dir = 'up';
-lati = 30
-longi = 30
+//lati = 30
+//longi = 30
 MainAssistant.prototype.handleServiceResponse = function(event){
 //	if (speed > 250)
 //		dir = 'down';
@@ -306,8 +306,8 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 //		event.velocity = speed += 75;
 //	else
 //		event.velocity = speed -= 75;
-	event.latitude = lati+=.00151
-	event.longitude = longi+=.001
+//	event.latitude = lati+=.00151
+//	event.longitude = longi+=.001
 //	event.horizAccuracy = 1000;
 //	event.errorCode = 1;
 
@@ -978,6 +978,8 @@ MainAssistant.prototype.handleReverseResponseError = function(event){
 	elements.addressButton.mojo.deactivate();
 	elements.address.removeClassName('hidden');
 	elements.address1.update(event.errorCode);
+	if (event.errorCode == 1)
+		this.controller.get('address1').update($L("Error"))
 	if (event.errorCode == 6)
 		this.controller.get('address1').update($L("Error: You have not accepted Location Services terms of service.<br />Check Location Services on the third page of the launcher."));
 	if (event.errorCode == 7)

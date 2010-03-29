@@ -81,6 +81,7 @@
 	"Error: You have not accepted Location Services terms of service.<br />Check Location Services on the third page of the launcher.": "Fehler: Sie haben nicht akzeptiert die Nutzungsbedingungen von Standortbasierte Dienste.",
 	"Error: Application has a pending message.<br />Please reset your phone.": "Fehler: Die Anwendung steht bereits eine Nachricht.<br />Bitte starten Sie Ihr Telefon.",
 	"Error: Application is temporarily blacklisted.<br />Please reset your phone.": "Fehler: Bitte starten Sie Ihr Telefon.",
+	"Error": "Fehler",
 	
 	"Would you like to see the features you get when you upgrade to gpsDashboard Plus?": "Would you like to see the features you get when you upgrade to gpsDashboard Plus?",
 	"Yes (Opens a new browser)": "Yes (Opens a new browser)",
