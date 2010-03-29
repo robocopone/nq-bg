@@ -326,7 +326,7 @@ MainAssistant.prototype.avgSpeed = function(event){
 	
 	var local = {}
 
-	local.avgSpeed = parseInt(this.avgSpeedHelper(event));
+	local.avgSpeed = parseFloat(this.avgSpeedHelper(event));
 	
 	if (!local.avgSpeed > 0)
 		return "&nbsp;";
