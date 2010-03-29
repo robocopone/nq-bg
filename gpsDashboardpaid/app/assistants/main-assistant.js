@@ -308,6 +308,8 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 //		event.velocity = speed -= 75;
 //	event.latitude = lati+=.00151
 //	event.longitude = longi+=.001
+//	event.horizAccuracy = 1000;
+//	event.errorCode = 1;
 
 	if (gpsDashboard.stage)
 		scenes = gpsDashboard.stage.getScenes();
