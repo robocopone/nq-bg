@@ -298,14 +298,14 @@ MainAssistant.prototype.activate = function(event) {
 //lati = 30
 //longi = 30
 MainAssistant.prototype.handleServiceResponse = function(event){
-//	if (speed > 250)
+//	if (speed > 40)
 //		dir = 'down';
 //	if (speed <= 0)
 //		dir = 'up';
 //	if (dir == 'up')
-//		event.velocity = speed += 75;
+//		event.velocity = speed += 2;
 //	else
-//		event.velocity = speed -= 75;
+//		event.velocity = speed -= 2;
 //	event.latitude = lati+=.00151
 //	event.longitude = longi+=.001
 //	event.horizAccuracy = 1000;
