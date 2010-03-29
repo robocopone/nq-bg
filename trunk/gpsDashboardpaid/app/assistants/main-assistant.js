@@ -175,6 +175,7 @@ MainAssistant.prototype.setup = function(){
 	elements.speedometerHeading = this.controller.get('speedometerHeading');
 	elements.reverse = this.controller.get('reverse')
 	
+	elements.lowAccuracyNotice = this.controller.get('lowAccuracyNotice')
 	
 	// Localizable stuff
 	elements.tripAvgSpeedHead.update($L("Average Speed:"))
@@ -189,6 +190,8 @@ MainAssistant.prototype.setup = function(){
 	elements.altHead.update($L("Altitude:"))
 	
 	elements.addressHead.update($L("Address"))
+	
+	elements.lowAccuracyNotice.update($L("Satellite strength is too low to gather accurate trip info. Be sure your phone has a clear view of the sky, or adjust Max Error in prefs"))
 	
 	gpsDashboard.cookie.initialize();
 
@@ -974,11 +977,11 @@ MainAssistant.prototype.handleReverseResponseError = function(event){
 	elements.address.removeClassName('hidden');
 	elements.address1.update(event.errorCode);
 	if (event.errorCode == 6)
-		elements.address1.update("Error: Permission Denied - You have not accepted the terms of use for Google Location Services");
+		this.controller.get('address1').update($L("Error: You have not accepted Location Services terms of service.<br />Check Location Services on the third page of the launcher."));
 	if (event.errorCode == 7)
-		elements.address1.update("Error: The application already has a pending message");
+		this.controller.get('address1').update($L("Error: Application has a pending message.<br />Please reset your phone."));
 	if (event.errorCode == 8)
-		elements.address1.update("Error: The application has been temporarily blacklisted");
+		this.controller.get('address1').update($L("Error: Application is temporarily blacklisted.<br />Please reset your phone."));
 }
 
 /*
