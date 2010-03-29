@@ -4,21 +4,21 @@ function GpsErrorAssistant(errorCode) {
 
 GpsErrorAssistant.prototype.setup = function() {
 	if (this.errCode == 1)
-		this.controller.get('message').update("Error: GPS Timed Out");
+		this.controller.get('message').update($L("Error: GPS Timed Out.<br />Please reset your phone."));
 	if (this.errCode == 2)
-		this.controller.get('message').update("Error: Position Unavailable");
+		this.controller.get('message').update($L("Error: Position Unavailable.<br />Please reset your phone."));
 	if (this.errCode == 3)
-		this.controller.get('message').update("Unknown Error");
+		this.controller.get('message').update($L("Unknown Error.<br />Please reset your phone."));
 	if (this.errCode == 4)
-		this.controller.get('message').update("Check Location Services to ensure that GPS Fixes are turned on");
+		this.controller.get('message').update($L("Check Location Services to ensure that GPS Fixes are turned on.<br />Location Services are on the third page of the launcher."));
 	if (this.errCode == 5)
-		this.controller.get('message').update("Error: Location Services are Off");
+		this.controller.get('message').update($L("Error: Location Services are Off.<br />Check Location Services on the third page of the launcher."));
 	if (this.errCode == 6)
-		this.controller.get('message').update("Error: You have not accepted Location Services terms of service.  Go to Location Services, click 'Preferences', 'Locate Me Using', and turn on Google Services");
+		this.controller.get('message').update($L("Error: You have not accepted Location Services terms of service.<br />Check Location Services on the third page of the launcher."));
 	if (this.errCode == 7)
-		this.controller.get('message').update("Error: Application has a pending message");
+		this.controller.get('message').update($L("Error: Application has a pending message.<br />Please reset your phone."));
 	if (this.errCode == 8)
-		this.controller.get('message').update("Error: Application is temporarily blacklisted");
+		this.controller.get('message').update($L("Error: Application is temporarily blacklisted.<br />Please reset your phone."));
 }
 
 GpsErrorAssistant.prototype.activate = function(event) {
