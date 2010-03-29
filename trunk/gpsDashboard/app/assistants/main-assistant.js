@@ -170,8 +170,8 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 //		event.velocity = speed -= 75;
 //	event.latitude = lati+=.00151
 //	event.longitude = longi+=.001
-	event.horizAccuracy = 1000;
-	event.errorCode = 8;
+//	event.horizAccuracy = 1000;
+//	event.errorCode = 3;
 
 	if (!gpsDashboard.initialLoc && event.horizAccuracy <= gpsDashboard.maxError) 
 		gpsDashboard.initialLoc = event;
