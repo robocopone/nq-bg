@@ -95,6 +95,7 @@ MainAssistant.prototype.setup = function(){
 	elements.altHead.update($L("Altitude:"))
 
 	elements.addressHead.update($L("Address"))
+
 	elements.lowAccuracyNotice.update($L("Satellite strength is too low to gather accurate trip info. Be sure your phone has a clear view of the sky, or adjust Max Error in prefs"))
 	
 	// Hides the dashboard
@@ -647,12 +648,13 @@ MainAssistant.prototype.handleReverseResponse = function( event ) {
 MainAssistant.prototype.handleReverseResponseError = function(event){
 	this.controller.get('addressButton').mojo.deactivate();
 	this.controller.get('address').removeClassName('hidden');
+	elements.address1.update(event.errorCode);
 	if (event.errorCode == 6)
-		this.controller.get('address1').update("Error: Permission Denied - You have not accepted the terms of use for GPS Services");
+		this.controller.get('address1').update($L("Error: You have not accepted Location Services terms of service.<br />Check Location Services on the third page of the launcher."));
 	if (event.errorCode == 7)
-		this.controller.get('address1').update("Error: The application already has a pending message");
+		this.controller.get('address1').update($L("Error: Application has a pending message.<br />Please reset your phone."));
 	if (event.errorCode == 8)
-		this.controller.get('address1').update("Error: The application has been temporarily blacklisted");
+		this.controller.get('address1').update($L("Error: Application is temporarily blacklisted.<br />Please reset your phone."));
 }
 
 /*
@@ -662,7 +664,7 @@ MainAssistant.prototype.initialPrompt = function () {
 	this.controller.showAlertDialog({
 		onChoose: this.doInitialChoice,
 		title: $L("gpsDashboard Free"),
-		message: $L("Would you like to see the features you get when you upgrade to gpsDashboard Plus? (Not currently available outside of the US)"),
+		message: $L("Would you like to see the features you get when you upgrade to gpsDashboard Plus?"),
 		choices: [{
 			label: $L('Yes (Opens a new browser)'),
 			value: 'yes',
