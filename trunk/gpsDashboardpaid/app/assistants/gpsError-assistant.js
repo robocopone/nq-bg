@@ -3,6 +3,7 @@ function GpsErrorAssistant(errorCode) {
 }
 
 GpsErrorAssistant.prototype.setup = function() {
+	this.controller.get('message').update($L("Unknown Error.<br />Please reset your phone."))
 	if (this.errCode == 1)
 		this.controller.get('message').update($L("Error: GPS Timed Out.<br />Please reset your phone."));
 	if (this.errCode == 2)
