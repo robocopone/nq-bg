@@ -119,7 +119,7 @@ MainAssistant.prototype.setup = function(){
 	elements.multiplier.setStyle({ width: global.screenWidth * (3 / 10) + 'px' })
 	
 	elements.display.setStyle({
-		height: global.screenHeight * .65 + 'px',
+		height: global.screenHeight * .6 + 'px',
 		width: global.screenWidth * .8 + 'px',
 		top: global.screenHeight * .2 + 'px',
 		left: (global.screenWidth * .1) - 10 + 'px'
@@ -221,9 +221,9 @@ MainAssistant.prototype.setup = function(){
 MainAssistant.prototype.activate = function(event) {
 	var local = {}	
 	local.currentDate = new Date().getTime();
-	this.controller.get('timeRemaining').update("Free Time Remaining: " + (14 - (local.currentDate - global.initialDate) / 1000 / 60 / 60 / 24).toFixed(0) + " days")		
-	if ((local.currentDate - global.initialDate) / 1000 / 60 / 60 / 24 > 14)
-		global.locked = true;
+//	this.controller.get('timeRemaining').update("Free Time Remaining: " + (14 - (local.currentDate - global.initialDate) / 1000 / 60 / 60 / 24).toFixed(0) + " days")		
+//	if ((local.currentDate - global.initialDate) / 1000 / 60 / 60 / 24 > 14)
+//		global.locked = true;
 	
 	if (global.locked) {
 		elements.difficultyButton.addClassName('hidden')
