@@ -1,0 +1,10 @@
+.float {
+	float: left;
+}
+.noFloat {
+	float: none;
+}
+.tempo {
+	margin-top: 10px;
+	margin-left: 5px;
+}
