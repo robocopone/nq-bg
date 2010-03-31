@@ -49,3 +49,21 @@ MainAssistant.prototype.cleanup = function(event) {
 	this.controller.stopListening(this.controller.sceneElement, Mojo.Event.keypress, this.keyPressed.bindAsEventListener(this))
 	this.controller.stopListening(this.controller.document, Mojo.Event.tap, this.keyPressed.bindAsEventListener(this))
 }
+
+/*
+ * Handles the application pulldown menu
+ */
+MainAssistant.prototype.handleCommand = function (event) {
+	if (event.type == Mojo.Event.commandEnable &&
+	   (event.command == Mojo.Menu.helpCmd)) 
+	{	event.stopPropagation(); 
+	}
+
+	if (event.type == Mojo.Event.command) {
+		switch (event.command) {
+			case Mojo.Menu.helpCmd:
+				Mojo.Controller.stageController.pushAppSupportInfoScene();
+				break;
+		}
+	}
+}
