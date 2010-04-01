@@ -7,9 +7,21 @@
 </div>
 <div class="palm-text-wrapper">Tap the screen, or use any key</div>
 
-<div class="palm-text-wrapper float">Tempo:</div>
-<div class="palm-text-wrapper float" id="tempo" ></div>
+<div id="tempoGroup" class="palm-group">
+	<div class="palm-group-title">   
+		<div id="currentTitle">Average Tempo</div>
+	</div>
+	<div id="avgTempo" class="tempo" >&nbsp;</div>
+</div>
 
-<div class="palm-text-wrapper"><br /><br />Wait two seconds to reset</div>
+<div id="accelGroup" class="palm-group">
+	<div class="palm-group-title">   
+		<div id="currentTitle">Current Tempo</div>
+	</div>
+	<div id="currentTempo" class="tempo">&nbsp;</div>
+</div>	
 
-<div id="accel"></div>
+<div id="resetLine1">Wait</div>
+<div id="resetLine2">seconds to reset</div>
+<div id="resetDuration" x-mojo-element="IntegerPicker"></div>
+<div id="resetDuration2" x-mojo-element="IntegerPicker"></div>
