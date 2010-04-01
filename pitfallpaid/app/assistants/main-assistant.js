@@ -29,6 +29,8 @@ var global = {
 	minWidth: 100,
 	widthRandomizer: 25,
 	leftRandomizer: 50,
+	
+	initialized: false,
 }
 
 var freefallCookie = ({
@@ -40,6 +42,7 @@ var freefallCookie = ({
 			global.name = storedData.name;
 			global.difficulty = storedData.difficulty;
 			global.initialDate = storedData.initialDate;
+			global.initialized = storedData.initialized;
 		}
 			
 		this.storeCookie();
@@ -51,7 +54,8 @@ var freefallCookie = ({
 			initialDate: global.initialDate,
 			scores: tmpScores,
 			name: global.name,
-			difficulty: global.difficulty
+			difficulty: global.difficulty,
+			initialized: global.initialized
 		})		
 	}
 });
@@ -82,7 +86,15 @@ MainAssistant.prototype.initGame = function () {
 
 MainAssistant.prototype.setup = function(){
 	freefallCookie.initialize();
-
+	if (!global.initialized) {
+		global.scores[1] = {}
+		global.scores[1].name = "bleh"
+		global.scores[1].score = 1
+		global.scores[1].date = new Date()
+		global.initialized = true;
+	}
+	freefallCookie.storeCookie();
+	freefallCookie.initialize();
 	var local = {}
 	
 	global.screenWidth = Mojo.Environment.DeviceInfo.screenHeight;
@@ -598,6 +610,7 @@ MainAssistant.prototype.stop = function (state) {
 			}
 		}
 		this.initGame();
+		freefallCookie.storeCookie();
 	}
 }
 
