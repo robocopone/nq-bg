@@ -2,19 +2,18 @@ var tapTempo = {}
 
 tapTempo.elements = {}
 
-tapTempo.time = new Date().getTime()
-tapTempo.count = 0;
-tapTempo.duration = 0;
-tapTempo.prevDuration = 0;
+tapTempo.time = new Date().getTime() - 10000
+tapTempo.duration = {};
 tapTempo.resetDuration = 2;
+tapTempo.currentNum = 5;
 
 tapTempo.cookie = ({
 	initialize: function() {
 		this.cookieData = new Mojo.Model.Cookie("netBradleyGraberTapTempo");
-		this.storeCookie();
 		storedData = this.cookieData.get();
 		if (storedData && storedData.version == "1.1.0") {
 			tapTempo.resetDuration = storedData.resetDuration;
+			tapTempo.currentNum = storedData.currentNum;
 		}
 		this.storeCookie();
 	},
@@ -22,6 +21,7 @@ tapTempo.cookie = ({
 		this.cookieData.put({  
 			version: "1.1.0",
 			resetDuration: tapTempo.resetDuration,
+			currentNum: tapTempo.currentNum,
 		});		
 	}
 });
@@ -56,49 +56,74 @@ MainAssistant.prototype.setup = function() {
 		value: tapTempo.resetDuration
 	});
 
+	this.controller.setupWidget('currentNumPicker', {
+		label: $L(" "),
+		modelProperty: 'value',
+		min: 1,
+		max: 20,
+	}, model = {
+		value: tapTempo.currentNum
+	});
 
 	this.controller.listen(this.controller.get('resetDuration'),Mojo.Event.propertyChange, this.resetDuration.bindAsEventListener(this));
 	this.controller.listen(this.controller.get('resetDuration2'),Mojo.Event.propertyChange, this.resetDuration.bindAsEventListener(this));
+	this.controller.listen(this.controller.get('currentNumPicker'),Mojo.Event.propertyChange, this.currentNumPicker.bindAsEventListener(this));
 	this.controller.listen(this.controller.sceneElement, Mojo.Event.keypress, this.keyPressed.bindAsEventListener(this))
 	this.controller.listen(this.controller.document, Mojo.Event.tap, this.keyPressed.bindAsEventListener(this))
 }
 
 MainAssistant.prototype.reset = function () {
-	tapTempo.count = 0;
-	tapTempo.duration = 0;
-	tapTempo.prevDuration = 0;
-	tapTempo.initialBPM = 0;
+	tapTempo.duration = {};
 }
 MainAssistant.prototype.resetDuration = function (event) {
 	tapTempo.resetDuration = event.value;
 	tapTempo.cookie.storeCookie();
 }
+MainAssistant.prototype.currentNumPicker = function (event) {
+	tapTempo.currentNum = event.value;
+	tapTempo.cookie.storeCookie();
+}
 
 MainAssistant.prototype.keyPressed = function (event) {
 	var local = {}
+	var x = 1;
+
+	local.totalDuration = 0;
 	local.time = new Date().getTime()
 	
-	local.currentDuration = local.time - tapTempo.time;
-
-	if (tapTempo.count != 0 && local.currentDuration < (tapTempo.resetDuration * 1000))
-		tapTempo.duration += local.currentDuration;
-	else if (local.currentDuration > (tapTempo.resetDuration * 1000) )
+	local.currentTime = local.time - tapTempo.time;
+		
+	if (local.currentTime > tapTempo.resetDuration * 1000) {
 		this.reset();
+		local.currentTime = 0;
+	}
 
-	tapTempo.count++;
+	for (x; tapTempo.duration[x]; x++)
+		local.totalDuration += tapTempo.duration[x]
+		
+	local.totalDuration += tapTempo.duration[x] = local.currentDuration = local.currentTime;
 	
-	local.avgBPM = (((tapTempo.count - 1) / (tapTempo.duration / 1000)) * 60).toFixed(1)
-	local.currentBPM = ((2 / ((local.currentDuration + tapTempo.prevDuration) / 1000)) * 60).toFixed(1)
+	for (var y = x-1; y > x - tapTempo.currentNum && tapTempo.duration[y]; y--)
+		local.currentDuration += tapTempo.duration[y]
+
+	if (x < tapTempo.currentNum)
+		local.currentCount = x
+	else
+		local.currentCount = tapTempo.currentNum
 	
-	if (tapTempo.duration == 0) 
+	local.avgBPM = ((x / (local.totalDuration / 1000)) * 60).toFixed(1)
+	local.currentBPM = ((local.currentCount / (local.currentDuration / 1000)) * 60).toFixed(1)
+	
+	if (!tapTempo.duration[1]) {
 		tapTempo.elements.avgTempo.update("First Beat")
+		tapTempo.elements.currentTempo.update("First Beat")
+	}
 	else {
 		tapTempo.elements.avgTempo.update(local.avgBPM + " bpm")
 		tapTempo.elements.currentTempo.update(local.currentBPM + " bpm")
 	}
 
 	tapTempo.time = new Date().getTime();
-	tapTempo.prevDuration = local.currentDuration;
 }
 
 MainAssistant.prototype.activate = function(event) {
@@ -110,6 +135,7 @@ MainAssistant.prototype.deactivate = function(event) {
 }
 
 MainAssistant.prototype.cleanup = function(event) {
+	this.controller.stopListening(this.controller.get('currentNumPicker'),Mojo.Event.propertyChange, this.currentNumPicker.bindAsEventListener(this));
 	this.controller.stopListening(this.controller.get('resetDuration'),Mojo.Event.propertyChange, this.resetDuration.bindAsEventListener(this));
 	this.controller.stopListening(this.controller.get('resetDuration2'),Mojo.Event.propertyChange, this.resetDuration.bindAsEventListener(this));
 	this.controller.stopListening(this.controller.sceneElement, Mojo.Event.keypress, this.keyPressed.bindAsEventListener(this))
