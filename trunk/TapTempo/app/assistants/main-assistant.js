@@ -153,18 +153,10 @@ MainAssistant.prototype.handleCommand = function (event) {
 	{	event.stopPropagation(); 
 	}
 
-	if (event.type == Mojo.Event.commandEnable &&
-	   (event.command == Mojo.Menu.prefsCmd)) 
-	{	event.stopPropagation(); 
-	}
-
 	if (event.type == Mojo.Event.command) {
 		switch (event.command) {
 			case Mojo.Menu.helpCmd:
 				Mojo.Controller.stageController.pushAppSupportInfoScene();
-				break;
-			case Mojo.Menu.prefsCmd:
-				Mojo.Controller.stageController.pushScene('preferences');
 				break;
 		}
 	}
