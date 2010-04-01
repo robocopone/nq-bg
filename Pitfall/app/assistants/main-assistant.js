@@ -29,19 +29,21 @@ var global = {
 	minWidth: 100,
 	widthRandomizer: 25,
 	leftRandomizer: 50,
+	
+	initialized: false,
 }
 
 var freefallCookie = ({
 	initialize: function() {
-		this.cookieData = new Mojo.Model.Cookie("netBradleyGraberFreeFall");
+		this.cookieData = new Mojo.Model.Cookie("netBradleyGraberFreeFallFree");
 		var storedData = this.cookieData.get();
 		if (storedData && storedData.version == "1.0.0") {
 			global.scores = storedData.scores.slice(0);
 			global.name = storedData.name;
 			global.difficulty = storedData.difficulty;
 			global.initialDate = storedData.initialDate;
+			global.initialized = storedData.initialized;
 		}
-			
 		this.storeCookie();
 	},
 	storeCookie: function() {
@@ -51,7 +53,8 @@ var freefallCookie = ({
 			initialDate: global.initialDate,
 			scores: tmpScores,
 			name: global.name,
-			difficulty: global.difficulty
+			difficulty: global.difficulty,
+			initialized: global.initialized
 		})		
 	}
 });
@@ -81,6 +84,15 @@ MainAssistant.prototype.initGame = function () {
 }
 
 MainAssistant.prototype.setup = function(){
+	freefallCookie.initialize();
+	if (!global.initialized) {
+		global.scores[1] = {}
+		global.scores[1].name = "bleh"
+		global.scores[1].score = 1
+		global.scores[1].date = new Date()
+		global.initialized = true;
+	}
+	freefallCookie.storeCookie();
 	freefallCookie.initialize();
 
 	var local = {}
@@ -598,6 +610,7 @@ MainAssistant.prototype.stop = function (state) {
 			}
 		}
 		this.initGame();
+		freefallCookie.storeCookie();
 	}
 }
 
