@@ -280,9 +280,9 @@ MainAssistant.prototype.checkAccel = function(event){
 		if (!global.moveable) 
 			return;
 		if (event.accelY > .05) 
-			this.moveShip('left', Math.pow(event.accelY * 10, 2.5))
+			this.moveShip('left', Math.pow(event.accelY * 10, 2))
 		if (event.accelY < -.05) 
-			this.moveShip('right', Math.pow(event.accelY * 10, 2.5))
+			this.moveShip('right', Math.pow(event.accelY * 10, 2))
 		global.accelTimingStart = new Date().getTime();
 	}
 	else if (deltaT >= 500) {
