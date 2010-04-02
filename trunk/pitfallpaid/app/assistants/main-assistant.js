@@ -275,17 +275,17 @@ MainAssistant.prototype.doGo = function(){
 MainAssistant.prototype.checkAccel = function(event){
 	global.accelTimingFinish = new Date().getTime();
 	var deltaT = global.accelTimingFinish - global.accelTimingStart
-	if (deltaT > 100 && deltaT < 1000) {
+	if (deltaT > 100 && deltaT < 500) {
 		elements.clock.update(Mojo.Format.formatDate( new Date(), { time: 'medium' } ) );
 		if (!global.moveable) 
 			return;
 		if (event.accelY > .05) 
-			this.moveShip('left', Math.pow(event.accelY * 10, 2))
+			this.moveShip('left', Math.abs(Math.pow(event.accelY * 10, 2)))
 		if (event.accelY < -.05) 
-			this.moveShip('right', Math.pow(event.accelY * 10, 2))
+			this.moveShip('right', Math.abs(Math.pow(event.accelY * 10, 2)))
 		global.accelTimingStart = new Date().getTime();
 	}
-	else if (deltaT >= 250) {
+	else if (deltaT >= 500) {
 		global.paused = true;
 	}
 	
