@@ -279,9 +279,9 @@ MainAssistant.prototype.checkAccel = function(event){
 		elements.clock.update(Mojo.Format.formatDate( new Date(), { time: 'medium' } ) );
 		if (!global.moveable) 
 			return;
-		if (event.accelY > .1) 
+		if (event.accelY > .05) 
 			this.moveShip('left', Math.pow(event.accelY * 10, 2))
-		if (event.accelY < -.1) 
+		if (event.accelY < -.05) 
 			this.moveShip('right', Math.pow(event.accelY * 10, 2))
 		global.accelTimingStart = new Date().getTime();
 	}
