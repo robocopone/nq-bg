@@ -441,10 +441,6 @@ MainAssistant.prototype.bumpUp = function () {
 	return local.currLastLayer;
 }
 
-MainAssistant.prototype.getTop = function (layer) {
-	return parseInt(layer.getStyle('top'));
-}
-
 MainAssistant.prototype.checkWidth = function (num) {
 	if (num > global.maxWidth) {
 		global.adjWidthDistribution++;
@@ -476,24 +472,25 @@ MainAssistant.prototype.deactivate = function(event){
 	});
 }
 
+MainAssistant.prototype.getTop = function (layer) {
+	return parseInt(layer.getStyle('top'));
+}
 MainAssistant.prototype.getLayerLeft = function (inLayer) {
 	return parseInt(layer[inLayer].getStyle('left'))
 }
-
 MainAssistant.prototype.getLayerWidth = function (inLayer) {
 	return parseInt(layer[inLayer].getStyle('width'))
 }
-
 MainAssistant.prototype.getMultiPosition = function (inLayer) {
 	return parseInt(multiplier[inLayer].getStyle('left'))
 }
 MainAssistant.prototype.getObstaclePosition = function (inLayer) {
 	return parseInt(obstacle[inLayer].getStyle('left'))
 }
-
 MainAssistant.prototype.getShipPosition = function () {
 	return parseInt(elements.ship.getStyle('left'));
 }
+
 MainAssistant.prototype.initShip = function () {
 	var currWidth = this.getLayerWidth(global.shipLayer)
 	var currPosition = this.getLayerLeft(global.shipLayer) + Math.floor(currWidth / 2);
