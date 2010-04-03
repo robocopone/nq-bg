@@ -1,0 +1,48 @@
+.tempo {
+	text-align: center;
+	font-size: 150%;
+}
+
+#resetLine1 {
+	position: absolute;
+	top: 315px;
+	left: 10px;
+}
+
+#resetLine2 {
+	position: absolute;
+	top: 315px;
+	left: 122px;
+}
+
+#resetDuration {
+	display: none;
+	position: absolute;
+	top: 300px;
+	left: 32px;
+}
+
+#resetDuration2 {
+	position: absolute;
+	top: 300px;
+	left: 32px;
+}
+
+
+#currentNumLine1 {
+	position: absolute;
+	top: 365px;
+	left: 10px;
+}
+
+#currentNumLine2 {
+	position: absolute;
+	top: 365px;
+	left: 257px;
+}
+
+#currentNumPicker {
+	position: absolute;
+	top: 350px;
+	left: 167px;
+}
