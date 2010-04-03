@@ -1,0 +1,18 @@
+{
+	"id": "net.bradleygraber.taptempo",
+	"version": "1.1.0",
+	"vendor": "Bradley Graber",
+	"type": "web",
+	"main": "index.html",
+	"title": "Tap Tempo",
+	"icon": "icon.png",
+	"noDeprecatedStyles": "true",
+	"copyright": "Copyright 2010 Bradley Graber",
+	"support": 
+	{	"url": "http://www.bradleygraber.net",
+		"email": { "address": "bradgraber@gmail.com",
+					"subject": "Inquiry"
+				 },
+		"phone": "812-488-2068"
+	}
+}
