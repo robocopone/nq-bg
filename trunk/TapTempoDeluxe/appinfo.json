@@ -1,10 +1,10 @@
 {
-	"id": "net.bradleygraber.taptempo",
+	"id": "net.bradleygraber.taptempodeluxe",
 	"version": "1.1.0",
 	"vendor": "Bradley Graber",
 	"type": "web",
 	"main": "index.html",
-	"title": "Tap Tempo",
+	"title": "Tap Tempo Deluxe",
 	"icon": "icon.png",
 	"noDeprecatedStyles": "true",
 	"copyright": "Copyright 2010 Bradley Graber",

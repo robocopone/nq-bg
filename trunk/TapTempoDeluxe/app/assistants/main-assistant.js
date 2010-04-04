@@ -37,6 +37,10 @@ MainAssistant.prototype.setup = function() {
 	tapTempo.cookie.initialize();
 	tapTempo.elements.avgTempo = this.controller.get('avgTempo')
 	tapTempo.elements.currentTempo = this.controller.get('currentTempo')
+	
+	tapTempo.elements.tapTempoArea = this.controller.get('tapTempoArea')
+	tapTempo.elements.pitchPipeArea = this.controller.get('pitchPipeArea')
+	tapTempo.elements.metronomeArea = this.controller.get('metronomeArea')
 
 	this.controller.setupWidget('resetDuration2', {
 		label: $L(" "),
@@ -65,13 +69,60 @@ MainAssistant.prototype.setup = function() {
 		value: tapTempo.currentNum
 	});
 
+	this.controller.setupWidget('currentLock', {
+		trueLabel: $L("Locked"),
+		falseLabel: $L("Ready")
+	}, model = {
+		value: false,
+	});
+
+	this.controller.setupWidget('avgLock', {
+		trueLabel: $L("Locked"),
+		falseLabel: $L("Ready")
+	}, model = {
+		value: false,
+	});
+
+	this.controller.listen(tapTempo.elements.tapTempoArea, Mojo.Event.flick, this.catchFlick.bindAsEventListener(this))
+	this.controller.listen(tapTempo.elements.pitchPipeArea, Mojo.Event.flick, this.catchFlick.bindAsEventListener(this))
+	this.controller.listen(tapTempo.elements.metronomeArea, Mojo.Event.flick, this.catchFlick.bindAsEventListener(this))
 	this.controller.listen(this.controller.get('resetDuration'),Mojo.Event.propertyChange, this.resetDuration.bindAsEventListener(this));
 	this.controller.listen(this.controller.get('resetDuration2'),Mojo.Event.propertyChange, this.resetDuration.bindAsEventListener(this));
 	this.controller.listen(this.controller.get('currentNumPicker'),Mojo.Event.propertyChange, this.currentNumPicker.bindAsEventListener(this));
 	this.controller.listen(this.controller.sceneElement, Mojo.Event.keypress, this.keyPressed.bindAsEventListener(this))
-	this.controller.listen(this.controller.document, Mojo.Event.tap, this.keyPressed.bindAsEventListener(this))
+	this.controller.listen(tapTempo.elements.tapTempoArea, Mojo.Event.tap, this.keyPressed.bindAsEventListener(this))
+}
+MainAssistant.prototype.cleanup = function(event) {
+	this.controller.stopListening(tapTempo.elements.pitchPipeArea, Mojo.Event.flick, this.catchFlick.bindAsEventListener(this))
+	this.controller.stopListening(tapTempo.elements.metronomeArea, Mojo.Event.flick, this.catchFlick.bindAsEventListener(this))
+	this.controller.stopListening(tapTempo.elements.tapTempoArea, Mojo.Event.flick, this.catchFlick.bindAsEventListener(this))
+	this.controller.stopListening(this.controller.get('currentNumPicker'),Mojo.Event.propertyChange, this.currentNumPicker.bindAsEventListener(this));
+	this.controller.stopListening(this.controller.get('resetDuration'),Mojo.Event.propertyChange, this.resetDuration.bindAsEventListener(this));
+	this.controller.stopListening(this.controller.get('resetDuration2'),Mojo.Event.propertyChange, this.resetDuration.bindAsEventListener(this));
+	this.controller.stopListening(this.controller.sceneElement, Mojo.Event.keypress, this.keyPressed.bindAsEventListener(this))
+	this.controller.stopListening(this.controller.document, Mojo.Event.tap, this.keyPressed.bindAsEventListener(this))
+	tapTempo.cookie.storeCookie();
 }
 
+MainAssistant.prototype.catchFlick = function(event) {
+	var local = {}
+	local.pitchPipeAreaLeft = parseInt(tapTempo.elements.pitchPipeArea.getStyle('left'))
+	local.tapTempoAreaLeft = parseInt(tapTempo.elements.tapTempoArea.getStyle('left'))
+	local.metronomeAreaLeft = parseInt(tapTempo.elements.metronomeArea.getStyle('left'))
+	
+	//Move Left
+	if (event.velocity.x > 0 && local.pitchPipeAreaLeft != 0) {
+		tapTempo.elements.pitchPipeArea.setStyle({ left: local.pitchPipeAreaLeft + 320 + 'px'})
+		tapTempo.elements.tapTempoArea.setStyle({ left: local.tapTempoAreaLeft + 320 + 'px'})
+		tapTempo.elements.metronomeArea.setStyle({ left: local.metronomeAreaLeft + 320 + 'px'})
+	}
+	//Move Right
+	if (event.velocity.x < 0 && local.metronomeAreaLeft != 0) {
+		tapTempo.elements.pitchPipeArea.setStyle({ left: local.pitchPipeAreaLeft - 320 + 'px'})
+		tapTempo.elements.tapTempoArea.setStyle({ left: local.tapTempoAreaLeft - 320 + 'px'})
+		tapTempo.elements.metronomeArea.setStyle({ left: local.metronomeAreaLeft - 320 + 'px'})
+	}
+}
 MainAssistant.prototype.reset = function () {
 	tapTempo.duration = {};
 }
@@ -133,16 +184,6 @@ MainAssistant.prototype.activate = function(event) {
 MainAssistant.prototype.deactivate = function(event) {
 
 }
-
-MainAssistant.prototype.cleanup = function(event) {
-	this.controller.stopListening(this.controller.get('currentNumPicker'),Mojo.Event.propertyChange, this.currentNumPicker.bindAsEventListener(this));
-	this.controller.stopListening(this.controller.get('resetDuration'),Mojo.Event.propertyChange, this.resetDuration.bindAsEventListener(this));
-	this.controller.stopListening(this.controller.get('resetDuration2'),Mojo.Event.propertyChange, this.resetDuration.bindAsEventListener(this));
-	this.controller.stopListening(this.controller.sceneElement, Mojo.Event.keypress, this.keyPressed.bindAsEventListener(this))
-	this.controller.stopListening(this.controller.document, Mojo.Event.tap, this.keyPressed.bindAsEventListener(this))
-	tapTempo.cookie.storeCookie();
-}
-
 
 /*
  * Handles the application pulldown menu
