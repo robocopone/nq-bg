@@ -15,7 +15,12 @@
 	width: 320px;
 	-webkit-transition: left .25s linear;
 }
-
+.metroTapGroup {
+	width: 110px;
+}
+.metroTempo {
+	text-align: center;
+}
 /*
  * Pitch Pipe
  */
