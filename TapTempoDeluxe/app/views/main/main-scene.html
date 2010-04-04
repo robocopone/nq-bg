@@ -1,31 +1,61 @@
-<div class="palm-page-header">
-	<div class="palm-page-header-wrapper">
-		<div class="title left">
-			Tap Tempo
+<div id="tapTempoArea">
+	<div class="palm-page-header">
+		<div class="palm-page-header-wrapper">
+			<div class="title left">
+				<div class="floatLeft">&laquo;</div>
+				<div id="tapTitle">Tap Tempo</div>
+				<div class="floatRight">&raquo;</div>
+			</div>
 		</div>
 	</div>
-</div>
-<div class="palm-text-wrapper">Tap the screen, or use any key</div>
-
-<div id="tempoGroup" class="palm-group">
-	<div class="palm-group-title">   
-		<div id="currentTitle">Average Tempo</div>
+	<div class="palm-text-wrapper">Tap the screen, or use any key</div>
+	
+	<div id="avgGroup" class="palm-group">
+		<div class="palm-group-title">   
+			<div id="currentTitle">Average Tempo</div>
+		</div>
+		<div id="avgTempo" class="tempo floatLeft" >&nbsp;</div>
+		<div id="avgLock" class="floatRight" x-mojo-element="ToggleButton"></div>
 	</div>
-	<div id="avgTempo" class="tempo" >&nbsp;</div>
+	
+	<div id="currentGroup" class="palm-group">
+		<div class="palm-group-title">   
+			<div id="currentTitle">Current Tempo</div>
+		</div>
+		<div id="currentTempo" class="tempo floatLeft">&nbsp;</div>
+		<div id="currentLock" class="floatRight" x-mojo-element="ToggleButton"></div>
+	</div>	
+	
+	<div id="resetLine1">Wait</div>
+	<div id="resetLine2">seconds to reset</div>
+	<div id="resetDuration" x-mojo-element="IntegerPicker"></div>
+	<div id="resetDuration2" x-mojo-element="IntegerPicker"></div>
+	
+	<div id="currentNumLine1">Current BPM = Last</div>
+	<div id="currentNumLine2">beats</div>
+	<div id="currentNumPicker" x-mojo-element="IntegerPicker"></div>
 </div>
 
-<div id="accelGroup" class="palm-group">
-	<div class="palm-group-title">   
-		<div id="currentTitle">Current Tempo</div>
+<div id="pitchPipeArea">
+	<div class="palm-page-header">
+		<div class="palm-page-header-wrapper">
+			<div class="title left">
+				<div id="pitchTitle">Pitch Pipe</div>
+				<div class="floatRight">&raquo;</div>
+			</div>
+		</div>
 	</div>
-	<div id="currentTempo" class="tempo">&nbsp;</div>
-</div>	
 
-<div id="resetLine1">Wait</div>
-<div id="resetLine2">seconds to reset</div>
-<div id="resetDuration" x-mojo-element="IntegerPicker"></div>
-<div id="resetDuration2" x-mojo-element="IntegerPicker"></div>
+</div>
 
-<div id="currentNumLine1">Current BPM = Last</div>
-<div id="currentNumLine2">beats</div>
-<div id="currentNumPicker" x-mojo-element="IntegerPicker"></div>
+<div id="metronomeArea">
+	<div class="palm-page-header">
+		<div class="palm-page-header-wrapper">
+			<div class="title left">
+				<div class="floatLeft">&laquo;</div>
+				<div id="metroTitle">Metronome</div>
+			</div>
+		</div>
+	</div>
+
+</div>
