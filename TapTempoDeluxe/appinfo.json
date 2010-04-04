@@ -1,10 +1,10 @@
 {
-	"id": "net.bradleygraber.taptempodeluxe",
+	"id": "net.bradleygraber.musicianstoolbox",
 	"version": "1.1.0",
 	"vendor": "Bradley Graber",
 	"type": "web",
 	"main": "index.html",
-	"title": "Tap Tempo Deluxe",
+	"title": "Musician's Toolbox",
 	"icon": "icon.png",
 	"noDeprecatedStyles": "true",
 	"copyright": "Copyright 2010 Bradley Graber",

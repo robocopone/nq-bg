@@ -6,6 +6,8 @@ tapTempo.time = new Date().getTime() - 10000
 tapTempo.duration = {};
 tapTempo.resetDuration = 2;
 tapTempo.currentNum = 5;
+tapTempo.currentLock = false
+tapTempo.avgLock = false
 
 tapTempo.cookie = ({
 	initialize: function() {
@@ -42,6 +44,9 @@ MainAssistant.prototype.setup = function() {
 	tapTempo.elements.pitchPipeArea = this.controller.get('pitchPipeArea')
 	tapTempo.elements.metronomeArea = this.controller.get('metronomeArea')
 
+	tapTempo.elements.currentLock = this.controller.get('currentLock')
+	tapTempo.elements.avgLock = this.controller.get('avgLock')
+
 	this.controller.setupWidget('resetDuration2', {
 		label: $L(" "),
 		modelProperty: 'value',
@@ -72,20 +77,23 @@ MainAssistant.prototype.setup = function() {
 	this.controller.setupWidget('currentLock', {
 		trueLabel: $L("Locked"),
 		falseLabel: $L("Ready")
-	}, model = {
+	}, this.currentLockModel = {
 		value: false,
 	});
 
 	this.controller.setupWidget('avgLock', {
 		trueLabel: $L("Locked"),
 		falseLabel: $L("Ready")
-	}, model = {
+	}, this.avgLockModel = {
 		value: false,
 	});
 
-	this.controller.listen(tapTempo.elements.tapTempoArea, Mojo.Event.flick, this.catchFlick.bindAsEventListener(this))
-	this.controller.listen(tapTempo.elements.pitchPipeArea, Mojo.Event.flick, this.catchFlick.bindAsEventListener(this))
-	this.controller.listen(tapTempo.elements.metronomeArea, Mojo.Event.flick, this.catchFlick.bindAsEventListener(this))
+	this.unlockFlick = Mojo.Function.debounce(undefined, this.doUnlockFlick.bind(this), .1);
+	this.lock = Mojo.Function.debounce(undefined, this.doLock.bind(this), tapTempo.resetDuration);
+	
+	this.controller.listen(tapTempo.elements.avgLock,Mojo.Event.propertyChange,this.lockAvg.bindAsEventListener(this));
+	this.controller.listen(tapTempo.elements.currentLock,Mojo.Event.propertyChange,this.lockCurrent.bindAsEventListener(this));
+	this.controller.listen(this.controller.document, Mojo.Event.flick, this.catchFlick.bindAsEventListener(this))
 	this.controller.listen(this.controller.get('resetDuration'),Mojo.Event.propertyChange, this.resetDuration.bindAsEventListener(this));
 	this.controller.listen(this.controller.get('resetDuration2'),Mojo.Event.propertyChange, this.resetDuration.bindAsEventListener(this));
 	this.controller.listen(this.controller.get('currentNumPicker'),Mojo.Event.propertyChange, this.currentNumPicker.bindAsEventListener(this));
@@ -93,18 +101,33 @@ MainAssistant.prototype.setup = function() {
 	this.controller.listen(tapTempo.elements.tapTempoArea, Mojo.Event.tap, this.keyPressed.bindAsEventListener(this))
 }
 MainAssistant.prototype.cleanup = function(event) {
-	this.controller.stopListening(tapTempo.elements.pitchPipeArea, Mojo.Event.flick, this.catchFlick.bindAsEventListener(this))
-	this.controller.stopListening(tapTempo.elements.metronomeArea, Mojo.Event.flick, this.catchFlick.bindAsEventListener(this))
-	this.controller.stopListening(tapTempo.elements.tapTempoArea, Mojo.Event.flick, this.catchFlick.bindAsEventListener(this))
+	this.controller.stopListening(tapTempo.elements.avgLock,Mojo.Event.propertyChange,this.lockAvg.bindAsEventListener(this));
+	this.controller.stopListening(tapTempo.elements.currentLock,Mojo.Event.propertyChange,this.lockCurrent.bindAsEventListener(this));
+	this.controller.stopListening(this.controller.document, Mojo.Event.flick, this.catchFlick.bindAsEventListener(this))
 	this.controller.stopListening(this.controller.get('currentNumPicker'),Mojo.Event.propertyChange, this.currentNumPicker.bindAsEventListener(this));
 	this.controller.stopListening(this.controller.get('resetDuration'),Mojo.Event.propertyChange, this.resetDuration.bindAsEventListener(this));
 	this.controller.stopListening(this.controller.get('resetDuration2'),Mojo.Event.propertyChange, this.resetDuration.bindAsEventListener(this));
 	this.controller.stopListening(this.controller.sceneElement, Mojo.Event.keypress, this.keyPressed.bindAsEventListener(this))
-	this.controller.stopListening(this.controller.document, Mojo.Event.tap, this.keyPressed.bindAsEventListener(this))
+	this.controller.stopListening(tapTempo.elements.tapTempoArea, Mojo.Event.tap, this.keyPressed.bindAsEventListener(this))
 	tapTempo.cookie.storeCookie();
 }
+MainAssistant.prototype.doUnlockFlick = function () {
+	tapTempo.flickLock = false;
+}
 
+MainAssistant.prototype.lockCurrent = function(event) {
+	tapTempo.flickLock = true;
+	tapTempo.currentLock = event.value;
+	this.unlockFlick();
+}
+MainAssistant.prototype.lockAvg = function (event) {
+	tapTempo.flickLock = true;
+	tapTempo.avgLock = event.value;
+	this.unlockFlick();
+}
 MainAssistant.prototype.catchFlick = function(event) {
+	if (tapTempo.flickLock)
+		return;
 	var local = {}
 	local.pitchPipeAreaLeft = parseInt(tapTempo.elements.pitchPipeArea.getStyle('left'))
 	local.tapTempoAreaLeft = parseInt(tapTempo.elements.tapTempoArea.getStyle('left'))
@@ -128,6 +151,7 @@ MainAssistant.prototype.reset = function () {
 }
 MainAssistant.prototype.resetDuration = function (event) {
 	tapTempo.resetDuration = event.value;
+	this.lock = Mojo.Function.debounce(undefined, this.doLock.bind(this), tapTempo.resetDuration);
 	tapTempo.cookie.storeCookie();
 }
 MainAssistant.prototype.currentNumPicker = function (event) {
@@ -136,6 +160,9 @@ MainAssistant.prototype.currentNumPicker = function (event) {
 }
 
 MainAssistant.prototype.keyPressed = function (event) {
+	if ((tapTempo.currentLock && tapTempo.avgLock) || 
+		parseInt(tapTempo.elements.tapTempoArea.getStyle('left')) != 0)
+		return;
 	var local = {}
 	var x = 1;
 
@@ -161,22 +188,36 @@ MainAssistant.prototype.keyPressed = function (event) {
 		local.currentCount = x
 	else
 		local.currentCount = tapTempo.currentNum
-	
-	local.avgBPM = ((x / (local.totalDuration / 1000)) * 60).toFixed(1)
-	local.currentBPM = ((local.currentCount / (local.currentDuration / 1000)) * 60).toFixed(1)
+
+	if (!tapTempo.avgLock)
+		tapTempo.avgBPM = ((x / (local.totalDuration / 1000)) * 60).toFixed(1)
+	if (!tapTempo.currentLock)
+		tapTempo.currentBPM = ((local.currentCount / (local.currentDuration / 1000)) * 60).toFixed(1)
 	
 	if (!tapTempo.duration[1]) {
-		tapTempo.elements.avgTempo.update("First Beat")
-		tapTempo.elements.currentTempo.update("First Beat")
+		if (!tapTempo.avgLock)
+			tapTempo.elements.avgTempo.update("First Beat")
+		if (!tapTempo.currentLock)
+			tapTempo.elements.currentTempo.update("First Beat")
 	}
 	else {
-		tapTempo.elements.avgTempo.update(local.avgBPM + " bpm")
-		tapTempo.elements.currentTempo.update(local.currentBPM + " bpm")
+		if (tapTempo.avgBPM && tapTempo.avgBPM < 100000)
+			tapTempo.elements.avgTempo.update(tapTempo.avgBPM + " bpm")
+		if (tapTempo.currentBPM && tapTempo.currentBPM < 100000)
+			tapTempo.elements.currentTempo.update(tapTempo.currentBPM + " bpm")
 	}
 
 	tapTempo.time = new Date().getTime();
+	this.lock();
 }
-
+MainAssistant.prototype.doLock = function () {
+	tapTempo.avgLock = true;
+	tapTempo.currentLock = true;
+	this.avgLockModel.value = true;
+	this.currentLockModel.value = true;
+	this.controller.modelChanged(this.avgLockModel, this);
+	this.controller.modelChanged(this.currentLockModel, this);
+}
 MainAssistant.prototype.activate = function(event) {
 
 }
