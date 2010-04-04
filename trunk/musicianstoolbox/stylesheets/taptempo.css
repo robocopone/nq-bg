@@ -1,0 +1,94 @@
+.floatLeft { float: left; }
+.floatRight { float: right; }
+
+#tapTitle { margin-left: 77px; float: left; }
+#pitchTitle { margin-left: 83px; float: left; }
+#metroTitle { margin-left: 83px; float: left; }
+
+/*
+ * Metronome
+ */
+#metronomeArea {
+	position: absolute;
+	left: 320px;
+	top: 0px;
+	width: 320px;
+	-webkit-transition: left .25s linear;
+}
+
+/*
+ * Pitch Pipe
+ */
+#pitchPipeArea {
+	position: absolute;
+	left: -320px;
+	top: 0px;
+	width: 320px;
+	-webkit-transition: left .25s linear;
+}
+
+/*
+ * Tap Tempo
+ */
+#tapTempoArea {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 320px;
+	height: 480px;
+	-webkit-transition: left .25s linear;
+}
+#avgGroup {
+	height: 41px;
+}
+#currentGroup {
+	height: 41px;
+}
+#currentLock {
+	position: relative;
+	top: -10px;
+}
+#avgLock {
+	position: relative;
+	top: -10px;
+}
+.tempo {
+    text-align: center;
+    font-size: 150%;
+}
+#resetLine1 {
+    position: absolute;
+    top: 315px;
+    left: 10px;
+}
+#resetLine2 {
+    position: absolute;
+    top: 315px;
+    left: 122px;
+}
+#resetDuration {
+    display: none;
+    position: absolute;
+    top: 300px;
+    left: 32px;
+}
+#resetDuration2 {
+    position: absolute;
+    top: 300px;
+    left: 32px;
+}
+#currentNumLine1 {
+    position: absolute;
+    top: 365px;
+    left: 10px;
+}
+#currentNumLine2 {
+    position: absolute;
+    top: 365px;
+    left: 257px;
+}
+#currentNumPicker {
+    position: absolute;
+    top: 350px;
+    left: 167px;
+}
