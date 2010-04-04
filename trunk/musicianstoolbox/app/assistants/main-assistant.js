@@ -46,6 +46,10 @@ MainAssistant.prototype.setup = function() {
 
 	tapTempo.elements.currentLock = this.controller.get('currentLock')
 	tapTempo.elements.avgLock = this.controller.get('avgLock')
+	
+	tapTempo.elements.metroAvgTempo = this.controller.get('metroAvgTempo')
+	tapTempo.elements.metroCurrentTempo = this.controller.get('metroCurrentTempo')
+	
 
 	this.controller.setupWidget('resetDuration2', {
 		label: $L(" "),
@@ -217,6 +221,8 @@ MainAssistant.prototype.doLock = function () {
 	this.currentLockModel.value = true;
 	this.controller.modelChanged(this.avgLockModel, this);
 	this.controller.modelChanged(this.currentLockModel, this);
+	tapTempo.elements.metroAvgTempo.update(tapTempo.avgBPM + " bpm")
+	tapTempo.elements.metroCurrentTempo.update(tapTempo.currentBPM + " bpm")
 }
 MainAssistant.prototype.activate = function(event) {
 
