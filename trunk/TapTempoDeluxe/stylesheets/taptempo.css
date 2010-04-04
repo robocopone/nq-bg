@@ -45,8 +45,12 @@
 	height: 41px;
 }
 #currentLock {
+	position: relative;
+	top: -10px;
 }
 #avgLock {
+	position: relative;
+	top: -10px;
 }
 .tempo {
     text-align: center;
