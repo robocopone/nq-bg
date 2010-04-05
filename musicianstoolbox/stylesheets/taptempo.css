@@ -21,11 +21,38 @@
 .metroTempo {
 	text-align: center;
 }
-
+#metroSetTempoMessage {
+	position: absolute;
+	top: 220px;
+	left: 10px;
+}
 #setMetroTempo {
 	position: absolute;
-	top: 125px;
-	left: 235px;
+	top: 187px;
+	left: 233px;
+}
+#metroSetMeasureMessage {
+	position: absolute;
+	top: 270px;
+	left: 86px;
+}
+#setMetroMeasure {
+	position: absolute;
+	top: 255px;
+	left: -10px;
+}
+#metroAlertBox {
+	position: absolute;
+	top: 310px;
+	width: 270px;
+}
+.metroAlertUnit {
+	text-align: center;
+	width: 33%;
+	float: left;
+}
+.metroCheck {
+	margin-left: 32px;
 }
 /*
  * Pitch Pipe

@@ -9,6 +9,11 @@ tapTempo.currentNum = 5;
 tapTempo.currentLock = false
 tapTempo.avgLock = false
 tapTempo.metroTempo = 100;
+tapTempo.metroMeasure = 4;
+tapTempo.metroIsRunning = false;
+tapTempo.metroAlertVisable = true;
+tapTempo.metroAlertAudible = false;
+tapTempo.metroAlertVibration = false;
 
 tapTempo.cookie = ({
 	initialize: function() {
@@ -50,14 +55,14 @@ MainAssistant.prototype.setup = function() {
 	
 	tapTempo.elements.metroAvgTempo = this.controller.get('metroAvgTempo')
 	tapTempo.elements.metroCurrentTempo = this.controller.get('metroCurrentTempo')
-	
+	tapTempo.elements.metroStartStop = this.controller.get('metroStartStop')
 
 	this.controller.setupWidget('resetDuration2', {
 		label: $L(" "),
 		modelProperty: 'value',
 		min: 1,
 		max: 5,
-	}, model = {
+	}, {
 		value: tapTempo.resetDuration
 	});
 
@@ -66,7 +71,7 @@ MainAssistant.prototype.setup = function() {
 		modelProperty: 'value',
 		min: 1,
 		max: 5,
-	}, model = {
+	}, {
 		value: tapTempo.resetDuration
 	});
 
@@ -75,7 +80,7 @@ MainAssistant.prototype.setup = function() {
 		modelProperty: 'value',
 		min: 1,
 		max: 20,
-	}, model = {
+	}, {
 		value: tapTempo.currentNum
 	});
 
@@ -84,8 +89,17 @@ MainAssistant.prototype.setup = function() {
 		modelProperty: 'value',
 		min: 30,
 		max: 500,
-	}, this.setMetroModel = {
+	}, this.setMetroTempoModel = {
 		value: tapTempo.metroTempo
+	});
+
+	this.controller.setupWidget('setMetroMeasure', {
+		label: $L(" "),
+		modelProperty: 'value',
+		min: 1,
+		max: 12,
+	}, this.setMetroMeasureModel = {
+		value: tapTempo.metroMeasure
 	});
 
 	this.controller.setupWidget('currentLock', {
@@ -102,9 +116,36 @@ MainAssistant.prototype.setup = function() {
 		value: false,
 	});
 
+	// Metro Start/Stop Button Widget
+	this.controller.setupWidget('metroStartStop', {
+		type: Mojo.Widget.defaultButton
+	}, this.metroStartStopModel = {
+		buttonLabel: $L("Start"),
+		buttonClass: 'affirmative',
+		disabled: false
+	});
+
+	// Types of alerts checkboxes
+	this.controller.setupWidget("metroAlertVisable", {
+	}, {
+		value: tapTempo.metroAlertVisable,
+		disabled: false
+	});
+	this.controller.setupWidget("metroAlertAudible", {
+	}, {
+		value: tapTempo.metroAlertAudible,
+		disabled: false
+	});
+	this.controller.setupWidget("metroAlertVibration", {
+	}, {
+		value: tapTempo.metroAlertVibration,
+		disabled: false
+	});
+
 	this.unlockFlick = Mojo.Function.debounce(undefined, this.doUnlockFlick.bind(this), .1);
 	this.lock = Mojo.Function.debounce(undefined, this.doLock.bind(this), tapTempo.resetDuration);
 
+	this.controller.listen(tapTempo.elements.metroStartStop, Mojo.Event.tap, this.metroStartStop.bindAsEventListener(this))	
 	this.controller.listen(tapTempo.elements.metroAvgTempo, Mojo.Event.tap, this.tapMetroAvgTempo.bindAsEventListener(this))	
 	this.controller.listen(tapTempo.elements.metroCurrentTempo, Mojo.Event.tap, this.tapMetroCurrentTempo.bindAsEventListener(this))	
 	this.controller.listen(tapTempo.elements.avgLock,Mojo.Event.propertyChange,this.lockAvg.bindAsEventListener(this));
@@ -117,6 +158,7 @@ MainAssistant.prototype.setup = function() {
 	this.controller.listen(tapTempo.elements.tapTempoArea, Mojo.Event.tap, this.keyPressed.bindAsEventListener(this))
 }
 MainAssistant.prototype.cleanup = function(event) {
+	this.controller.stopListening(tapTempo.elements.metroStartStop, Mojo.Event.tap, this.metroStartStop.bindAsEventListener(this))	
 	this.controller.stopListening(tapTempo.elements.metroAvgTempo, Mojo.Event.tap, this.tapMetroAvgTempo.bindAsEventListener(this))	
 	this.controller.stopListening(tapTempo.elements.metroCurrentTempo, Mojo.Event.tap, this.tapMetroCurrentTempo.bindAsEventListener(this))	
 	this.controller.stopListening(tapTempo.elements.avgLock,Mojo.Event.propertyChange,this.lockAvg.bindAsEventListener(this));
@@ -130,17 +172,32 @@ MainAssistant.prototype.cleanup = function(event) {
 	tapTempo.cookie.storeCookie();
 }
 
+MainAssistant.prototype.metroStartStop = function () {
+	if (tapTempo.metroIsRunning) {
+		tapTempo.metroIsRunning = false;
+		this.metroStartStopModel.buttonLabel = 'Start';
+		this.metroStartStopModel.buttonClass = 'affirmative';
+		this.controller.modelChanged(this.metroStartStopModel, this);
+	}
+	else {
+		tapTempo.metroIsRunning = true;
+		this.metroStartStopModel.buttonLabel = 'Stop';
+		this.metroStartStopModel.buttonClass = 'negative';
+		this.controller.modelChanged(this.metroStartStopModel, this);
+	}
+}
+
 MainAssistant.prototype.tapMetroAvgTempo = function () {
 	if (tapTempo.metroAvgBPM) {
-		this.setMetroModel.value = parseFloat(tapTempo.metroAvgBPM).toFixed();
-		this.controller.modelChanged(this.setMetroModel, this);
+		this.setMetroTempoModel.value = parseFloat(tapTempo.metroAvgBPM).toFixed();
+		this.controller.modelChanged(this.setMetroTempoModel, this);
 	}
 }
 
 MainAssistant.prototype.tapMetroCurrentTempo = function () {
 	if (tapTempo.metroCurrentBPM) {
-		this.setMetroModel.value = parseFloat(tapTempo.metroCurrentBPM).toFixed();
-		this.controller.modelChanged(this.setMetroModel, this);
+		this.setMetroTempoModel.value = parseFloat(tapTempo.metroCurrentBPM).toFixed();
+		this.controller.modelChanged(this.setMetroTempoModel, this);
 	}
 }
 
