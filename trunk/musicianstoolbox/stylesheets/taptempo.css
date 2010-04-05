@@ -21,6 +21,12 @@
 .metroTempo {
 	text-align: center;
 }
+
+#setMetroTempo {
+	position: absolute;
+	top: 125px;
+	left: 235px;
+}
 /*
  * Pitch Pipe
  */

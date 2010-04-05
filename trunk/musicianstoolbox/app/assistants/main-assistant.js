@@ -8,6 +8,7 @@ tapTempo.resetDuration = 2;
 tapTempo.currentNum = 5;
 tapTempo.currentLock = false
 tapTempo.avgLock = false
+tapTempo.metroTempo = 100;
 
 tapTempo.cookie = ({
 	initialize: function() {
@@ -78,6 +79,15 @@ MainAssistant.prototype.setup = function() {
 		value: tapTempo.currentNum
 	});
 
+	this.controller.setupWidget('setMetroTempo', {
+		label: $L(" "),
+		modelProperty: 'value',
+		min: 30,
+		max: 500,
+	}, this.setMetroModel = {
+		value: tapTempo.metroTempo
+	});
+
 	this.controller.setupWidget('currentLock', {
 		trueLabel: $L("Locked"),
 		falseLabel: $L("Ready")
@@ -94,7 +104,9 @@ MainAssistant.prototype.setup = function() {
 
 	this.unlockFlick = Mojo.Function.debounce(undefined, this.doUnlockFlick.bind(this), .1);
 	this.lock = Mojo.Function.debounce(undefined, this.doLock.bind(this), tapTempo.resetDuration);
-	
+
+	this.controller.listen(tapTempo.elements.metroAvgTempo, Mojo.Event.tap, this.tapMetroAvgTempo.bindAsEventListener(this))	
+	this.controller.listen(tapTempo.elements.metroCurrentTempo, Mojo.Event.tap, this.tapMetroCurrentTempo.bindAsEventListener(this))	
 	this.controller.listen(tapTempo.elements.avgLock,Mojo.Event.propertyChange,this.lockAvg.bindAsEventListener(this));
 	this.controller.listen(tapTempo.elements.currentLock,Mojo.Event.propertyChange,this.lockCurrent.bindAsEventListener(this));
 	this.controller.listen(this.controller.document, Mojo.Event.flick, this.catchFlick.bindAsEventListener(this))
@@ -105,6 +117,8 @@ MainAssistant.prototype.setup = function() {
 	this.controller.listen(tapTempo.elements.tapTempoArea, Mojo.Event.tap, this.keyPressed.bindAsEventListener(this))
 }
 MainAssistant.prototype.cleanup = function(event) {
+	this.controller.stopListening(tapTempo.elements.metroAvgTempo, Mojo.Event.tap, this.tapMetroAvgTempo.bindAsEventListener(this))	
+	this.controller.stopListening(tapTempo.elements.metroCurrentTempo, Mojo.Event.tap, this.tapMetroCurrentTempo.bindAsEventListener(this))	
 	this.controller.stopListening(tapTempo.elements.avgLock,Mojo.Event.propertyChange,this.lockAvg.bindAsEventListener(this));
 	this.controller.stopListening(tapTempo.elements.currentLock,Mojo.Event.propertyChange,this.lockCurrent.bindAsEventListener(this));
 	this.controller.stopListening(this.controller.document, Mojo.Event.flick, this.catchFlick.bindAsEventListener(this))
@@ -115,6 +129,21 @@ MainAssistant.prototype.cleanup = function(event) {
 	this.controller.stopListening(tapTempo.elements.tapTempoArea, Mojo.Event.tap, this.keyPressed.bindAsEventListener(this))
 	tapTempo.cookie.storeCookie();
 }
+
+MainAssistant.prototype.tapMetroAvgTempo = function () {
+	if (tapTempo.metroAvgBPM) {
+		this.setMetroModel.value = parseFloat(tapTempo.metroAvgBPM).toFixed();
+		this.controller.modelChanged(this.setMetroModel, this);
+	}
+}
+
+MainAssistant.prototype.tapMetroCurrentTempo = function () {
+	if (tapTempo.metroCurrentBPM) {
+		this.setMetroModel.value = parseFloat(tapTempo.metroCurrentBPM).toFixed();
+		this.controller.modelChanged(this.setMetroModel, this);
+	}
+}
+
 MainAssistant.prototype.doUnlockFlick = function () {
 	tapTempo.flickLock = false;
 }
@@ -221,8 +250,14 @@ MainAssistant.prototype.doLock = function () {
 	this.currentLockModel.value = true;
 	this.controller.modelChanged(this.avgLockModel, this);
 	this.controller.modelChanged(this.currentLockModel, this);
-	tapTempo.elements.metroAvgTempo.update(tapTempo.avgBPM + " bpm")
-	tapTempo.elements.metroCurrentTempo.update(tapTempo.currentBPM + " bpm")
+	if (tapTempo.avgBPM < 100000) {
+		tapTempo.elements.metroAvgTempo.update(tapTempo.avgBPM + " bpm")
+		tapTempo.metroAvgBPM = tapTempo.avgBPM
+	}
+	if (tapTempo.currentBPM < 100000){
+		tapTempo.elements.metroCurrentTempo.update(tapTempo.currentBPM + " bpm")
+		tapTempo.metroCurrentBPM = tapTempo.currentBPM
+	}
 }
 MainAssistant.prototype.activate = function(event) {
 
