@@ -57,6 +57,7 @@ MainAssistant.prototype.setup = function() {
 	tapTempo.elements.metroCurrentTempo = this.controller.get('metroCurrentTempo')
 	tapTempo.elements.metroStartStop = this.controller.get('metroStartStop')
 	tapTempo.elements.metroVisualAlert = this.controller.get('metroVisualAlert')
+	tapTempo.elements.metroVisualAlertNum = this.controller.get('metroVisualAlertNum')
 
 	this.controller.setupWidget('resetDuration2', {
 		label: $L(" "),
@@ -155,6 +156,8 @@ MainAssistant.prototype.setup = function() {
 	this.controller.listen(tapTempo.elements.avgLock,Mojo.Event.propertyChange,this.lockAvg.bindAsEventListener(this));
 	this.controller.listen(tapTempo.elements.currentLock,Mojo.Event.propertyChange,this.lockCurrent.bindAsEventListener(this));
 	this.controller.listen(this.controller.document, Mojo.Event.flick, this.catchFlick.bindAsEventListener(this))
+	this.controller.listen(this.controller.get('setMetroMeasure'),Mojo.Event.propertyChange, this.setMetroMeasureChanged.bindAsEventListener(this));
+	this.controller.listen(this.controller.get('setMetroTempo'),Mojo.Event.propertyChange, this.setMetroTempoChanged.bindAsEventListener(this));
 	this.controller.listen(this.controller.get('resetDuration'),Mojo.Event.propertyChange, this.resetDuration.bindAsEventListener(this));
 	this.controller.listen(this.controller.get('resetDuration2'),Mojo.Event.propertyChange, this.resetDuration.bindAsEventListener(this));
 	this.controller.listen(this.controller.get('currentNumPicker'),Mojo.Event.propertyChange, this.currentNumPicker.bindAsEventListener(this));
@@ -162,6 +165,8 @@ MainAssistant.prototype.setup = function() {
 	this.controller.listen(tapTempo.elements.tapTempoArea, Mojo.Event.tap, this.keyPressed.bindAsEventListener(this))
 }
 MainAssistant.prototype.cleanup = function(event) {
+	this.controller.stopListening(this.controller.get('setMetroMeasure'),Mojo.Event.propertyChange, this.setMetroMeasureChanged.bindAsEventListener(this));
+	this.controller.stopListening(this.controller.get('setMetroTempo'),Mojo.Event.propertyChange, this.setMetroTempoChanged.bindAsEventListener(this));
 	this.controller.stopListening(this.controller.get("metroAlertVisable"), Mojo.Event.propertyChange, this.metroAlertVisableChanged.bindAsEventListener(this));
 	this.controller.stopListening(this.controller.get("metroAlertAudible"), Mojo.Event.propertyChange, this.metroAlertAudibleChanged.bindAsEventListener(this));
 	this.controller.stopListening(this.controller.get("metroAlertVibration"), Mojo.Event.propertyChange, this.metroAlertVibrationChanged.bindAsEventListener(this));
@@ -176,6 +181,14 @@ MainAssistant.prototype.cleanup = function(event) {
 	this.controller.stopListening(this.controller.get('resetDuration2'),Mojo.Event.propertyChange, this.resetDuration.bindAsEventListener(this));
 	this.controller.stopListening(this.controller.sceneElement, Mojo.Event.keypress, this.keyPressed.bindAsEventListener(this))
 	this.controller.stopListening(tapTempo.elements.tapTempoArea, Mojo.Event.tap, this.keyPressed.bindAsEventListener(this))
+	tapTempo.cookie.storeCookie();
+}
+MainAssistant.prototype.setMetroMeasureChanged = function (event) {
+	tapTempo.metroMeasure = event.value;
+	tapTempo.cookie.storeCookie();
+}
+MainAssistant.prototype.setMetroTempoChanged = function (event) {
+	tapTempo.metroTempo = event.value;
 	tapTempo.cookie.storeCookie();
 }
 MainAssistant.prototype.metroAlertVisableChanged = function (event) {
@@ -200,27 +213,58 @@ MainAssistant.prototype.metroStartStop = function () {
 		tapTempo.elements.metroVisualAlert.addClassName('hidden')
 	}
 	else {
+		this.runMetronome = Mojo.Function.debounce(undefined, this.doRunMetronome.bind(this), 1 / (tapTempo.metroTempo / 60));
 		tapTempo.metroIsRunning = true;
 		this.metroStartStopModel.buttonLabel = 'Stop';
 		this.metroStartStopModel.buttonClass = 'negative';
 		this.controller.modelChanged(this.metroStartStopModel, this);
-		if (tapTempo.metroAlertVisable)
+		tapTempo.currentBeat = 1;
+		if (tapTempo.metroAlertVisable) {
 			tapTempo.elements.metroVisualAlert.removeClassName('hidden')
+			tapTempo.elements.metroVisualAlertNum.update(tapTempo.currentBeat++)
+			tapTempo.elements.metroVisualAlertNum.addClassName('down')
+		}
+		this.runMetronome();
 	}
 }
+MainAssistant.prototype.doRunMetronome = function () {
+	this.controller.stageController.setWindowProperties({
+		"blockScreenTimeout": true,
+		"fastAccelerometer": false,
+	});
+	this.controller.stageController.setWindowProperties({
+		"fastAccelerometer": true,
+	});
 
+	if (!tapTempo.metroIsRunning)
+		return
+		
+	if (tapTempo.metroAlertVisable) {
+		if (tapTempo.currentBeat == 1)
+			tapTempo.elements.metroVisualAlertNum.addClassName('down')
+		else
+			tapTempo.elements.metroVisualAlertNum.removeClassName('down')
+
+		tapTempo.elements.metroVisualAlertNum.update(tapTempo.currentBeat++)
+		if (tapTempo.currentBeat > tapTempo.metroMeasure)
+			tapTempo.currentBeat = 1
+	}
+	this.runMetronome();
+}
 MainAssistant.prototype.tapMetroAvgTempo = function () {
 	if (tapTempo.metroAvgBPM) {
-		this.setMetroTempoModel.value = parseFloat(tapTempo.metroAvgBPM).toFixed();
+		tapTempo.metroTempo = this.setMetroTempoModel.value = parseFloat(tapTempo.metroAvgBPM).toFixed();
 		this.controller.modelChanged(this.setMetroTempoModel, this);
 	}
+	tapTempo.cookie.storeCookie()
 }
 
 MainAssistant.prototype.tapMetroCurrentTempo = function () {
 	if (tapTempo.metroCurrentBPM) {
-		this.setMetroTempoModel.value = parseFloat(tapTempo.metroCurrentBPM).toFixed();
+		tapTempo.metroTempo = this.setMetroTempoModel.value = parseFloat(tapTempo.metroCurrentBPM).toFixed();
 		this.controller.modelChanged(this.setMetroTempoModel, this);
 	}
+	tapTempo.cookie.storeCookie()
 }
 
 MainAssistant.prototype.doUnlockFlick = function () {

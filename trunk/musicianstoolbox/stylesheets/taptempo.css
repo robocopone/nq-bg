@@ -23,6 +23,13 @@
 	height: 310px;
 	background-color: #e4e4e2;
 }
+#metroVisualAlertNum {
+	font-size: 1000%;
+	text-align: center;
+}
+#metroVisualAlertNum.down {
+	color: red;
+}
 .metroTapGroup {
 	width: 110px;
 }
@@ -99,8 +106,9 @@
 	top: -10px;
 }
 .tempo {
+	margin-left: 15px;
     text-align: center;
-    font-size: 150%;
+    font-size: 125%;
 }
 #resetLine1 {
     position: absolute;
