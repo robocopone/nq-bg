@@ -53,6 +53,8 @@ MainAssistant.prototype.setup = function() {
 	tapTempo.elements.currentLock = this.controller.get('currentLock')
 	tapTempo.elements.avgLock = this.controller.get('avgLock')
 	
+	tapTempo.elements.metroAvgGroup = this.controller.get('metroAvgGroup')
+	tapTempo.elements.metroCurrentGroup = this.controller.get('metroCurrentGroup')
 	tapTempo.elements.metroAvgTempo = this.controller.get('metroAvgTempo')
 	tapTempo.elements.metroCurrentTempo = this.controller.get('metroCurrentTempo')
 	tapTempo.elements.metroStartStop = this.controller.get('metroStartStop')
@@ -151,8 +153,8 @@ MainAssistant.prototype.setup = function() {
 	this.controller.listen(this.controller.get("metroAlertAudible"), Mojo.Event.propertyChange, this.metroAlertAudibleChanged.bindAsEventListener(this));
 	this.controller.listen(this.controller.get("metroAlertVibration"), Mojo.Event.propertyChange, this.metroAlertVibrationChanged.bindAsEventListener(this));
 	this.controller.listen(tapTempo.elements.metroStartStop, Mojo.Event.tap, this.metroStartStop.bindAsEventListener(this))	
-	this.controller.listen(tapTempo.elements.metroAvgTempo, Mojo.Event.tap, this.tapMetroAvgTempo.bindAsEventListener(this))	
-	this.controller.listen(tapTempo.elements.metroCurrentTempo, Mojo.Event.tap, this.tapMetroCurrentTempo.bindAsEventListener(this))	
+	this.controller.listen(tapTempo.elements.metroAvgGroup, Mojo.Event.tap, this.tapMetroAvgTempo.bindAsEventListener(this))	
+	this.controller.listen(tapTempo.elements.metroCurrentGroup, Mojo.Event.tap, this.tapMetroCurrentTempo.bindAsEventListener(this))	
 	this.controller.listen(tapTempo.elements.avgLock,Mojo.Event.propertyChange,this.lockAvg.bindAsEventListener(this));
 	this.controller.listen(tapTempo.elements.currentLock,Mojo.Event.propertyChange,this.lockCurrent.bindAsEventListener(this));
 	this.controller.listen(this.controller.document, Mojo.Event.flick, this.catchFlick.bindAsEventListener(this))
@@ -171,8 +173,8 @@ MainAssistant.prototype.cleanup = function(event) {
 	this.controller.stopListening(this.controller.get("metroAlertAudible"), Mojo.Event.propertyChange, this.metroAlertAudibleChanged.bindAsEventListener(this));
 	this.controller.stopListening(this.controller.get("metroAlertVibration"), Mojo.Event.propertyChange, this.metroAlertVibrationChanged.bindAsEventListener(this));
 	this.controller.stopListening(tapTempo.elements.metroStartStop, Mojo.Event.tap, this.metroStartStop.bindAsEventListener(this))	
-	this.controller.stopListening(tapTempo.elements.metroAvgTempo, Mojo.Event.tap, this.tapMetroAvgTempo.bindAsEventListener(this))	
-	this.controller.stopListening(tapTempo.elements.metroCurrentTempo, Mojo.Event.tap, this.tapMetroCurrentTempo.bindAsEventListener(this))	
+	this.controller.stopListening(tapTempo.elements.metroAvgGroup, Mojo.Event.tap, this.tapMetroAvgTempo.bindAsEventListener(this))	
+	this.controller.stopListening(tapTempo.elements.metroCurrentGroup, Mojo.Event.tap, this.tapMetroCurrentTempo.bindAsEventListener(this))	
 	this.controller.stopListening(tapTempo.elements.avgLock,Mojo.Event.propertyChange,this.lockAvg.bindAsEventListener(this));
 	this.controller.stopListening(tapTempo.elements.currentLock,Mojo.Event.propertyChange,this.lockCurrent.bindAsEventListener(this));
 	this.controller.stopListening(this.controller.document, Mojo.Event.flick, this.catchFlick.bindAsEventListener(this))
