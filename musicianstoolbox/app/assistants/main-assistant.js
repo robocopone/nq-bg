@@ -53,6 +53,7 @@ MainAssistant.prototype.setup = function() {
 	tapTempo.elements.currentLock = this.controller.get('currentLock')
 	tapTempo.elements.avgLock = this.controller.get('avgLock')
 	
+	tapTempo.elements.metroTitle = this.controller.get('metroTitle')
 	tapTempo.elements.metroAvgGroup = this.controller.get('metroAvgGroup')
 	tapTempo.elements.metroCurrentGroup = this.controller.get('metroCurrentGroup')
 	tapTempo.elements.metroAvgTempo = this.controller.get('metroAvgTempo')
@@ -148,6 +149,7 @@ MainAssistant.prototype.setup = function() {
 
 	this.unlockFlick = Mojo.Function.debounce(undefined, this.doUnlockFlick.bind(this), .1);
 	this.lock = Mojo.Function.debounce(undefined, this.doLock.bind(this), tapTempo.resetDuration);
+	this.runMetronome = Mojo.Function.debounce(undefined, this.doRunMetronome.bind(this), .01);
 
 	this.controller.listen(this.controller.get("metroAlertVisable"), Mojo.Event.propertyChange, this.metroAlertVisableChanged.bindAsEventListener(this));
 	this.controller.listen(this.controller.get("metroAlertAudible"), Mojo.Event.propertyChange, this.metroAlertAudibleChanged.bindAsEventListener(this));
@@ -207,6 +209,7 @@ MainAssistant.prototype.metroAlertVibrationChanged = function (event) {
 }
 
 MainAssistant.prototype.metroStartStop = function () {
+	this.start = new Date().getTime();
 	if (tapTempo.metroIsRunning) {
 		tapTempo.metroIsRunning = false;
 		this.metroStartStopModel.buttonLabel = 'Start';
@@ -215,11 +218,12 @@ MainAssistant.prototype.metroStartStop = function () {
 		tapTempo.elements.metroVisualAlert.addClassName('hidden')
 	}
 	else {
-		this.runMetronome = Mojo.Function.debounce(undefined, this.doRunMetronome.bind(this), 1 / (tapTempo.metroTempo / 60));
 		tapTempo.metroIsRunning = true;
 		this.metroStartStopModel.buttonLabel = 'Stop';
 		this.metroStartStopModel.buttonClass = 'negative';
 		this.controller.modelChanged(this.metroStartStopModel, this);
+		tapTempo.metroDelay = (1 / (tapTempo.metroTempo / 60)) * 1000
+		tapTempo.metroTotalBeats = 1;
 		tapTempo.currentBeat = 1;
 		if (tapTempo.metroAlertVisable) {
 			tapTempo.elements.metroVisualAlert.removeClassName('hidden')
@@ -230,26 +234,32 @@ MainAssistant.prototype.metroStartStop = function () {
 	}
 }
 MainAssistant.prototype.doRunMetronome = function () {
-	this.controller.stageController.setWindowProperties({
-		"blockScreenTimeout": true,
-		"fastAccelerometer": false,
-	});
-	this.controller.stageController.setWindowProperties({
-		"fastAccelerometer": true,
-	});
+	this.finish = new Date().getTime()
+	var deltaT = this.finish - this.start
 
-	if (!tapTempo.metroIsRunning)
-		return
-		
-	if (tapTempo.metroAlertVisable) {
-		if (tapTempo.currentBeat == 1)
-			tapTempo.elements.metroVisualAlertNum.addClassName('down')
-		else
-			tapTempo.elements.metroVisualAlertNum.removeClassName('down')
-
-		tapTempo.elements.metroVisualAlertNum.update(tapTempo.currentBeat++)
-		if (tapTempo.currentBeat > tapTempo.metroMeasure)
-			tapTempo.currentBeat = 1
+	if (deltaT > tapTempo.metroDelay * tapTempo.metroTotalBeats) {
+		tapTempo.metroTotalBeats++
+		this.controller.stageController.setWindowProperties({
+			"blockScreenTimeout": true,
+			"fastAccelerometer": false,
+		});
+		this.controller.stageController.setWindowProperties({
+			"fastAccelerometer": true,
+		});
+	
+		if (!tapTempo.metroIsRunning)
+			return
+			
+		if (tapTempo.metroAlertVisable) {
+			if (tapTempo.currentBeat == 1)
+				tapTempo.elements.metroVisualAlertNum.addClassName('down')
+			else
+				tapTempo.elements.metroVisualAlertNum.removeClassName('down')
+	
+			tapTempo.elements.metroVisualAlertNum.update(tapTempo.currentBeat++)
+			if (tapTempo.currentBeat > tapTempo.metroMeasure)
+				tapTempo.currentBeat = 1
+		}
 	}
 	this.runMetronome();
 }
@@ -328,6 +338,8 @@ MainAssistant.prototype.keyPressed = function (event) {
 	local.time = new Date().getTime()
 	
 	local.currentTime = local.time - tapTempo.time;
+
+	tapTempo.time = new Date().getTime();
 		
 	if (local.currentTime > tapTempo.resetDuration * 1000) {
 		this.reset();
@@ -365,7 +377,6 @@ MainAssistant.prototype.keyPressed = function (event) {
 			tapTempo.elements.currentTempo.update(tapTempo.currentBPM + " bpm")
 	}
 
-	tapTempo.time = new Date().getTime();
 	this.lock();
 }
 MainAssistant.prototype.doLock = function () {
