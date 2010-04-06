@@ -93,6 +93,8 @@ MainAssistant.prototype.keyPressed = function (event) {
 	
 	local.currentTime = local.time - tapTempo.time;
 		
+	tapTempo.time = new Date().getTime();
+
 	if (local.currentTime > tapTempo.resetDuration * 1000) {
 		this.reset();
 		local.currentTime = 0;
@@ -122,8 +124,6 @@ MainAssistant.prototype.keyPressed = function (event) {
 		tapTempo.elements.avgTempo.update(local.avgBPM + " bpm")
 		tapTempo.elements.currentTempo.update(local.currentBPM + " bpm")
 	}
-
-	tapTempo.time = new Date().getTime();
 }
 
 MainAssistant.prototype.activate = function(event) {
