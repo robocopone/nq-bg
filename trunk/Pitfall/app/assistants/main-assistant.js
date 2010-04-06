@@ -252,6 +252,13 @@ MainAssistant.prototype.activate = function(event) {
  * Iterative function
  */
 MainAssistant.prototype.doGo = function(){
+	this.controller.stageController.setWindowProperties({
+		fastAccelerometer: false
+	});
+	this.controller.stageController.setWindowProperties({
+		fastAccelerometer: true
+	});
+	
 	if (!global.paused) {
 		var currLastLayer = this.bumpUp();
 		this.fillLayer(currLastLayer, currLastLayer)
