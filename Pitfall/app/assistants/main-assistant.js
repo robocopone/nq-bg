@@ -506,7 +506,7 @@ MainAssistant.prototype.tapBuyButton = function() {
 		parameters: {
 			id: 'com.palm.app.browser',
 			params: {
-				target: "http://www.bradleygraber.net/gpsDashboard"
+				target: "http://developer.palm.com/appredirect/?packageid=net.bradleygraber.freefall&applicationid=2445"
 			}
 		}
 	});
