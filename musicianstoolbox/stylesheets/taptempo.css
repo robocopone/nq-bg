@@ -20,15 +20,17 @@
 	position: absolute;
 	top: 120px;
 	width: 320px;
-	height: 310px;
+	height: 400px;
 	background-color: #e4e4e2;
 }
 #metroVisualAlertNum {
-	font-size: 1000%;
+	font-size: 1200%;
 	text-align: center;
+	height: 400px;
 }
 #metroVisualAlertNum.down {
-	color: red;
+	background-color: black;
+	color: white;
 }
 .metroTapGroup {
 	width: 110px;

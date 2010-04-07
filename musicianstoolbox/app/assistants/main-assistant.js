@@ -61,6 +61,15 @@ MainAssistant.prototype.setup = function() {
 	tapTempo.elements.metroStartStop = this.controller.get('metroStartStop')
 	tapTempo.elements.metroVisualAlert = this.controller.get('metroVisualAlert')
 	tapTempo.elements.metroVisualAlertNum = this.controller.get('metroVisualAlertNum')
+	
+	// Audio
+	tapTempo.audio = {}
+	tapTempo.audio.click = new Audio();
+	tapTempo.audio.click.src = Mojo.appPath + "/audio/click.wav"
+	tapTempo.audio.click.load()
+	tapTempo.audio.clickDown = new Audio();
+	tapTempo.audio.clickDown.src = Mojo.appPath + "/audio/click-down.wav"
+	tapTempo.audio.clickDown.load()
 
 	this.controller.setupWidget('resetDuration2', {
 		label: $L(" "),
@@ -93,7 +102,7 @@ MainAssistant.prototype.setup = function() {
 		label: $L(" "),
 		modelProperty: 'value',
 		min: 30,
-		max: 500,
+		max: 300,
 	}, this.setMetroTempoModel = {
 		value: tapTempo.metroTempo
 	});
@@ -225,10 +234,16 @@ MainAssistant.prototype.metroStartStop = function () {
 		tapTempo.metroDelay = (1 / (tapTempo.metroTempo / 60)) * 1000
 		tapTempo.metroTotalBeats = 1;
 		tapTempo.currentBeat = 1;
+		if (tapTempo.metroAlertVibration) {
+			Mojo.Controller.getAppController().playSoundNotification("vibrate","");
+		}
 		if (tapTempo.metroAlertVisable) {
 			tapTempo.elements.metroVisualAlert.removeClassName('hidden')
-			tapTempo.elements.metroVisualAlertNum.update(tapTempo.currentBeat++)
+			tapTempo.elements.metroVisualAlertNum.update(tapTempo.currentBeat)
 			tapTempo.elements.metroVisualAlertNum.addClassName('down')
+		}
+		if (tapTempo.metroAlertAudible) {
+			this.playDownClick();
 		}
 		this.runMetronome();
 	}
@@ -236,32 +251,63 @@ MainAssistant.prototype.metroStartStop = function () {
 MainAssistant.prototype.doRunMetronome = function () {
 	this.finish = new Date().getTime()
 	var deltaT = this.finish - this.start
-
 	if (deltaT > tapTempo.metroDelay * tapTempo.metroTotalBeats) {
+		this.lagFighter();
 		tapTempo.metroTotalBeats++
-		this.controller.stageController.setWindowProperties({
-			"blockScreenTimeout": true,
-			"fastAccelerometer": false,
-		});
-		this.controller.stageController.setWindowProperties({
-			"fastAccelerometer": true,
-		});
-	
-		if (!tapTempo.metroIsRunning)
-			return
-			
+		tapTempo.currentBeat++
+		if (tapTempo.currentBeat > tapTempo.metroMeasure) 
+			tapTempo.currentBeat = 1
+
 		if (tapTempo.metroAlertVisable) {
-			if (tapTempo.currentBeat == 1)
+			if (tapTempo.currentBeat == 1) 
 				tapTempo.elements.metroVisualAlertNum.addClassName('down')
-			else
+			else 
 				tapTempo.elements.metroVisualAlertNum.removeClassName('down')
-	
-			tapTempo.elements.metroVisualAlertNum.update(tapTempo.currentBeat++)
-			if (tapTempo.currentBeat > tapTempo.metroMeasure)
-				tapTempo.currentBeat = 1
+			tapTempo.elements.metroVisualAlertNum.update(tapTempo.currentBeat)
+		}
+		if (tapTempo.metroAlertVibration) {
+			Mojo.Controller.getAppController().playSoundNotification("vibrate", "");
+		}
+		if (tapTempo.metroAlertAudible) {
+			if (tapTempo.currentBeat == 1)
+				this.playDownClick();
+			else
+				this.playClick();
 		}
 	}
-	this.runMetronome();
+	if (tapTempo.metroIsRunning)
+		this.runMetronome();
+}
+MainAssistant.prototype.playDownClick = function(){
+	this.controller.serviceRequest('palm://com.palm.audio/systemsounds', {
+		method: "playFeedback",
+		parameters: {
+			name: "dtmf_1"
+		},
+		onSuccess: {},
+		onFailure: {}
+	})
+}
+
+MainAssistant.prototype.playClick = function(){
+	this.controller.serviceRequest('palm://com.palm.audio/systemsounds', {
+		method: "playFeedback",
+		parameters: {
+			name: "dtmf_2"
+		},
+		onSuccess: {},
+		onFailure: {}
+	})
+}
+
+MainAssistant.prototype.lagFighter = function () {
+	this.controller.stageController.setWindowProperties({
+		"blockScreenTimeout": true,
+		"fastAccelerometer": false,
+	});
+	this.controller.stageController.setWindowProperties({
+		"fastAccelerometer": true,
+	});
 }
 MainAssistant.prototype.tapMetroAvgTempo = function () {
 	if (tapTempo.metroAvgBPM) {
