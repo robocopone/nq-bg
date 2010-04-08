@@ -14,14 +14,22 @@ tapTempo.metroIsRunning = false;
 tapTempo.metroAlertVisable = true;
 tapTempo.metroAlertAudible = false;
 tapTempo.metroAlertVibration = false;
+tapTempo.metroInitialAudioAttempt = true;
 
 tapTempo.cookie = ({
 	initialize: function() {
 		this.cookieData = new Mojo.Model.Cookie("netBradleyGraberTapTempo");
+		this.storeCookie();
 		storedData = this.cookieData.get();
 		if (storedData && storedData.version == "1.1.0") {
 			tapTempo.resetDuration = storedData.resetDuration;
 			tapTempo.currentNum = storedData.currentNum;
+			tapTempo.metroTempo = storedData.metroTempo
+			tapTempo.metroAlertVisable = storedData.metroAlertVisable
+			tapTempo.metroAlertAudible = storedData.metroAlertAudible
+			tapTempo.metroAlertVibration = storedData.metroAlertVibration
+			tapTempo.metroMeasure = storedData.metroMeasure
+			tapTempo.metroInitialAudioAttempt = storedData.metroInitialAudioAttempt
 		}
 		this.storeCookie();
 	},
@@ -30,6 +38,12 @@ tapTempo.cookie = ({
 			version: "1.1.0",
 			resetDuration: tapTempo.resetDuration,
 			currentNum: tapTempo.currentNum,
+			metroTempo: tapTempo.metroTempo,
+			metroAlertVisable: tapTempo.metroAlertVisable,
+			metroAlertAudible: tapTempo.metroAlertAudible,
+			metroAlertVibration: tapTempo.metroAlertVibration,
+			metroMeasure: tapTempo.metroMeasure,
+			metroInitialAudioAttempt: tapTempo.metroInitialAudioAttempt,
 		});		
 	}
 });
@@ -37,6 +51,11 @@ tapTempo.cookie = ({
 
 function MainAssistant() {
 
+}
+
+MainAssistant.prototype.doLoadAudio = function () {
+	tapTempo.audio.click.load()
+	tapTempo.audio.clickDown.load()
 }
 
 MainAssistant.prototype.setup = function() {
@@ -66,10 +85,8 @@ MainAssistant.prototype.setup = function() {
 	tapTempo.audio = {}
 	tapTempo.audio.click = new Audio();
 	tapTempo.audio.click.src = Mojo.appPath + "/audio/click.wav"
-	tapTempo.audio.click.load()
 	tapTempo.audio.clickDown = new Audio();
 	tapTempo.audio.clickDown.src = Mojo.appPath + "/audio/click-down.wav"
-	tapTempo.audio.clickDown.load()
 
 	this.controller.setupWidget('resetDuration2', {
 		label: $L(" "),
@@ -159,6 +176,7 @@ MainAssistant.prototype.setup = function() {
 	this.unlockFlick = Mojo.Function.debounce(undefined, this.doUnlockFlick.bind(this), .1);
 	this.lock = Mojo.Function.debounce(undefined, this.doLock.bind(this), tapTempo.resetDuration);
 	this.runMetronome = Mojo.Function.debounce(undefined, this.doRunMetronome.bind(this), .01);
+	this.loadAudio = Mojo.Function.debounce(undefined, this.doLoadAudio.bind(this), 1);
 
 	this.controller.listen(this.controller.get("metroAlertVisable"), Mojo.Event.propertyChange, this.metroAlertVisableChanged.bindAsEventListener(this));
 	this.controller.listen(this.controller.get("metroAlertAudible"), Mojo.Event.propertyChange, this.metroAlertAudibleChanged.bindAsEventListener(this));
@@ -209,7 +227,29 @@ MainAssistant.prototype.metroAlertVisableChanged = function (event) {
 	tapTempo.cookie.storeCookie();
 }
 MainAssistant.prototype.metroAlertAudibleChanged = function (event) {
+	if (tapTempo.metroInitialAudioAttempt && event.value) {
+		this.controller.showAlertDialog({
+			onChoose: this.metroInitialAudioAttempt,
+			title: $L("Audio Alert"),
+			message: $L('The only way to play audio on the Pre within the timing constraints of a metronome is to use the onboard system sounds.  If you cannot hear anything you need to go into "Sounds & Ringtones" on the third page of the launcher and turn up the volume on System Sounds.  This also forced me to use the dial-pad tones.'),
+			choices: [{
+				label: $L('Ok'),
+				value: 'ok',
+				type: 'affirmative'
+			}, {
+				label: $L('Don\'t tell me again'),
+				value: 'no',
+				type: 'negative'
+			}, ]
+		});
+	}
 	tapTempo.metroAlertAudible = event.value;
+	tapTempo.cookie.storeCookie();
+}
+MainAssistant.prototype.metroInitialAudioAttempt = function(choice) {
+	if (choice == 'no') {
+		tapTempo.metroInitialAudioAttempt = false;
+	}
 	tapTempo.cookie.storeCookie();
 }
 MainAssistant.prototype.metroAlertVibrationChanged = function (event) {
@@ -441,8 +481,8 @@ MainAssistant.prototype.doLock = function () {
 		tapTempo.metroCurrentBPM = tapTempo.currentBPM
 	}
 }
-MainAssistant.prototype.activate = function(event) {
-
+MainAssistant.prototype.activate = function(event){
+	this.loadAudio();
 }
 
 MainAssistant.prototype.deactivate = function(event) {
