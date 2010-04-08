@@ -8,6 +8,7 @@ tapTempo.resetDuration = 2;
 tapTempo.currentNum = 5;
 tapTempo.currentLock = false
 tapTempo.avgLock = false
+
 tapTempo.metroTempo = 100;
 tapTempo.metroMeasure = 4;
 tapTempo.metroIsRunning = false;
@@ -15,6 +16,10 @@ tapTempo.metroAlertVisable = true;
 tapTempo.metroAlertAudible = false;
 tapTempo.metroAlertVibration = false;
 tapTempo.metroInitialAudioAttempt = true;
+
+tapTempo.pitchKey = 'A'
+tapTempo.pitchOctave = 4;
+tapTempo.pitchDuration = 5;
 
 tapTempo.cookie = ({
 	initialize: function() {
@@ -56,6 +61,8 @@ function MainAssistant() {
 MainAssistant.prototype.doLoadAudio = function () {
 	tapTempo.audio.click.load()
 	tapTempo.audio.clickDown.load()
+	tapTempo.audio.a.load()
+	tapTempo.audio.a.play()	
 }
 
 MainAssistant.prototype.setup = function() {
@@ -83,10 +90,10 @@ MainAssistant.prototype.setup = function() {
 	
 	// Audio
 	tapTempo.audio = {}
-	tapTempo.audio.click = new Audio();
-	tapTempo.audio.click.src = Mojo.appPath + "/audio/click.wav"
-	tapTempo.audio.clickDown = new Audio();
-	tapTempo.audio.clickDown.src = Mojo.appPath + "/audio/click-down.wav"
+	tapTempo.audio.a = new Audio();
+	tapTempo.audio.a.src = Mojo.appPath + "/audio/a.wav"
+	tapTempo.audio.a.playcount = 5;
+	
 
 	this.controller.setupWidget('resetDuration2', {
 		label: $L(" "),
@@ -173,11 +180,115 @@ MainAssistant.prototype.setup = function() {
 		disabled: false
 	});
 
+	//Pitch Key select
+	this.controller.setupWidget("pitchKeySelector", {
+		labelPlacement: Mojo.Widget.labelPlacementLeft,
+		label: $L("Key"),
+		choices: [{
+			label: $L("A"),
+			value: 'A'
+		}, {
+			label: $L('A#/Bb'),
+			value: 'A#'
+		}, {
+			label: $L("B"),
+			value: 'B'
+		}, {
+			label: $L("C"),
+			value: 'C'
+		}, {
+			label: $L("C#/Db"),
+			value: 'C#'
+		}, {
+			label: $L("D"),
+			value: 'D'
+		}, {
+			label: $L("D#/Eb"),
+			value: 'D#'
+		}, {
+			label: $L("E"),
+			value: 'E'
+		}, {
+			label: $L("F"),
+			value: 'F'
+		}, {
+			label: $L("F#/Gb"),
+			value: 'F#'
+		}, {
+			label: $L("G"),
+			value: 'G'
+		}, {
+			label: $L("G#/Ab"),
+			value: 'G#'
+		}, ],
+	}, {
+		value: tapTempo.pitchKey,
+		disabled: false
+	});
+	//Pitch Key select
+	this.controller.setupWidget("pitchOctaveSelector", {
+		labelPlacement: Mojo.Widget.labelPlacementRight,
+		label: $L("Octave"),
+		choices: [{
+			label: $L("0"),
+			value: 0
+		}, {
+			label: $L('1'),
+			value: 1
+		}, {
+			label: $L("2"),
+			value: 2
+		}, {
+			label: $L("3"),
+			value: 3
+		}, {
+			label: $L("4"),
+			value: 4
+		}, {
+			label: $L("5"),
+			value: 5
+		}, {
+			label: $L("6"),
+			value: 6
+		}, {
+			label: $L("7"),
+			value: 7
+		}, {
+			label: $L("8"),
+			value: 8
+		}, ],
+	}, {
+		value: tapTempo.pitchOctave,
+		disabled: false
+	});
+
+	this.controller.setupWidget('pitchDurationSelector', {
+		label: $L(" "),
+		modelProperty: 'value',
+		min: 1,
+		max: 20,
+	}, {
+		value: tapTempo.metroMeasure
+	});
+
+	// Pitch Start Button Widget
+	this.controller.setupWidget('pitchStart', {
+		type: Mojo.Widget.defaultButton
+	}, this.metroStartStopModel = {
+		buttonLabel: $L("Go"),
+		buttonClass: 'affirmative',
+		disabled: false
+	});
+
 	this.unlockFlick = Mojo.Function.debounce(undefined, this.doUnlockFlick.bind(this), .1);
 	this.lock = Mojo.Function.debounce(undefined, this.doLock.bind(this), tapTempo.resetDuration);
 	this.runMetronome = Mojo.Function.debounce(undefined, this.doRunMetronome.bind(this), .01);
 	this.loadAudio = Mojo.Function.debounce(undefined, this.doLoadAudio.bind(this), 1);
 
+	this.controller.listen("pitchStart", Mojo.Event.tap, this.pitchStart.bindAsEventListener(this))	
+	this.controller.listen("pitchDurationSelector", Mojo.Event.propertyChange, this.pitchDurationSelector.bindAsEventListener(this));
+	this.controller.listen("pitchKeySelector", Mojo.Event.propertyChange, this.pitchKeySelector.bindAsEventListener(this));
+	this.controller.listen("pitchOctaveSelector",Mojo.Event.propertyChange, this.pitchOctaveSelector.bindAsEventListener(this));
 	this.controller.listen(this.controller.get("metroAlertVisable"), Mojo.Event.propertyChange, this.metroAlertVisableChanged.bindAsEventListener(this));
 	this.controller.listen(this.controller.get("metroAlertAudible"), Mojo.Event.propertyChange, this.metroAlertAudibleChanged.bindAsEventListener(this));
 	this.controller.listen(this.controller.get("metroAlertVibration"), Mojo.Event.propertyChange, this.metroAlertVibrationChanged.bindAsEventListener(this));
@@ -196,6 +307,9 @@ MainAssistant.prototype.setup = function() {
 	this.controller.listen(tapTempo.elements.tapTempoArea, Mojo.Event.tap, this.keyPressed.bindAsEventListener(this))
 }
 MainAssistant.prototype.cleanup = function(event) {
+	this.controller.stopListening("pitchStart", Mojo.Event.tap, this.pitchStart.bindAsEventListener(this))	
+	this.controller.stopListening("pitchKeySelector", Mojo.Event.propertyChange, this.pitchKeySelector.bindAsEventListener(this));
+	this.controller.stopListening("pitchOctaveSelector",Mojo.Event.propertyChange, this.pitchOctaveSelector.bindAsEventListener(this));
 	this.controller.stopListening(this.controller.get('setMetroMeasure'),Mojo.Event.propertyChange, this.setMetroMeasureChanged.bindAsEventListener(this));
 	this.controller.stopListening(this.controller.get('setMetroTempo'),Mojo.Event.propertyChange, this.setMetroTempoChanged.bindAsEventListener(this));
 	this.controller.stopListening(this.controller.get("metroAlertVisable"), Mojo.Event.propertyChange, this.metroAlertVisableChanged.bindAsEventListener(this));
@@ -214,6 +328,23 @@ MainAssistant.prototype.cleanup = function(event) {
 	this.controller.stopListening(tapTempo.elements.tapTempoArea, Mojo.Event.tap, this.keyPressed.bindAsEventListener(this))
 	tapTempo.cookie.storeCookie();
 }
+MainAssistant.prototype.pitchStart = function () {
+	var local = {}
+	
+}
+MainAssistant.prototype.pitchDurationSelector = function (event) {
+	tapTempo.pitchDuration = event.value
+	tapTempo.cookie.storeCookie();
+}
+MainAssistant.prototype.pitchKeySelector = function (event) {
+	tapTempo.pitchKey = event.value
+	tapTempo.cookie.storeCookie();
+}
+MainAssistant.prototype.pitchOctaveSelector = function (event) {
+	tapTempo.pitchOctave = event.value
+	tapTempo.cookie.storeCookie();
+}
+
 MainAssistant.prototype.setMetroMeasureChanged = function (event) {
 	tapTempo.metroMeasure = event.value;
 	tapTempo.cookie.storeCookie();
@@ -483,6 +614,7 @@ MainAssistant.prototype.doLock = function () {
 }
 MainAssistant.prototype.activate = function(event){
 	this.loadAudio();
+//	tapTempo.audio.a.play();
 }
 
 MainAssistant.prototype.deactivate = function(event) {

@@ -81,7 +81,49 @@
 	width: 320px;
 	-webkit-transition: left .25s linear;
 }
-
+.keySelect {
+	float: left;
+	width: 120px;
+}
+#pitchKeyGroup {
+	height: 31px;
+}
+#pitchKeySelector {
+	width: 100px;
+	padding-top: 15px;
+	height: 45px;
+	position: absolute;
+	top: 85px;
+	left: 45px;
+}
+#pitchOctaveSelector {
+	padding-top: 15px;
+	height: 45px;
+	width: 130px;
+	position: absolute;
+	top: 85px;
+	left: 150px;
+}
+#pitchDurationSelectionline1 {
+	position: absolute;
+	top: 165px;
+	left: 30px;
+}
+#pitchDurationSelectionline2 {
+	position: absolute;
+	top: 165px;
+	left: 210px;
+}
+#pitchDurationSelector {
+	position: absolute;
+	top: 150px;
+	left: 120px;
+}
+#pitchStart {
+	position: absolute;
+	top: 205px;
+	width: 320px;
+}
 /*
  * Tap Tempo
  */
