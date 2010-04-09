@@ -326,7 +326,7 @@ MainAssistant.prototype.pitchStart = function () {
 	
 	local.audio = new Audio();
 	local.audio.src = Mojo.appPath + "/audio/" + local.key + ".wav"
-	local.audio.playcount = tapTempo.pitchDuration;
+	local.audio.playcount = 10;
 	local.audio.play()
 
 	tapTempo.elements.pitchTitle.update(local.key + " for " + tapTempo.pitchDuration + " seconds")
