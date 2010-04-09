@@ -24,7 +24,6 @@ tapTempo.pitchDuration = 5;
 tapTempo.cookie = ({
 	initialize: function() {
 		this.cookieData = new Mojo.Model.Cookie("netBradleyGraberTapTempo");
-		this.storeCookie();
 		storedData = this.cookieData.get();
 		if (storedData && storedData.version == "1.1.0") {
 			tapTempo.resetDuration = storedData.resetDuration;
@@ -35,6 +34,9 @@ tapTempo.cookie = ({
 			tapTempo.metroAlertVibration = storedData.metroAlertVibration
 			tapTempo.metroMeasure = storedData.metroMeasure
 			tapTempo.metroInitialAudioAttempt = storedData.metroInitialAudioAttempt
+			tapTempo.pitchKey = storedData.pitchKey
+			tapTempo.pitchOctave = storedData.pitchOctave
+			tapTempo.pitchDuration = storedData.pitchDuration
 		}
 		this.storeCookie();
 	},
@@ -49,6 +51,9 @@ tapTempo.cookie = ({
 			metroAlertVibration: tapTempo.metroAlertVibration,
 			metroMeasure: tapTempo.metroMeasure,
 			metroInitialAudioAttempt: tapTempo.metroInitialAudioAttempt,
+			pitchKey: tapTempo.pitchKey,
+			pitchOctave: tapTempo.pitchOctave,
+			pitchDuration: tapTempo.pitchDuration,
 		});		
 	}
 });
@@ -56,13 +61,6 @@ tapTempo.cookie = ({
 
 function MainAssistant() {
 
-}
-
-MainAssistant.prototype.doLoadAudio = function () {
-	tapTempo.audio.click.load()
-	tapTempo.audio.clickDown.load()
-	tapTempo.audio.a.load()
-	tapTempo.audio.a.play()	
 }
 
 MainAssistant.prototype.setup = function() {
@@ -88,12 +86,7 @@ MainAssistant.prototype.setup = function() {
 	tapTempo.elements.metroVisualAlert = this.controller.get('metroVisualAlert')
 	tapTempo.elements.metroVisualAlertNum = this.controller.get('metroVisualAlertNum')
 	
-	// Audio
-	tapTempo.audio = {}
-	tapTempo.audio.a = new Audio();
-	tapTempo.audio.a.src = Mojo.appPath + "/audio/a.wav"
-	tapTempo.audio.a.playcount = 5;
-	
+	tapTempo.elements.pitchTitle = this.controller.get('pitchTitle')
 
 	this.controller.setupWidget('resetDuration2', {
 		label: $L(" "),
@@ -268,7 +261,7 @@ MainAssistant.prototype.setup = function() {
 		min: 1,
 		max: 20,
 	}, {
-		value: tapTempo.metroMeasure
+		value: tapTempo.pitchDuration
 	});
 
 	// Pitch Start Button Widget
@@ -283,7 +276,6 @@ MainAssistant.prototype.setup = function() {
 	this.unlockFlick = Mojo.Function.debounce(undefined, this.doUnlockFlick.bind(this), .1);
 	this.lock = Mojo.Function.debounce(undefined, this.doLock.bind(this), tapTempo.resetDuration);
 	this.runMetronome = Mojo.Function.debounce(undefined, this.doRunMetronome.bind(this), .01);
-	this.loadAudio = Mojo.Function.debounce(undefined, this.doLoadAudio.bind(this), 1);
 
 	this.controller.listen("pitchStart", Mojo.Event.tap, this.pitchStart.bindAsEventListener(this))	
 	this.controller.listen("pitchDurationSelector", Mojo.Event.propertyChange, this.pitchDurationSelector.bindAsEventListener(this));
@@ -330,8 +322,16 @@ MainAssistant.prototype.cleanup = function(event) {
 }
 MainAssistant.prototype.pitchStart = function () {
 	var local = {}
+	local.key = tapTempo.pitchKey + tapTempo.pitchOctave
 	
+	local.audio = new Audio();
+	local.audio.src = Mojo.appPath + "/audio/" + local.key + ".wav"
+	local.audio.playcount = tapTempo.pitchDuration;
+	local.audio.play()
+
+	tapTempo.elements.pitchTitle.update(local.key + " for " + tapTempo.pitchDuration + " seconds")
 }
+
 MainAssistant.prototype.pitchDurationSelector = function (event) {
 	tapTempo.pitchDuration = event.value
 	tapTempo.cookie.storeCookie();
@@ -613,8 +613,7 @@ MainAssistant.prototype.doLock = function () {
 	}
 }
 MainAssistant.prototype.activate = function(event){
-	this.loadAudio();
-//	tapTempo.audio.a.play();
+
 }
 
 MainAssistant.prototype.deactivate = function(event) {
