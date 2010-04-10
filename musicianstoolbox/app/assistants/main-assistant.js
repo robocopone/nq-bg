@@ -64,6 +64,9 @@ function MainAssistant() {
 }
 
 MainAssistant.prototype.setup = function() {
+	// Load the MediaExtension library
+	this.libs = MojoLoader.require({ name: "mediaextension", version: "1.0"});
+	
 	var local = {}
 	
 	tapTempo.cookie.initialize();
@@ -276,6 +279,7 @@ MainAssistant.prototype.setup = function() {
 	this.unlockFlick = Mojo.Function.debounce(undefined, this.doUnlockFlick.bind(this), .1);
 	this.lock = Mojo.Function.debounce(undefined, this.doLock.bind(this), tapTempo.resetDuration);
 	this.runMetronome = Mojo.Function.debounce(undefined, this.doRunMetronome.bind(this), .01);
+	this.loopAudio = Mojo.Function.debounce(undefined, this.doLoopAudio.bind(this), .25);
 
 	this.controller.listen("pitchStart", Mojo.Event.tap, this.pitchStart.bindAsEventListener(this))	
 	this.controller.listen("pitchDurationSelector", Mojo.Event.propertyChange, this.pitchDurationSelector.bindAsEventListener(this));
@@ -324,14 +328,24 @@ MainAssistant.prototype.pitchStart = function () {
 	var local = {}
 	local.key = tapTempo.pitchKey + tapTempo.pitchOctave
 	
-	local.audio = new Audio();
-	local.audio.src = Mojo.appPath + "/audio/" + local.key + ".wav"
-	local.audio.playcount = 10;
-	local.audio.play()
+//	tapTempo.extAudio = this.libs.mediaextension.MediaExtension.getInstance(tapTempo.audio);
+//	tapTempo.extAudio.audioClass = "media";
+	this.mediaFile = new Audio();
+	this.mediaFile.src = Mojo.appPath + "/audio/" + local.key + ".wav"
 
-	tapTempo.elements.pitchTitle.update(local.key + " for " + tapTempo.pitchDuration + " seconds")
+	this.mediaFile.currentTime = 0.0
+	this.mediaFile.play()
+
+	tapTempo.pitchLoopDurationLeft = tapTempo.pitchDuration * 2
+	this.loopAudio()
 }
-
+MainAssistant.prototype.doLoopAudio = function () {
+//	Mojo.Log.error(tapTempo.pitchLoopDurationLeft)
+//	tapTempo.audio.currentTime = 0.0
+//	tapTempo.pitchLoopDurationLeft--
+//	if (tapTempo.pitchLoopDurationLeft > 1)
+//		this.loopAudio()
+}
 MainAssistant.prototype.pitchDurationSelector = function (event) {
 	tapTempo.pitchDuration = event.value
 	tapTempo.cookie.storeCookie();
