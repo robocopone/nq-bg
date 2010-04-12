@@ -1,0 +1,9 @@
+{
+	"id": "net.bradleygraber.metronome",
+	"version": "1.0.0",
+	"vendor": "Bradley Graber",
+	"type": "web",
+	"main": "index.html",
+	"title": "Metronome",
+	"icon": "icon.png"
+}
