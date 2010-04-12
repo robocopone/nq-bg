@@ -65,8 +65,9 @@ function MainAssistant() {
 
 MainAssistant.prototype.setup = function() {
 	// Load the MediaExtension library
-	this.libs = MojoLoader.require({ name: "mediaextension", version: "1.0"});
-	
+	try{ this.libs = MojoLoader.require({ name: "mediaextension", version: "1.0"}); }
+	catch(e){ Mojo.Log.error("Cannot load mediaextension library: "+e.message); }	
+
 	var local = {}
 	
 	tapTempo.cookie.initialize();
@@ -279,7 +280,7 @@ MainAssistant.prototype.setup = function() {
 	this.unlockFlick = Mojo.Function.debounce(undefined, this.doUnlockFlick.bind(this), .1);
 	this.lock = Mojo.Function.debounce(undefined, this.doLock.bind(this), tapTempo.resetDuration);
 	this.runMetronome = Mojo.Function.debounce(undefined, this.doRunMetronome.bind(this), .01);
-	this.loopAudio = Mojo.Function.debounce(undefined, this.doLoopAudio.bind(this), .25);
+	this.replay = Mojo.Function.debounce(undefined, this.doReplay.bind(this), .25);
 
 	this.controller.listen("pitchStart", Mojo.Event.tap, this.pitchStart.bindAsEventListener(this))	
 	this.controller.listen("pitchDurationSelector", Mojo.Event.propertyChange, this.pitchDurationSelector.bindAsEventListener(this));
@@ -301,6 +302,11 @@ MainAssistant.prototype.setup = function() {
 	this.controller.listen(this.controller.get('currentNumPicker'),Mojo.Event.propertyChange, this.currentNumPicker.bindAsEventListener(this));
 	this.controller.listen(this.controller.sceneElement, Mojo.Event.keypress, this.keyPressed.bindAsEventListener(this))
 	this.controller.listen(tapTempo.elements.tapTempoArea, Mojo.Event.tap, this.keyPressed.bindAsEventListener(this))
+
+	this.pitchAudio = this.controller.get('pitchAudio');
+	this.pitchExtAudio = this.libs.mediaextension.MediaExtension.getInstance(this.pitchAudio);
+	this.pitchExtAudio.audioClass = 'media';
+	this.audioSetup();
 }
 MainAssistant.prototype.cleanup = function(event) {
 	this.controller.stopListening("pitchStart", Mojo.Event.tap, this.pitchStart.bindAsEventListener(this))	
@@ -324,28 +330,59 @@ MainAssistant.prototype.cleanup = function(event) {
 	this.controller.stopListening(tapTempo.elements.tapTempoArea, Mojo.Event.tap, this.keyPressed.bindAsEventListener(this))
 	tapTempo.cookie.storeCookie();
 }
+MainAssistant.prototype.audioSetup = function() {
+	this.pitchAudio.addEventListener('play', this.handleAudioEvent.bindAsEventListener(this), false);
+	this.pitchAudio.addEventListener('ended', this.handleAudioEvent.bindAsEventListener(this), false); 
+	this.pitchAudio.addEventListener('pause', this.handleAudioEvent.bindAsEventListener(this), false);
+	this.pitchAudio.addEventListener('error', this.handleAudioEvent.bindAsEventListener(this), false);
+	this.pitchAudio.addEventListener('canplay', this.handleAudioEvent.bindAsEventListener(this), false);
+
+	this.pitchAudio.src = Mojo.appPath + "/audio/C0.wav";
+}
+MainAssistant.prototype.handleAudioEvent = function (event) {
+	try{
+		Mojo.Log.info("PlayAudioAssistant::eventHandlerMedia for event: ", event.type);
+		switch(event.type){
+			case 'canplay':
+				Mojo.Log.error("Can Play event received")
+				if (!event.target.paused)
+					Mojo.Log.error("Should only be getting canplay if the state is paused");
+				break;
+			case 'ended':
+				this.pitchAudio.currentTime = 0.0
+				Mojo.Log.error("Ended event received")
+				break;
+			case 'error':
+				Mojo.Log.error("Error occured on the media element: ", event.target.error);
+				break;
+			case 'pause':
+				Mojo.Log.error("State went to pause.  presumably there was a call or some other such high priority interrupt");
+				break;
+			case 'play':
+				Mojo.Log.error("Play event received")
+				break;
+			case 'stop':
+				Mojo.Log.error("Stop event received")
+				break;
+			default:
+				Mojo.Log.error("PlayAudioAssistant::eventHandlerMedia: Need a handler for ", event.type);
+				break;
+		}
+	}
+	catch(e){
+		Mojo.Log.error("PlayAudioAssistant::eventHandlerMedia threw: ", Object.toJSON(e));
+	}
+}
 MainAssistant.prototype.pitchStart = function () {
 	var local = {}
 	local.key = tapTempo.pitchKey + tapTempo.pitchOctave
 	
-//	tapTempo.extAudio = this.libs.mediaextension.MediaExtension.getInstance(tapTempo.audio);
-//	tapTempo.extAudio.audioClass = "media";
-	this.mediaFile = new Audio();
-	this.mediaFile.src = Mojo.appPath + "/audio/" + local.key + ".wav"
-
-	this.mediaFile.currentTime = 0.0
-	this.mediaFile.play()
-
-	tapTempo.pitchLoopDurationLeft = tapTempo.pitchDuration * 2
-	this.loopAudio()
+	this.pitchAudio.play()
 }
-MainAssistant.prototype.doLoopAudio = function () {
-//	Mojo.Log.error(tapTempo.pitchLoopDurationLeft)
-//	tapTempo.audio.currentTime = 0.0
-//	tapTempo.pitchLoopDurationLeft--
-//	if (tapTempo.pitchLoopDurationLeft > 1)
-//		this.loopAudio()
+MainAssistant.prototype.doReplay = function () {
+	this.pitchAudio.currentTime = 0.0
 }
+
 MainAssistant.prototype.pitchDurationSelector = function (event) {
 	tapTempo.pitchDuration = event.value
 	tapTempo.cookie.storeCookie();
