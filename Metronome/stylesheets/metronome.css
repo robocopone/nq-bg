@@ -1,1 +1,76 @@
-/* Put Application specific CSS here. */
+.hidden { display: none; }
+#metroStartStop {
+	position: absolute;
+	top: 50px;
+	width: 320px;
+	z-index: 10;
+}
+#metroBeatSetupButton {
+	position: absolute;
+	top: 240px;
+	width: 320px;
+}
+#metronomeArea {
+	position: absolute;
+	left: 320px;
+	top: 0px;
+	width: 320px;
+	-webkit-transition: left .25s linear;
+}
+#metroVisualAlert {
+	position: absolute;
+	top: 110px;
+	width: 320px;
+	height: 270px;
+	background-color: #e4e4e2;
+}
+#metroVisualAlert.down {
+	background-color: black;
+	color: white;
+}
+#metroVisualAlertNum {
+	margin-top: -50px;
+	font-size: 1400%;
+	text-align: center;
+}
+.metroTapGroup {
+	width: 110px;
+}
+.metroTempo {
+	text-align: center;
+}
+#metroSetTempoMessage {
+	position: absolute;
+	top: 125px;
+	left: 20px;
+}
+#setMetroTempo {
+	position: absolute;
+	top: 110px;
+	left: 93px;
+}
+#metroSetMeasureMessage {
+	position: absolute;
+	top: 180px;
+	left: 86px;
+}
+#setMetroMeasure {
+	position: absolute;
+	top: 165px;
+	left: -10px;
+}
+#metroAlertBox {
+	position: absolute;
+	top: 330px;
+	width: 270px;
+}
+.metroAlertUnit {
+	text-align: center;
+	width: 33%;
+	float: left;
+}
+.metroCheck {
+	position: relative; 
+	left: 32px; 
+	z-index: 10
+}
