@@ -1,4 +1,15 @@
 .hidden { display: none; }
+.metroBeatButton {
+	float: left;
+	width: 25%;
+}
+#metroBeatSetupWindow {
+	z-index: 11;
+	position: absolute;
+	top: 110px;
+	width: 270px;
+	background-color: #e4e4e2;
+}
 #metroStartStop {
 	position: absolute;
 	top: 50px;
@@ -74,3 +85,8 @@
 	left: 32px; 
 	z-index: 10
 }
+.metroBeatLegend { width: 31%; text-align: center; float: left; margin-right: 5px;}
+#metroBeatOff 		{ background-color: #d0d0d0 }
+#metroBeatOn 		{ background-color: #8c8c8c; color: white; }
+#metroBeatAccented 	{ background-color: #2c931a; color: white; }
+
