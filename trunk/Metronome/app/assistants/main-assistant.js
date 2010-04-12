@@ -6,6 +6,21 @@ tapTempo.metroAlertVisable = true;
 tapTempo.metroAlertAudible = false;
 tapTempo.metroAlertVibration = false;
 tapTempo.metroInitialAudioAttempt = true;
+tapTempo.metroBeatSetup = []
+tapTempo.metroBeatSetup[1] = 'affirmative'
+tapTempo.metroBeatSetup[2] = 'primary'
+tapTempo.metroBeatSetup[3] = 'primary'
+tapTempo.metroBeatSetup[4] = 'primary'
+tapTempo.metroBeatSetup[5] = 'primary'
+tapTempo.metroBeatSetup[6] = 'primary'
+tapTempo.metroBeatSetup[7] = 'primary'
+tapTempo.metroBeatSetup[8] = 'primary'
+tapTempo.metroBeatSetup[9] = 'primary'
+tapTempo.metroBeatSetup[10] = 'primary'
+tapTempo.metroBeatSetup[11] = 'primary'
+tapTempo.metroBeatSetup[12] = 'primary'
+tapTempo.initialized = false;
+
 
 tapTempo.cookie = ({
 	initialize: function() {
@@ -18,10 +33,13 @@ tapTempo.cookie = ({
 			tapTempo.metroAlertVibration = storedData.metroAlertVibration
 			tapTempo.metroMeasure = storedData.metroMeasure
 			tapTempo.metroInitialAudioAttempt = storedData.metroInitialAudioAttempt
+			tapTempo.metroBeatSetup = storedData.metroBeatSetup.slice(0);
+			tapTempo.initialized = storedData.initialized
 		}
 		this.storeCookie();
 	},
 	storeCookie: function() {
+		var tmpMetroBeatSetup = tapTempo.metroBeatSetup.slice(0)
 		this.cookieData.put({  
 			version: "1.0.0",
 			metroTempo: tapTempo.metroTempo,
@@ -30,6 +48,8 @@ tapTempo.cookie = ({
 			metroAlertVibration: tapTempo.metroAlertVibration,
 			metroMeasure: tapTempo.metroMeasure,
 			metroInitialAudioAttempt: tapTempo.metroInitialAudioAttempt,
+			metroBeatSetup: tmpMetroBeatSetup,
+			initialized: tapTempo.initialized,
 		});		
 	}
 });
@@ -39,6 +59,13 @@ function MainAssistant() {
 
 MainAssistant.prototype.setup = function() {
 	tapTempo.cookie.initialize();
+	if (!tapTempo.initialized) {
+		Mojo.Log.error('Initializing')
+		tapTempo.metroBeatSetup[1] = 'affirmative'
+		tapTempo.initialized = true;
+		tapTempo.cookie.storeCookie();
+		tapTempo.metroBeatSetup[1] = 'affirmative'
+	}
 	tapTempo.elements = {}
 	
 	tapTempo.elements.metroTitle = this.controller.get('metroTitle')
@@ -49,6 +76,21 @@ MainAssistant.prototype.setup = function() {
 	tapTempo.elements.metroStartStop = this.controller.get('metroStartStop')
 	tapTempo.elements.metroVisualAlert = this.controller.get('metroVisualAlert')
 	tapTempo.elements.metroVisualAlertNum = this.controller.get('metroVisualAlertNum')
+	
+	tapTempo.elements.metroBeatSetupButton = []
+	this.metroBeatSetupButtonModel = []
+	var element;
+	for (var x = 1; x <= 12; x++) {
+		element = 'metroBeatSetupMeasure' + x
+		tapTempo.elements.metroBeatSetupButton[x] = this.controller.get(element);
+		this.controller.setupWidget(element, {
+			type: Mojo.Widget.defaultButton
+		}, this.metroBeatSetupButtonModel[x] = {
+			buttonLabel: $L('' + x),
+			buttonClass: tapTempo.metroBeatSetup[x],
+			disabled: false
+		});
+	}
 
 	this.controller.setupWidget('setMetroTempo', {
 		label: $L(" "),
@@ -86,6 +128,15 @@ MainAssistant.prototype.setup = function() {
 		disabled: false
 	});
 
+	// Metro Beat setup OK Button Widget
+	this.controller.setupWidget('metroBeatSetupOkButton', {
+		type: Mojo.Widget.defaultButton
+	}, {
+		buttonLabel: $L("OK"),
+		buttonClass: 'affirmative',
+		disabled: false
+	});
+
 	// Types of alerts checkboxes
 	this.controller.setupWidget("metroAlertVisable", {
 	}, {
@@ -105,21 +156,61 @@ MainAssistant.prototype.setup = function() {
 
 	this.runMetronome = Mojo.Function.debounce(undefined, this.doRunMetronome.bind(this), .01);
 
-	this.controller.listen(this.controller.get("metroAlertVisable"), Mojo.Event.propertyChange, this.metroAlertVisableChanged.bindAsEventListener(this));
-	this.controller.listen(this.controller.get("metroAlertAudible"), Mojo.Event.propertyChange, this.metroAlertAudibleChanged.bindAsEventListener(this));
-	this.controller.listen(this.controller.get("metroAlertVibration"), Mojo.Event.propertyChange, this.metroAlertVibrationChanged.bindAsEventListener(this));
+	this.controller.listen("metroBeatSetupMeasure1", Mojo.Event.tap, this.metroBeatSetupMeasure1.bindAsEventListener(this))
+	this.controller.listen("metroBeatSetupMeasure2", Mojo.Event.tap, this.metroBeatSetupMeasure2.bindAsEventListener(this))
+	this.controller.listen("metroBeatSetupMeasure3", Mojo.Event.tap, this.metroBeatSetupMeasure3.bindAsEventListener(this))
+	this.controller.listen("metroBeatSetupMeasure4", Mojo.Event.tap, this.metroBeatSetupMeasure4.bindAsEventListener(this))
+	this.controller.listen("metroBeatSetupMeasure5", Mojo.Event.tap, this.metroBeatSetupMeasure5.bindAsEventListener(this))
+	this.controller.listen("metroBeatSetupMeasure6", Mojo.Event.tap, this.metroBeatSetupMeasure6.bindAsEventListener(this))
+	this.controller.listen("metroBeatSetupMeasure7", Mojo.Event.tap, this.metroBeatSetupMeasure7.bindAsEventListener(this))
+	this.controller.listen("metroBeatSetupMeasure8", Mojo.Event.tap, this.metroBeatSetupMeasure8.bindAsEventListener(this))
+	this.controller.listen("metroBeatSetupMeasure9", Mojo.Event.tap, this.metroBeatSetupMeasure9.bindAsEventListener(this))
+	this.controller.listen("metroBeatSetupMeasure10", Mojo.Event.tap, this.metroBeatSetupMeasure10.bindAsEventListener(this))
+	this.controller.listen("metroBeatSetupMeasure11", Mojo.Event.tap, this.metroBeatSetupMeasure11.bindAsEventListener(this))
+	this.controller.listen("metroBeatSetupMeasure12", Mojo.Event.tap, this.metroBeatSetupMeasure12.bindAsEventListener(this))
+	this.controller.listen("metroBeatSetupButton", Mojo.Event.tap, this.metroBeatSetupButton.bindAsEventListener(this))
+	this.controller.listen("metroBeatSetupOkButton", Mojo.Event.tap, this.metroBeatSetupOkButton.bindAsEventListener(this))
+	this.controller.listen("metroAlertVisable", Mojo.Event.propertyChange, this.metroAlertVisableChanged.bindAsEventListener(this));
+	this.controller.listen("metroAlertAudible", Mojo.Event.propertyChange, this.metroAlertAudibleChanged.bindAsEventListener(this));
+	this.controller.listen("metroAlertVibration", Mojo.Event.propertyChange, this.metroAlertVibrationChanged.bindAsEventListener(this));
 	this.controller.listen(tapTempo.elements.metroStartStop, Mojo.Event.tap, this.metroStartStop.bindAsEventListener(this))	
-	this.controller.listen(this.controller.get('setMetroMeasure'),Mojo.Event.propertyChange, this.setMetroMeasureChanged.bindAsEventListener(this));
-	this.controller.listen(this.controller.get('setMetroTempo'),Mojo.Event.propertyChange, this.setMetroTempoChanged.bindAsEventListener(this));
+	this.controller.listen("setMetroMeasure",Mojo.Event.propertyChange, this.setMetroMeasureChanged.bindAsEventListener(this));
+	this.controller.listen("setMetroTempo",Mojo.Event.propertyChange, this.setMetroTempoChanged.bindAsEventListener(this));
 }
 MainAssistant.prototype.cleanup = function(event) {
-	this.controller.stopListening(this.controller.get("metroAlertVisable"), Mojo.Event.propertyChange, this.metroAlertVisableChanged.bindAsEventListener(this));
-	this.controller.stopListening(this.controller.get("metroAlertAudible"), Mojo.Event.propertyChange, this.metroAlertAudibleChanged.bindAsEventListener(this));
-	this.controller.stopListening(this.controller.get("metroAlertVibration"), Mojo.Event.propertyChange, this.metroAlertVibrationChanged.bindAsEventListener(this));
+	this.controller.stopListening("metroBeatSetupMeasure1", Mojo.Event.tap, this.metroBeatSetupMeasure1.bindAsEventListener(this))
+	this.controller.stopListening("metroBeatSetupMeasure2", Mojo.Event.tap, this.metroBeatSetupMeasure2.bindAsEventListener(this))
+	this.controller.stopListening("metroBeatSetupMeasure3", Mojo.Event.tap, this.metroBeatSetupMeasure3.bindAsEventListener(this))
+	this.controller.stopListening("metroBeatSetupMeasure4", Mojo.Event.tap, this.metroBeatSetupMeasure4.bindAsEventListener(this))
+	this.controller.stopListening("metroBeatSetupMeasure5", Mojo.Event.tap, this.metroBeatSetupMeasure5.bindAsEventListener(this))
+	this.controller.stopListening("metroBeatSetupMeasure6", Mojo.Event.tap, this.metroBeatSetupMeasure6.bindAsEventListener(this))
+	this.controller.stopListening("metroBeatSetupMeasure7", Mojo.Event.tap, this.metroBeatSetupMeasure7.bindAsEventListener(this))
+	this.controller.stopListening("metroBeatSetupMeasure8", Mojo.Event.tap, this.metroBeatSetupMeasure8.bindAsEventListener(this))
+	this.controller.stopListening("metroBeatSetupMeasure9", Mojo.Event.tap, this.metroBeatSetupMeasure9.bindAsEventListener(this))
+	this.controller.stopListening("metroBeatSetupMeasure10", Mojo.Event.tap, this.metroBeatSetupMeasure10.bindAsEventListener(this))
+	this.controller.stopListening("metroBeatSetupMeasure11", Mojo.Event.tap, this.metroBeatSetupMeasure11.bindAsEventListener(this))
+	this.controller.stopListening("metroBeatSetupMeasure12", Mojo.Event.tap, this.metroBeatSetupMeasure12.bindAsEventListener(this))
+	this.controller.stopListening("metroBeatSetupButton", Mojo.Event.tap, this.metroBeatSetupButton.bindAsEventListener(this))
+	this.controller.stopListening("metroBeatSetupOkButton", Mojo.Event.tap, this.metroBeatSetupOkButton.bindAsEventListener(this))
+	this.controller.stopListening("metroAlertVisable", Mojo.Event.propertyChange, this.metroAlertVisableChanged.bindAsEventListener(this));
+	this.controller.stopListening("metroAlertAudible", Mojo.Event.propertyChange, this.metroAlertAudibleChanged.bindAsEventListener(this));
+	this.controller.stopListening("metroAlertVibration", Mojo.Event.propertyChange, this.metroAlertVibrationChanged.bindAsEventListener(this));
 	this.controller.stopListening(tapTempo.elements.metroStartStop, Mojo.Event.tap, this.metroStartStop.bindAsEventListener(this))	
-	this.controller.stopListening(this.controller.get('setMetroMeasure'),Mojo.Event.propertyChange, this.setMetroMeasureChanged.bindAsEventListener(this));
-	this.controller.stopListening(this.controller.get('setMetroTempo'),Mojo.Event.propertyChange, this.setMetroTempoChanged.bindAsEventListener(this));
+	this.controller.stopListening("setMetroMeasure",Mojo.Event.propertyChange, this.setMetroMeasureChanged.bindAsEventListener(this));
+	this.controller.stopListening("setMetroTempo",Mojo.Event.propertyChange, this.setMetroTempoChanged.bindAsEventListener(this));
 	tapTempo.cookie.storeCookie();
+}
+MainAssistant.prototype.metroBeatSetupButton = function () {
+	for (var x = 1; x <= tapTempo.metroMeasure; x++) {
+		tapTempo.elements.metroBeatSetupButton[x].removeClassName('hidden')
+	}
+	this.controller.get("metroBeatSetupWindow").removeClassName('hidden')
+}
+MainAssistant.prototype.metroBeatSetupOkButton = function () {
+	this.controller.get("metroBeatSetupWindow").addClassName('hidden')
+	for (var x = 1; x <= 12; x++) {
+		tapTempo.elements.metroBeatSetupButton[x].addClassName('hidden')
+	}
 }
 MainAssistant.prototype.setMetroMeasureChanged = function (event) {
 	tapTempo.metroMeasure = event.value;
@@ -285,4 +376,185 @@ MainAssistant.prototype.handleCommand = function (event) {
 				break;
 		}
 	}
+}
+MainAssistant.prototype.metroBeatSetupMeasure1 = function(){
+	if (this.metroBeatSetupButtonModel[1].buttonClass == "primary") {
+		this.metroBeatSetupButtonModel[1].buttonClass = "affirmative"
+		tapTempo.metroBeatSetup[1] = 'affirmative'
+	}
+	else if (this.metroBeatSetupButtonModel[1].buttonClass == "affirmative") {
+		this.metroBeatSetupButtonModel[1].buttonClass = "secondary"
+		tapTempo.metroBeatSetup[1] = 'secondary'
+	}
+	else if(this.metroBeatSetupButtonModel[1].buttonClass == "secondary") {
+		this.metroBeatSetupButtonModel[1].buttonClass = "primary"
+		tapTempo.metroBeatSetup[1] = 'primary'
+	}
+	this.controller.modelChanged(this.metroBeatSetupButtonModel[1], this);
+}
+
+MainAssistant.prototype.metroBeatSetupMeasure2 = function () {
+	if (this.metroBeatSetupButtonModel[2].buttonClass=="primary") {
+		this.metroBeatSetupButtonModel[2].buttonClass="affirmative"
+		tapTempo.metroBeatSetup[2] = 'affirmative'
+	}
+	else if (this.metroBeatSetupButtonModel[2].buttonClass=="affirmative") {
+		this.metroBeatSetupButtonModel[2].buttonClass="secondary"
+		tapTempo.metroBeatSetup[2] = 'secondary'
+	}
+	else if (this.metroBeatSetupButtonModel[2].buttonClass=="secondary") {
+		this.metroBeatSetupButtonModel[2].buttonClass="primary"
+		tapTempo.metroBeatSetup[2] = 'primary'
+	}
+	this.controller.modelChanged(this.metroBeatSetupButtonModel[2], this);
+}
+MainAssistant.prototype.metroBeatSetupMeasure3 = function () {
+	if (this.metroBeatSetupButtonModel[3].buttonClass=="primary") {
+		this.metroBeatSetupButtonModel[3].buttonClass="affirmative"
+		tapTempo.metroBeatSetup[3] = 'affirmative'
+	}
+	else if (this.metroBeatSetupButtonModel[3].buttonClass=="affirmative") {
+		this.metroBeatSetupButtonModel[3].buttonClass="secondary"
+		tapTempo.metroBeatSetup[3] = 'secondary'
+	}
+	else if (this.metroBeatSetupButtonModel[3].buttonClass=="secondary") {
+		this.metroBeatSetupButtonModel[3].buttonClass="primary"
+		tapTempo.metroBeatSetup[3] = 'primary'
+	}
+	this.controller.modelChanged(this.metroBeatSetupButtonModel[3], this);
+}
+MainAssistant.prototype.metroBeatSetupMeasure4 = function () {
+	if (this.metroBeatSetupButtonModel[4].buttonClass=="primary") {
+		this.metroBeatSetupButtonModel[4].buttonClass="affirmative"
+		tapTempo.metroBeatSetup[4] = 'affirmative'
+	}
+	else if (this.metroBeatSetupButtonModel[4].buttonClass=="affirmative") {
+		this.metroBeatSetupButtonModel[4].buttonClass="secondary"
+		tapTempo.metroBeatSetup[4] = 'secondary'
+	}
+	else if (this.metroBeatSetupButtonModel[4].buttonClass=="secondary") {
+		this.metroBeatSetupButtonModel[4].buttonClass="primary"
+		tapTempo.metroBeatSetup[4] = 'primary'
+	}
+	this.controller.modelChanged(this.metroBeatSetupButtonModel[4], this);
+}
+MainAssistant.prototype.metroBeatSetupMeasure5 = function () {
+	if (this.metroBeatSetupButtonModel[5].buttonClass=="primary") {
+		this.metroBeatSetupButtonModel[5].buttonClass="affirmative"
+		tapTempo.metroBeatSetup[5] = 'affirmative'
+	}
+	else if (this.metroBeatSetupButtonModel[5].buttonClass=="affirmative") {
+		this.metroBeatSetupButtonModel[5].buttonClass="secondary"
+		tapTempo.metroBeatSetup[5] = 'secondary'
+	}
+	else if (this.metroBeatSetupButtonModel[5].buttonClass=="secondary") {
+		this.metroBeatSetupButtonModel[5].buttonClass="primary"
+		tapTempo.metroBeatSetup[5] = 'primary'
+	}
+	this.controller.modelChanged(this.metroBeatSetupButtonModel[5], this);
+}
+MainAssistant.prototype.metroBeatSetupMeasure6 = function () {
+	if (this.metroBeatSetupButtonModel[6].buttonClass=="primary") {
+		this.metroBeatSetupButtonModel[6].buttonClass="affirmative"
+		tapTempo.metroBeatSetup[6] = 'affirmative'
+	}
+	else if (this.metroBeatSetupButtonModel[6].buttonClass=="affirmative") {
+		this.metroBeatSetupButtonModel[6].buttonClass="secondary"
+		tapTempo.metroBeatSetup[6] = 'secondary'
+	}
+	else if (this.metroBeatSetupButtonModel[6].buttonClass=="secondary") {
+		this.metroBeatSetupButtonModel[6].buttonClass="primary"
+		tapTempo.metroBeatSetup[6] = 'primary'
+	}
+	this.controller.modelChanged(this.metroBeatSetupButtonModel[6], this);
+}
+MainAssistant.prototype.metroBeatSetupMeasure7 = function () {
+	if (this.metroBeatSetupButtonModel[7].buttonClass=="primary") {
+		this.metroBeatSetupButtonModel[7].buttonClass="affirmative"
+		tapTempo.metroBeatSetup[7] = 'affirmative'
+	}
+	else if (this.metroBeatSetupButtonModel[7].buttonClass=="affirmative") {
+		this.metroBeatSetupButtonModel[7].buttonClass="secondary"
+		tapTempo.metroBeatSetup[7] = 'secondary'
+	}
+	else if (this.metroBeatSetupButtonModel[7].buttonClass=="secondary") {
+		this.metroBeatSetupButtonModel[7].buttonClass="primary"
+		tapTempo.metroBeatSetup[7] = 'primary'
+	}
+	this.controller.modelChanged(this.metroBeatSetupButtonModel[7], this);
+}
+MainAssistant.prototype.metroBeatSetupMeasure8 = function () {
+	if (this.metroBeatSetupButtonModel[8].buttonClass=="primary") {
+		this.metroBeatSetupButtonModel[8].buttonClass="affirmative"
+		tapTempo.metroBeatSetup[8] = 'affirmative'
+	}
+	else if (this.metroBeatSetupButtonModel[8].buttonClass=="affirmative") {
+		this.metroBeatSetupButtonModel[8].buttonClass="secondary"
+		tapTempo.metroBeatSetup[8] = 'secondary'
+	}
+	else if (this.metroBeatSetupButtonModel[8].buttonClass=="secondary") {
+		this.metroBeatSetupButtonModel[8].buttonClass="primary"
+		tapTempo.metroBeatSetup[8] = 'primary'
+	}
+	this.controller.modelChanged(this.metroBeatSetupButtonModel[8], this);
+}
+MainAssistant.prototype.metroBeatSetupMeasure9 = function () {
+	if (this.metroBeatSetupButtonModel[9].buttonClass=="primary") {
+		this.metroBeatSetupButtonModel[9].buttonClass="affirmative"
+		tapTempo.metroBeatSetup[9] = 'affirmative'
+	}
+	else if (this.metroBeatSetupButtonModel[9].buttonClass=="affirmative") {
+		this.metroBeatSetupButtonModel[9].buttonClass="secondary"
+		tapTempo.metroBeatSetup[9] = 'secondary'
+	}
+	else if (this.metroBeatSetupButtonModel[9].buttonClass=="secondary") {
+		this.metroBeatSetupButtonModel[9].buttonClass="primary"
+		tapTempo.metroBeatSetup[9] = 'primary'
+	}
+	this.controller.modelChanged(this.metroBeatSetupButtonModel[9], this);
+}
+MainAssistant.prototype.metroBeatSetupMeasure10 = function () {
+	if (this.metroBeatSetupButtonModel[10].buttonClass=="primary") {
+		this.metroBeatSetupButtonModel[10].buttonClass="affirmative"
+		tapTempo.metroBeatSetup[10] = 'affirmative'
+	}
+	else if (this.metroBeatSetupButtonModel[10].buttonClass=="affirmative") {
+		this.metroBeatSetupButtonModel[10].buttonClass="secondary"
+		tapTempo.metroBeatSetup[10] = 'secondary'
+	}
+	else if (this.metroBeatSetupButtonModel[10].buttonClass=="secondary") {
+		this.metroBeatSetupButtonModel[10].buttonClass="primary"
+		tapTempo.metroBeatSetup[10] = 'primary'
+	}
+	this.controller.modelChanged(this.metroBeatSetupButtonModel[10], this);
+}
+MainAssistant.prototype.metroBeatSetupMeasure11 = function () {
+	if (this.metroBeatSetupButtonModel[11].buttonClass=="primary") {
+		this.metroBeatSetupButtonModel[11].buttonClass="affirmative"
+		tapTempo.metroBeatSetup[11] = 'affirmative'
+	}
+	else if (this.metroBeatSetupButtonModel[11].buttonClass=="affirmative") {
+		this.metroBeatSetupButtonModel[11].buttonClass="secondary"
+		tapTempo.metroBeatSetup[11] = 'secondary'
+	}
+	else if (this.metroBeatSetupButtonModel[11].buttonClass=="secondary") {
+		this.metroBeatSetupButtonModel[11].buttonClass="primary"
+		tapTempo.metroBeatSetup[11] = 'primary'
+	}
+	this.controller.modelChanged(this.metroBeatSetupButtonModel[11], this);
+}
+MainAssistant.prototype.metroBeatSetupMeasure12 = function () {
+	if (this.metroBeatSetupButtonModel[12].buttonClass=="primary") {
+		this.metroBeatSetupButtonModel[12].buttonClass="affirmative"
+		tapTempo.metroBeatSetup[12] = 'affirmative'
+	}
+	else if (this.metroBeatSetupButtonModel[12].buttonClass=="affirmative") {
+		this.metroBeatSetupButtonModel[12].buttonClass="secondary"
+		tapTempo.metroBeatSetup[12] = 'secondary'
+	}
+	else if (this.metroBeatSetupButtonModel[12].buttonClass=="secondary") {
+		this.metroBeatSetupButtonModel[12].buttonClass="primary"
+		tapTempo.metroBeatSetup[12] = 'primary'
+	}
+	this.controller.modelChanged(this.metroBeatSetupButtonModel[12], this);
 }
