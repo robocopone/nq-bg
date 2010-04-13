@@ -137,6 +137,24 @@ MainAssistant.prototype.setup = function() {
 		disabled: false
 	});
 
+	// Tempo Markings Button Widget
+	this.controller.setupWidget('metroTempoMarkingsButton', {
+		type: Mojo.Widget.defaultButton
+	}, {
+		buttonLabel: $L("Tempo Markings"),
+		buttonClass: 'normal',
+		disabled: false
+	});
+
+	// Tempo Markings OK Button Widget
+	this.controller.setupWidget('metroTempoMarkingsOkButton', {
+		type: Mojo.Widget.defaultButton
+	}, {
+		buttonLabel: $L("OK"),
+		buttonClass: 'affirmative',
+		disabled: false
+	});
+
 	// Types of alerts checkboxes
 	this.controller.setupWidget("metroAlertVisable", {
 	}, {
@@ -156,6 +174,8 @@ MainAssistant.prototype.setup = function() {
 
 	this.runMetronome = Mojo.Function.debounce(undefined, this.doRunMetronome.bind(this), .01);
 
+	this.controller.listen("metroTempoMarkingsButton", Mojo.Event.tap, this.metroTempoMarkingsButton.bindAsEventListener(this))
+	this.controller.listen("metroTempoMarkingsOkButton", Mojo.Event.tap, this.metroTempoMarkingsOkButton.bindAsEventListener(this))
 	this.controller.listen("metroBeatSetupMeasure1", Mojo.Event.tap, this.metroBeatSetupMeasure1.bindAsEventListener(this))
 	this.controller.listen("metroBeatSetupMeasure2", Mojo.Event.tap, this.metroBeatSetupMeasure2.bindAsEventListener(this))
 	this.controller.listen("metroBeatSetupMeasure3", Mojo.Event.tap, this.metroBeatSetupMeasure3.bindAsEventListener(this))
@@ -178,6 +198,8 @@ MainAssistant.prototype.setup = function() {
 	this.controller.listen("setMetroTempo",Mojo.Event.propertyChange, this.setMetroTempoChanged.bindAsEventListener(this));
 }
 MainAssistant.prototype.cleanup = function(event) {
+	this.controller.stopListening("metroTempoMarkingsButton", Mojo.Event.tap, this.metroTempoMarkingsButton.bindAsEventListener(this))
+	this.controller.stopListening("metroTempoMarkingsOkButton", Mojo.Event.tap, this.metroTempoMarkingsOkButton.bindAsEventListener(this))
 	this.controller.stopListening("metroBeatSetupMeasure1", Mojo.Event.tap, this.metroBeatSetupMeasure1.bindAsEventListener(this))
 	this.controller.stopListening("metroBeatSetupMeasure2", Mojo.Event.tap, this.metroBeatSetupMeasure2.bindAsEventListener(this))
 	this.controller.stopListening("metroBeatSetupMeasure3", Mojo.Event.tap, this.metroBeatSetupMeasure3.bindAsEventListener(this))
@@ -200,6 +222,13 @@ MainAssistant.prototype.cleanup = function(event) {
 	this.controller.stopListening("setMetroTempo",Mojo.Event.propertyChange, this.setMetroTempoChanged.bindAsEventListener(this));
 	tapTempo.cookie.storeCookie();
 }
+MainAssistant.prototype.metroTempoMarkingsButton = function () {
+	this.controller.get("metroTempoMarkingsWindow").removeClassName('hidden')
+}
+MainAssistant.prototype.metroTempoMarkingsOkButton = function () {
+	this.controller.get("metroTempoMarkingsWindow").addClassName('hidden')
+}
+
 MainAssistant.prototype.metroBeatSetupButton = function () {
 	for (var x = 1; x <= tapTempo.metroMeasure; x++) {
 		tapTempo.elements.metroBeatSetupButton[x].removeClassName('hidden')
