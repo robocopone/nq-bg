@@ -19,6 +19,7 @@ tapTempo.metroBeatSetup[9] = 'primary'
 tapTempo.metroBeatSetup[10] = 'primary'
 tapTempo.metroBeatSetup[11] = 'primary'
 tapTempo.metroBeatSetup[12] = 'primary'
+tapTempo.metroBeatSetup[13] = 'primary'
 tapTempo.initialized = false;
 
 
@@ -39,7 +40,6 @@ tapTempo.cookie = ({
 		this.storeCookie();
 	},
 	storeCookie: function() {
-		var tmpMetroBeatSetup = tapTempo.metroBeatSetup.slice(0)
 		this.cookieData.put({  
 			version: "1.0.0",
 			metroTempo: tapTempo.metroTempo,
@@ -48,7 +48,7 @@ tapTempo.cookie = ({
 			metroAlertVibration: tapTempo.metroAlertVibration,
 			metroMeasure: tapTempo.metroMeasure,
 			metroInitialAudioAttempt: tapTempo.metroInitialAudioAttempt,
-			metroBeatSetup: tmpMetroBeatSetup,
+			metroBeatSetup: tapTempo.metroBeatSetup.slice(0),
 			initialized: tapTempo.initialized,
 		});		
 	}
@@ -64,7 +64,10 @@ MainAssistant.prototype.setup = function() {
 		tapTempo.metroBeatSetup[1] = 'affirmative'
 		tapTempo.initialized = true;
 		tapTempo.cookie.storeCookie();
+		tapTempo.cookie.initialize();
 		tapTempo.metroBeatSetup[1] = 'affirmative'
+		tapTempo.cookie.storeCookie();
+		tapTempo.cookie.initialize();
 	}
 	tapTempo.elements = {}
 	
@@ -257,7 +260,7 @@ MainAssistant.prototype.metroAlertAudibleChanged = function (event) {
 	if (tapTempo.metroInitialAudioAttempt && event.value) {
 		this.controller.showAlertDialog({
 			onChoose: this.metroInitialAudioAttempt,
-			title: $L("Audio Alert"),
+			title: $L("Audio Disclaimer"),
 			message: $L('The only way to play audio on the Pre within the timing constraints of a metronome is to use the onboard system sounds.  If you cannot hear anything you need to go into "Sounds & Ringtones" on the third page of the launcher and turn up the volume on System Sounds.  This also forced me to use the dial-pad tones.  I apologize for the ghetto sound but blame Palm, not me.'),
 			choices: [{
 				label: $L('Ok'),
@@ -354,7 +357,7 @@ MainAssistant.prototype.playVisableAlert = function () {
 	if (tapTempo.metroBeatSetup[tapTempo.currentBeat] == 'secondary') {
 		tapTempo.elements.metroVisualAlert.removeClassName('down')
 		tapTempo.elements.metroVisualAlert.removeClassName('accent')
-		tapTempo.elements.metroVisualAlertNum.update('&nbsp;')
+//		tapTempo.elements.metroVisualAlertNum.update('&nbsp;')
 	}
 }
 MainAssistant.prototype.playAudibleAlert = function () {
@@ -382,7 +385,7 @@ MainAssistant.prototype.playAccentClick = function(){
 	this.controller.serviceRequest('palm://com.palm.audio/systemsounds', {
 		method: "playFeedback",
 		parameters: {
-			name: "dtmf_4"
+			name: "dtmf_5"
 		},
 		onSuccess: this.successfulClick.bind(this),
 		onFailure: this.failedClick.bind(this)
