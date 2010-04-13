@@ -229,7 +229,7 @@ MainAssistant.prototype.metroAlertAudibleChanged = function (event) {
 		this.controller.showAlertDialog({
 			onChoose: this.metroInitialAudioAttempt,
 			title: $L("Audio Alert"),
-			message: $L('The only way to play audio on the Pre within the timing constraints of a metronome is to use the onboard system sounds.  If you cannot hear anything you need to go into "Sounds & Ringtones" on the third page of the launcher and turn up the volume on System Sounds.  This also forced me to use the dial-pad tones.'),
+			message: $L('The only way to play audio on the Pre within the timing constraints of a metronome is to use the onboard system sounds.  If you cannot hear anything you need to go into "Sounds & Ringtones" on the third page of the launcher and turn up the volume on System Sounds.  This also forced me to use the dial-pad tones.  I apologize for the ghetto sound but blame Palm, not me.'),
 			choices: [{
 				label: $L('Ok'),
 				value: 'ok',
@@ -276,12 +276,38 @@ MainAssistant.prototype.metroStartStop = function () {
 			this.playVisableAlert();
 		if (tapTempo.metroAlertVibration)
 			Mojo.Controller.getAppController().playSoundNotification("vibrate","");
-		if (tapTempo.metroAlertAudible) {
-			this.playAccentClick();
-		}
+		if (tapTempo.metroAlertAudible)
+			this.playAudibleAlert();
 		this.runMetronome();
 	}
 }
+
+MainAssistant.prototype.doRunMetronome = function () {
+	this.finish = new Date().getTime()
+	var deltaT = this.finish - this.start
+	if (deltaT > tapTempo.metroDelay * tapTempo.metroTotalBeats) {
+		this.lagFighter();
+		tapTempo.metroTotalBeats++
+		tapTempo.currentBeat++
+		if (tapTempo.currentBeat > tapTempo.metroMeasure) 
+			tapTempo.currentBeat = 1
+
+		// Visable Alert
+		if (tapTempo.metroAlertVisable)
+			this.playVisableAlert();
+		else
+			tapTempo.elements.metroVisualAlert.addClassName('hidden')
+		// Vibration Alert
+		if (tapTempo.metroAlertVibration)
+			Mojo.Controller.getAppController().playSoundNotification("vibrate", "");
+		// Audible Alert
+		if (tapTempo.metroAlertAudible)
+			this.playAudibleAlert();
+	}
+	if (tapTempo.metroIsRunning)
+		this.runMetronome();
+}
+
 MainAssistant.prototype.playVisableAlert = function () {
 	tapTempo.elements.metroVisualAlert.removeClassName('hidden')
 	tapTempo.elements.metroVisualAlertNum.update(tapTempo.currentBeat)
@@ -296,39 +322,21 @@ MainAssistant.prototype.playVisableAlert = function () {
 		tapTempo.elements.metroVisualAlertNum.update('&nbsp;')
 	}
 }
-MainAssistant.prototype.doRunMetronome = function () {
-	this.finish = new Date().getTime()
-	var deltaT = this.finish - this.start
-	if (deltaT > tapTempo.metroDelay * tapTempo.metroTotalBeats) {
-		this.lagFighter();
-		tapTempo.metroTotalBeats++
-		tapTempo.currentBeat++
-		if (tapTempo.currentBeat > tapTempo.metroMeasure) 
-			tapTempo.currentBeat = 1
-
-		if (tapTempo.metroAlertVisable)
-			this.playVisableAlert();
-		else
-			tapTempo.elements.metroVisualAlert.addClassName('hidden')
-		
-		if (tapTempo.metroAlertVibration)
-			Mojo.Controller.getAppController().playSoundNotification("vibrate", "");
-
-		if (tapTempo.metroAlertAudible) {
-			if (tapTempo.currentBeat == 1)
-				this.playAccentClick();
-			else
-				this.playClick();
-		}
+MainAssistant.prototype.playAudibleAlert = function () {
+	if (tapTempo.metroBeatSetup[tapTempo.currentBeat] == 'affirmative') {
+		this.playAccentClick();
 	}
-	if (tapTempo.metroIsRunning)
-		this.runMetronome();
+	if (tapTempo.metroBeatSetup[tapTempo.currentBeat] == 'primary') {
+		this.playClick();
+	}
+	if (tapTempo.metroBeatSetup[tapTempo.currentBeat] == 'secondary') {
+	}
 }
 MainAssistant.prototype.playAccentClick = function(){
 	this.controller.serviceRequest('palm://com.palm.audio/systemsounds', {
 		method: "playFeedback",
 		parameters: {
-			name: "dtmf_1"
+			name: "dtmf_9"
 		},
 		onSuccess: this.successfulClick.bind(this),
 		onFailure: this.failedClick.bind(this)
