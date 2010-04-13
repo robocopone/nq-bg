@@ -272,18 +272,28 @@ MainAssistant.prototype.metroStartStop = function () {
 		tapTempo.metroDelay = (1 / (tapTempo.metroTempo / 60)) * 1000
 		tapTempo.metroTotalBeats = 1;
 		tapTempo.currentBeat = 1;
-		if (tapTempo.metroAlertVibration) {
+		if (tapTempo.metroAlertVisable)
+			this.playVisableAlert();
+		if (tapTempo.metroAlertVibration)
 			Mojo.Controller.getAppController().playSoundNotification("vibrate","");
-		}
-		if (tapTempo.metroAlertVisable) {
-			tapTempo.elements.metroVisualAlert.removeClassName('hidden')
-			tapTempo.elements.metroVisualAlertNum.update(tapTempo.currentBeat)
-			tapTempo.elements.metroVisualAlert.addClassName('down')
-		}
 		if (tapTempo.metroAlertAudible) {
 			this.playAccentClick();
 		}
 		this.runMetronome();
+	}
+}
+MainAssistant.prototype.playVisableAlert = function () {
+	tapTempo.elements.metroVisualAlert.removeClassName('hidden')
+	tapTempo.elements.metroVisualAlertNum.update(tapTempo.currentBeat)
+	if (tapTempo.metroBeatSetup[tapTempo.currentBeat] == 'affirmative') {
+		tapTempo.elements.metroVisualAlert.addClassName('down')
+	}
+	if (tapTempo.metroBeatSetup[tapTempo.currentBeat] == 'primary') {
+		tapTempo.elements.metroVisualAlert.removeClassName('down')
+	}
+	if (tapTempo.metroBeatSetup[tapTempo.currentBeat] == 'secondary') {
+		tapTempo.elements.metroVisualAlert.removeClassName('down')
+		tapTempo.elements.metroVisualAlertNum.update('&nbsp;')
 	}
 }
 MainAssistant.prototype.doRunMetronome = function () {
@@ -296,19 +306,14 @@ MainAssistant.prototype.doRunMetronome = function () {
 		if (tapTempo.currentBeat > tapTempo.metroMeasure) 
 			tapTempo.currentBeat = 1
 
-		if (tapTempo.metroAlertVisable) {
-			tapTempo.elements.metroVisualAlert.removeClassName('hidden')
-			if (tapTempo.currentBeat == 1) 
-				tapTempo.elements.metroVisualAlert.addClassName('down')
-			else 
-				tapTempo.elements.metroVisualAlert.removeClassName('down')
-			tapTempo.elements.metroVisualAlertNum.update(tapTempo.currentBeat)
-		} else
+		if (tapTempo.metroAlertVisable)
+			this.playVisableAlert();
+		else
 			tapTempo.elements.metroVisualAlert.addClassName('hidden')
 		
-		if (tapTempo.metroAlertVibration) {
+		if (tapTempo.metroAlertVibration)
 			Mojo.Controller.getAppController().playSoundNotification("vibrate", "");
-		}
+
 		if (tapTempo.metroAlertAudible) {
 			if (tapTempo.currentBeat == 1)
 				this.playAccentClick();
@@ -391,6 +396,7 @@ MainAssistant.prototype.metroBeatSetupMeasure1 = function(){
 		tapTempo.metroBeatSetup[1] = 'primary'
 	}
 	this.controller.modelChanged(this.metroBeatSetupButtonModel[1], this);
+	tapTempo.cookie.storeCookie();
 }
 
 MainAssistant.prototype.metroBeatSetupMeasure2 = function () {
@@ -407,6 +413,7 @@ MainAssistant.prototype.metroBeatSetupMeasure2 = function () {
 		tapTempo.metroBeatSetup[2] = 'primary'
 	}
 	this.controller.modelChanged(this.metroBeatSetupButtonModel[2], this);
+	tapTempo.cookie.storeCookie();
 }
 MainAssistant.prototype.metroBeatSetupMeasure3 = function () {
 	if (this.metroBeatSetupButtonModel[3].buttonClass=="primary") {
@@ -422,6 +429,7 @@ MainAssistant.prototype.metroBeatSetupMeasure3 = function () {
 		tapTempo.metroBeatSetup[3] = 'primary'
 	}
 	this.controller.modelChanged(this.metroBeatSetupButtonModel[3], this);
+	tapTempo.cookie.storeCookie();
 }
 MainAssistant.prototype.metroBeatSetupMeasure4 = function () {
 	if (this.metroBeatSetupButtonModel[4].buttonClass=="primary") {
@@ -437,6 +445,7 @@ MainAssistant.prototype.metroBeatSetupMeasure4 = function () {
 		tapTempo.metroBeatSetup[4] = 'primary'
 	}
 	this.controller.modelChanged(this.metroBeatSetupButtonModel[4], this);
+	tapTempo.cookie.storeCookie();
 }
 MainAssistant.prototype.metroBeatSetupMeasure5 = function () {
 	if (this.metroBeatSetupButtonModel[5].buttonClass=="primary") {
@@ -452,6 +461,7 @@ MainAssistant.prototype.metroBeatSetupMeasure5 = function () {
 		tapTempo.metroBeatSetup[5] = 'primary'
 	}
 	this.controller.modelChanged(this.metroBeatSetupButtonModel[5], this);
+	tapTempo.cookie.storeCookie();
 }
 MainAssistant.prototype.metroBeatSetupMeasure6 = function () {
 	if (this.metroBeatSetupButtonModel[6].buttonClass=="primary") {
@@ -467,6 +477,7 @@ MainAssistant.prototype.metroBeatSetupMeasure6 = function () {
 		tapTempo.metroBeatSetup[6] = 'primary'
 	}
 	this.controller.modelChanged(this.metroBeatSetupButtonModel[6], this);
+	tapTempo.cookie.storeCookie();
 }
 MainAssistant.prototype.metroBeatSetupMeasure7 = function () {
 	if (this.metroBeatSetupButtonModel[7].buttonClass=="primary") {
@@ -482,6 +493,7 @@ MainAssistant.prototype.metroBeatSetupMeasure7 = function () {
 		tapTempo.metroBeatSetup[7] = 'primary'
 	}
 	this.controller.modelChanged(this.metroBeatSetupButtonModel[7], this);
+	tapTempo.cookie.storeCookie();
 }
 MainAssistant.prototype.metroBeatSetupMeasure8 = function () {
 	if (this.metroBeatSetupButtonModel[8].buttonClass=="primary") {
@@ -497,6 +509,7 @@ MainAssistant.prototype.metroBeatSetupMeasure8 = function () {
 		tapTempo.metroBeatSetup[8] = 'primary'
 	}
 	this.controller.modelChanged(this.metroBeatSetupButtonModel[8], this);
+	tapTempo.cookie.storeCookie();
 }
 MainAssistant.prototype.metroBeatSetupMeasure9 = function () {
 	if (this.metroBeatSetupButtonModel[9].buttonClass=="primary") {
@@ -512,21 +525,25 @@ MainAssistant.prototype.metroBeatSetupMeasure9 = function () {
 		tapTempo.metroBeatSetup[9] = 'primary'
 	}
 	this.controller.modelChanged(this.metroBeatSetupButtonModel[9], this);
+	tapTempo.cookie.storeCookie();
 }
-MainAssistant.prototype.metroBeatSetupMeasure10 = function () {
-	if (this.metroBeatSetupButtonModel[10].buttonClass=="primary") {
-		this.metroBeatSetupButtonModel[10].buttonClass="affirmative"
+MainAssistant.prototype.metroBeatSetupMeasure10 = function(){
+	if (this.metroBeatSetupButtonModel[10].buttonClass == "primary") {
+		this.metroBeatSetupButtonModel[10].buttonClass = "affirmative"
 		tapTempo.metroBeatSetup[10] = 'affirmative'
 	}
-	else if (this.metroBeatSetupButtonModel[10].buttonClass=="affirmative") {
-		this.metroBeatSetupButtonModel[10].buttonClass="secondary"
-		tapTempo.metroBeatSetup[10] = 'secondary'
-	}
-	else if (this.metroBeatSetupButtonModel[10].buttonClass=="secondary") {
-		this.metroBeatSetupButtonModel[10].buttonClass="primary"
-		tapTempo.metroBeatSetup[10] = 'primary'
-	}
+	else 
+		if (this.metroBeatSetupButtonModel[10].buttonClass == "affirmative") {
+			this.metroBeatSetupButtonModel[10].buttonClass = "secondary"
+			tapTempo.metroBeatSetup[10] = 'secondary'
+		}
+		else 
+			if (this.metroBeatSetupButtonModel[10].buttonClass == "secondary") {
+				this.metroBeatSetupButtonModel[10].buttonClass = "primary"
+				tapTempo.metroBeatSetup[10] = 'primary'
+			}
 	this.controller.modelChanged(this.metroBeatSetupButtonModel[10], this);
+	tapTempo.cookie.storeCookie();
 }
 MainAssistant.prototype.metroBeatSetupMeasure11 = function () {
 	if (this.metroBeatSetupButtonModel[11].buttonClass=="primary") {
@@ -542,6 +559,7 @@ MainAssistant.prototype.metroBeatSetupMeasure11 = function () {
 		tapTempo.metroBeatSetup[11] = 'primary'
 	}
 	this.controller.modelChanged(this.metroBeatSetupButtonModel[11], this);
+	tapTempo.cookie.storeCookie();
 }
 MainAssistant.prototype.metroBeatSetupMeasure12 = function () {
 	if (this.metroBeatSetupButtonModel[12].buttonClass=="primary") {
@@ -557,4 +575,5 @@ MainAssistant.prototype.metroBeatSetupMeasure12 = function () {
 		tapTempo.metroBeatSetup[12] = 'primary'
 	}
 	this.controller.modelChanged(this.metroBeatSetupButtonModel[12], this);
+	tapTempo.cookie.storeCookie();
 }
