@@ -48,6 +48,10 @@
 	background-color: #e4e4e2;
 }
 #metroVisualAlert.down {
+	background-color: red;
+	color: white;
+}
+#metroVisualAlert.accent {
 	background-color: black;
 	color: white;
 }
