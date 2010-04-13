@@ -16,6 +16,21 @@ tapTempo.metroAlertVisable = true;
 tapTempo.metroAlertAudible = false;
 tapTempo.metroAlertVibration = false;
 tapTempo.metroInitialAudioAttempt = true;
+tapTempo.metroBeatSetup = []
+tapTempo.metroBeatSetup[1] = 'affirmative'
+tapTempo.metroBeatSetup[2] = 'primary'
+tapTempo.metroBeatSetup[3] = 'primary'
+tapTempo.metroBeatSetup[4] = 'primary'
+tapTempo.metroBeatSetup[5] = 'primary'
+tapTempo.metroBeatSetup[6] = 'primary'
+tapTempo.metroBeatSetup[7] = 'primary'
+tapTempo.metroBeatSetup[8] = 'primary'
+tapTempo.metroBeatSetup[9] = 'primary'
+tapTempo.metroBeatSetup[10] = 'primary'
+tapTempo.metroBeatSetup[11] = 'primary'
+tapTempo.metroBeatSetup[12] = 'primary'
+tapTempo.metroBeatSetup[13] = 'primary'
+tapTempo.initialized = false;
 
 tapTempo.pitchKey = 'A'
 tapTempo.pitchOctave = 4;
@@ -34,6 +49,8 @@ tapTempo.cookie = ({
 			tapTempo.metroAlertVibration = storedData.metroAlertVibration
 			tapTempo.metroMeasure = storedData.metroMeasure
 			tapTempo.metroInitialAudioAttempt = storedData.metroInitialAudioAttempt
+			tapTempo.metroBeatSetup = storedData.metroBeatSetup.slice(0);
+			tapTempo.initialized = storedData.initialized
 			tapTempo.pitchKey = storedData.pitchKey
 			tapTempo.pitchOctave = storedData.pitchOctave
 			tapTempo.pitchDuration = storedData.pitchDuration
@@ -54,6 +71,8 @@ tapTempo.cookie = ({
 			pitchKey: tapTempo.pitchKey,
 			pitchOctave: tapTempo.pitchOctave,
 			pitchDuration: tapTempo.pitchDuration,
+			metroBeatSetup: tapTempo.metroBeatSetup.slice(0),
+			initialized: tapTempo.initialized,
 		});		
 	}
 });
@@ -89,6 +108,21 @@ MainAssistant.prototype.setup = function() {
 	tapTempo.elements.metroStartStop = this.controller.get('metroStartStop')
 	tapTempo.elements.metroVisualAlert = this.controller.get('metroVisualAlert')
 	tapTempo.elements.metroVisualAlertNum = this.controller.get('metroVisualAlertNum')
+
+	tapTempo.elements.metroBeatSetupButton = []
+	this.metroBeatSetupButtonModel = []
+	var element;
+	for (var x = 1; x <= 12; x++) {
+		element = 'metroBeatSetupMeasure' + x
+		tapTempo.elements.metroBeatSetupButton[x] = this.controller.get(element);
+		this.controller.setupWidget(element, {
+			type: Mojo.Widget.defaultButton
+		}, this.metroBeatSetupButtonModel[x] = {
+			buttonLabel: $L('' + x),
+			buttonClass: tapTempo.metroBeatSetup[x],
+			disabled: false
+		});
+	}
 	
 	tapTempo.elements.pitchTitle = this.controller.get('pitchTitle')
 
@@ -176,6 +210,18 @@ MainAssistant.prototype.setup = function() {
 		value: tapTempo.metroAlertVibration,
 		disabled: false
 	});
+
+	// Metro Beat setup Button Widget
+	this.controller.setupWidget('metroBeatSetupButton', {
+		type: Mojo.Widget.defaultButton
+	}, {
+		buttonLabel: $L("Beat Setup"),
+		buttonClass: 'normal',
+		disabled: false
+	});
+
+
+
 /*
 	//Pitch Key select
 	this.controller.setupWidget("pitchKeySelector", {
