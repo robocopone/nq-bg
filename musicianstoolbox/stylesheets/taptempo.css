@@ -71,6 +71,12 @@
 .metroCheck {
 	margin-left: 32px;
 }
+#metroBeatSetupButton {
+	position: absolute;
+	top: 275px;
+	left: 290px;
+}
+
 /*
  * Pitch Pipe
  */
