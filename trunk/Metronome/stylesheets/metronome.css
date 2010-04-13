@@ -3,6 +3,13 @@
 	float: left;
 	width: 25%;
 }
+#metroTempoMarkingsWindow {
+	z-index: 11;
+	position: absolute;
+	top: 110px;
+	width: 270px;
+	background-color: #e4e4e2;
+}
 #metroBeatSetupWindow {
 	z-index: 11;
 	position: absolute;
@@ -16,9 +23,14 @@
 	width: 320px;
 	z-index: 10;
 }
+#metroTempoMarkingsButton {
+	position: absolute;
+	top: 275px;
+	width: 320px;
+}
 #metroBeatSetupButton {
 	position: absolute;
-	top: 240px;
+	top: 220px;
 	width: 320px;
 }
 #metronomeArea {
