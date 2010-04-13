@@ -340,28 +340,35 @@ MainAssistant.prototype.doRunMetronome = function () {
 MainAssistant.prototype.playVisableAlert = function () {
 	tapTempo.elements.metroVisualAlert.removeClassName('hidden')
 	tapTempo.elements.metroVisualAlertNum.update(tapTempo.currentBeat)
-	if (tapTempo.metroBeatSetup[tapTempo.currentBeat] == 'affirmative') {
+	if (tapTempo.metroBeatSetup[tapTempo.currentBeat] == 'affirmative' &&
+		tapTempo.currentBeat == 1) {
 		tapTempo.elements.metroVisualAlert.addClassName('down')
 	}
+	else if (tapTempo.metroBeatSetup[tapTempo.currentBeat] == 'affirmative')
+		tapTempo.elements.metroVisualAlert.addClassName('accent')
+
 	if (tapTempo.metroBeatSetup[tapTempo.currentBeat] == 'primary') {
 		tapTempo.elements.metroVisualAlert.removeClassName('down')
+		tapTempo.elements.metroVisualAlert.removeClassName('accent')
 	}
 	if (tapTempo.metroBeatSetup[tapTempo.currentBeat] == 'secondary') {
 		tapTempo.elements.metroVisualAlert.removeClassName('down')
+		tapTempo.elements.metroVisualAlert.removeClassName('accent')
 		tapTempo.elements.metroVisualAlertNum.update('&nbsp;')
 	}
 }
 MainAssistant.prototype.playAudibleAlert = function () {
-	if (tapTempo.metroBeatSetup[tapTempo.currentBeat] == 'affirmative') {
+	if (tapTempo.metroBeatSetup[tapTempo.currentBeat] == 'affirmative' &&
+		tapTempo.currentBeat == 1)
+		this.playDownClick();
+	else if (tapTempo.metroBeatSetup[tapTempo.currentBeat] == 'affirmative')
 		this.playAccentClick();
-	}
-	if (tapTempo.metroBeatSetup[tapTempo.currentBeat] == 'primary') {
+	if (tapTempo.metroBeatSetup[tapTempo.currentBeat] == 'primary')
 		this.playClick();
-	}
 	if (tapTempo.metroBeatSetup[tapTempo.currentBeat] == 'secondary') {
 	}
 }
-MainAssistant.prototype.playAccentClick = function(){
+MainAssistant.prototype.playDownClick = function(){
 	this.controller.serviceRequest('palm://com.palm.audio/systemsounds', {
 		method: "playFeedback",
 		parameters: {
@@ -371,12 +378,21 @@ MainAssistant.prototype.playAccentClick = function(){
 		onFailure: this.failedClick.bind(this)
 	})
 }
-
+MainAssistant.prototype.playAccentClick = function(){
+	this.controller.serviceRequest('palm://com.palm.audio/systemsounds', {
+		method: "playFeedback",
+		parameters: {
+			name: "dtmf_4"
+		},
+		onSuccess: this.successfulClick.bind(this),
+		onFailure: this.failedClick.bind(this)
+	})
+}
 MainAssistant.prototype.playClick = function(){
 	this.controller.serviceRequest('palm://com.palm.audio/systemsounds', {
 		method: "playFeedback",
 		parameters: {
-			name: "dtmf_2"
+			name: "dtmf_1"
 		},
 		onSuccess: this.successfulClick.bind(this),
 		onFailure: this.failedClick.bind(this)
