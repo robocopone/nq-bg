@@ -346,6 +346,7 @@ MainAssistant.prototype.playVisableAlert = function () {
 	if (tapTempo.metroBeatSetup[tapTempo.currentBeat] == 'affirmative' &&
 		tapTempo.currentBeat == 1) {
 		tapTempo.elements.metroVisualAlert.addClassName('down')
+		tapTempo.elements.metroVisualAlert.removeClassName('accent')
 	}
 	else if (tapTempo.metroBeatSetup[tapTempo.currentBeat] == 'affirmative')
 		tapTempo.elements.metroVisualAlert.addClassName('accent')
