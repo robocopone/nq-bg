@@ -2,7 +2,7 @@ var tapTempo = {}
 
 tapTempo.elements = {}
 
-tapTempo.time = new Date().getTime() - 10000
+tapTempo.time = new Date().getTime() - 100000
 tapTempo.duration = {};
 tapTempo.resetDuration = 2;
 tapTempo.currentNum = 5;
@@ -700,11 +700,19 @@ MainAssistant.prototype.lockCurrent = function(event) {
 	tapTempo.flickLock = true;
 	tapTempo.currentLock = event.value;
 	this.unlockFlick();
+	if (tapTempo.currentBPM < 100000){
+		tapTempo.elements.metroCurrentTempo.update(tapTempo.currentBPM + " bpm")
+		tapTempo.metroCurrentBPM = tapTempo.currentBPM
+	}
 }
 MainAssistant.prototype.lockAvg = function (event) {
 	tapTempo.flickLock = true;
 	tapTempo.avgLock = event.value;
 	this.unlockFlick();
+	if (tapTempo.avgBPM < 100000) {
+		tapTempo.elements.metroAvgTempo.update(tapTempo.avgBPM + " bpm")
+		tapTempo.metroAvgBPM = tapTempo.avgBPM
+	}
 }
 MainAssistant.prototype.catchFlick = function(event) {
 	if (tapTempo.flickLock)
