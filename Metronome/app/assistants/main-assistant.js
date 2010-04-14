@@ -98,7 +98,7 @@ MainAssistant.prototype.setup = function() {
 	this.controller.setupWidget('setMetroTempo', {
 		label: $L(" "),
 		modelProperty: 'value',
-		min: 30,
+		min: 1,
 		max: 300,
 	}, this.setMetroTempoModel = {
 		value: tapTempo.metroTempo
