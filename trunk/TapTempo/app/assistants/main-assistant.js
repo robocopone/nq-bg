@@ -42,7 +42,7 @@ MainAssistant.prototype.setup = function() {
 		label: $L(" "),
 		modelProperty: 'value',
 		min: 1,
-		max: 10,
+		max: 15,
 	}, model = {
 		value: tapTempo.resetDuration
 	});
@@ -51,7 +51,7 @@ MainAssistant.prototype.setup = function() {
 		label: $L(" "),
 		modelProperty: 'value',
 		min: 1,
-		max: 5,
+		max: 15,
 	}, model = {
 		value: tapTempo.resetDuration
 	});
