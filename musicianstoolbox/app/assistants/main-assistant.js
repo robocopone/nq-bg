@@ -524,8 +524,8 @@ MainAssistant.prototype.metroAlertAudibleChanged = function (event) {
 	if (tapTempo.metroInitialAudioAttempt && event.value) {
 		this.controller.showAlertDialog({
 			onChoose: this.metroInitialAudioAttempt,
-			title: $L("Audio Alert"),
-			message: $L('The only way to play audio on the Pre within the timing constraints of a metronome is to use the onboard system sounds.  If you cannot hear anything you need to go into "Sounds & Ringtones" on the third page of the launcher and turn up the volume on System Sounds.  This also forced me to use the dial-pad tones.'),
+			title: $L("Audio Disclaimer"),
+			message: $L('The only way to play audio on the Pre within the timing constraints of a metronome is to use the onboard system sounds.  If you cannot hear anything you need to go into "Sounds & Ringtones" on the third page of the launcher and turn up the volume on System Sounds.  This also forced me to use the dial-pad tones.  I apologize for the ghetto sound but blame Palm, not me.'),
 			choices: [{
 				label: $L('Ok'),
 				value: 'ok',
