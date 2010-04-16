@@ -21,13 +21,14 @@ tapTempo.metroBeatSetup[11] = 'primary'
 tapTempo.metroBeatSetup[12] = 'primary'
 tapTempo.metroBeatSetup[13] = 'primary'
 tapTempo.initialized = false;
+tapTempo.initialRun = true;
 
 
 tapTempo.cookie = ({
 	initialize: function() {
 		this.cookieData = new Mojo.Model.Cookie("netBradleyGraberTapTempo");
 		storedData = this.cookieData.get();
-		if (storedData && storedData.version == "1.0.0") {
+		if (storedData && storedData.version >= "1.0.0") {
 			tapTempo.metroTempo = storedData.metroTempo
 			tapTempo.metroAlertVisable = storedData.metroAlertVisable
 			tapTempo.metroAlertAudible = storedData.metroAlertAudible
@@ -37,11 +38,14 @@ tapTempo.cookie = ({
 			tapTempo.metroBeatSetup = storedData.metroBeatSetup.slice(0);
 			tapTempo.initialized = storedData.initialized
 		}
+		if (storedData && storedData.version == "1.0.2") {
+			tapTempo.initialRun = storedData.initialRun
+		}
 		this.storeCookie();
 	},
 	storeCookie: function() {
 		this.cookieData.put({  
-			version: "1.0.0",
+			version: "1.0.2",
 			metroTempo: tapTempo.metroTempo,
 			metroAlertVisable: tapTempo.metroAlertVisable,
 			metroAlertAudible: tapTempo.metroAlertAudible,
@@ -50,6 +54,7 @@ tapTempo.cookie = ({
 			metroInitialAudioAttempt: tapTempo.metroInitialAudioAttempt,
 			metroBeatSetup: tapTempo.metroBeatSetup.slice(0),
 			initialized: tapTempo.initialized,
+			initialRun: tapTempo.initialRun,
 		});		
 	}
 });
@@ -199,6 +204,8 @@ MainAssistant.prototype.setup = function() {
 	this.controller.listen(tapTempo.elements.metroStartStop, Mojo.Event.tap, this.metroStartStop.bindAsEventListener(this))	
 	this.controller.listen("setMetroMeasure",Mojo.Event.propertyChange, this.setMetroMeasureChanged.bindAsEventListener(this));
 	this.controller.listen("setMetroTempo",Mojo.Event.propertyChange, this.setMetroTempoChanged.bindAsEventListener(this));
+	if (tapTempo.initialRun)
+		this.initialPrompt();
 }
 MainAssistant.prototype.cleanup = function(event) {
 	this.controller.stopListening("metroTempoMarkingsButton", Mojo.Event.tap, this.metroTempoMarkingsButton.bindAsEventListener(this))
@@ -634,3 +641,51 @@ MainAssistant.prototype.metroBeatSetupMeasure12 = function () {
 	this.controller.modelChanged(this.metroBeatSetupButtonModel[12], this);
 	tapTempo.cookie.storeCookie();
 }
+
+/*
+ * Initial Run Prompt
+ */
+MainAssistant.prototype.initialPrompt = function () {
+	this.controller.showAlertDialog({
+		onChoose: this.doInitialChoice,
+		title: $L("Extended Capabilities Available"),
+		message: $L("Do you wish you had the ability to tap along to something to set the tempo?  Check out the Musician's Toolbox!"),
+		choices: [{
+			label: $L('Yes'),
+			value: 'yes',
+			type: 'affirmative'
+		}, {
+			label: $L('No'),
+			value: 'no',
+			type: 'negative'
+		}, {
+			label: $L('No, and never ask again'),
+			value: 'nono',
+			type: 'negative'
+		}, ]
+	});	
+}
+
+/*
+ * 
+ */
+MainAssistant.prototype.doInitialChoice = function(choice) {
+	if (choice == 'yes') {
+		this.controller.serviceRequest("palm://com.palm.applicationManager", {
+			method: "open",
+			parameters: {
+				id: 'com.palm.app.browser',
+				params: {
+					target: "http://developer.palm.com/appredirect/?packageid=net.bradleygraber.musicianstoolbox"
+				}
+			}
+		});
+	}
+	if (choice == 'no') {
+	}
+	if (choice == 'nono') {
+		tapTempo.initialRun = false;
+		tapTempo.cookie.storeCookie();
+	}
+}
+
