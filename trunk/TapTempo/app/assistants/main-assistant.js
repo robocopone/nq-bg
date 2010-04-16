@@ -6,22 +6,27 @@ tapTempo.time = new Date().getTime() - 10000
 tapTempo.duration = {};
 tapTempo.resetDuration = 2;
 tapTempo.currentNum = 5;
+tapTempo.initialRun = true;
 
 tapTempo.cookie = ({
 	initialize: function() {
 		this.cookieData = new Mojo.Model.Cookie("netBradleyGraberTapTempo");
 		storedData = this.cookieData.get();
-		if (storedData && storedData.version == "1.1.0") {
+		if (storedData && storedData.version >= "1.1.0") {
 			tapTempo.resetDuration = storedData.resetDuration;
 			tapTempo.currentNum = storedData.currentNum;
+		}
+		if (storedData && storedData.version == "1.1.3") {
+			tapTempo.initialRun = storedData.initialRun
 		}
 		this.storeCookie();
 	},
 	storeCookie: function() {
 		this.cookieData.put({  
-			version: "1.1.0",
+			version: "1.1.3",
 			resetDuration: tapTempo.resetDuration,
 			currentNum: tapTempo.currentNum,
+			initialRun: tapTempo.initialRun,
 		});		
 	}
 });
@@ -70,6 +75,8 @@ MainAssistant.prototype.setup = function() {
 	this.controller.listen(this.controller.get('currentNumPicker'),Mojo.Event.propertyChange, this.currentNumPicker.bindAsEventListener(this));
 	this.controller.listen(this.controller.sceneElement, Mojo.Event.keypress, this.keyPressed.bindAsEventListener(this))
 	this.controller.listen(this.controller.document, Mojo.Event.tap, this.keyPressed.bindAsEventListener(this))
+	if (tapTempo.initialRun)
+		this.initialPrompt();
 }
 
 MainAssistant.prototype.reset = function () {
@@ -161,3 +168,51 @@ MainAssistant.prototype.handleCommand = function (event) {
 		}
 	}
 }
+
+/*
+ * Initial Run Prompt
+ */
+MainAssistant.prototype.initialPrompt = function () {
+	this.controller.showAlertDialog({
+		onChoose: this.doInitialChoice,
+		title: $L("Extended Capabilities Available"),
+		message: $L("Do you wish you had the ability to replay the tempo with a metronome?  Check out the Musician's Toolbox!"),
+		choices: [{
+			label: $L('Yes'),
+			value: 'yes',
+			type: 'affirmative'
+		}, {
+			label: $L('No'),
+			value: 'no',
+			type: 'negative'
+		}, {
+			label: $L('No, and never ask again'),
+			value: 'nono',
+			type: 'negative'
+		}, ]
+	});	
+}
+
+/*
+ * 
+ */
+MainAssistant.prototype.doInitialChoice = function(choice) {
+	if (choice == 'yes') {
+		this.controller.serviceRequest("palm://com.palm.applicationManager", {
+			method: "open",
+			parameters: {
+				id: 'com.palm.app.browser',
+				params: {
+					target: "http://developer.palm.com/appredirect/?packageid=net.bradleygraber.musicianstoolbox"
+				}
+			}
+		});
+	}
+	if (choice == 'no') {
+	}
+	if (choice == 'nono') {
+		tapTempo.initialRun = false;
+		tapTempo.cookie.storeCookie();
+	}
+}
+
