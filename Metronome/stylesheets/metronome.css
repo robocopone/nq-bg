@@ -106,3 +106,118 @@
 #metroBeatOn 		{ background-color: #8c8c8c; color: white; }
 #metroBeatAccented 	{ background-color: #2c931a; color: white; }
 
+#metroSwingingArm {
+	z-index: 50;
+	position: absolute;
+	top: 230px;
+	left: -105px;
+	-webkit-transform-origin: right;
+}
+#metroSwingingArm.swing {
+	-webkit-animation-name: 'swing';
+	-webkit-animation-duration: .6s;
+	-webkit-animation-iteration-count: 1000000; 
+}
+@-webkit-keyframes 'swing' {
+	0% {-webkit-transform: rotate(60deg);}
+	1% {-webkit-transform: rotate(61.2deg);}
+	2% {-webkit-transform: rotate(62.4deg);}
+	3% {-webkit-transform: rotate(63.6deg);}
+	4% {-webkit-transform: rotate(64.8deg);}
+	5% {-webkit-transform: rotate(66deg);}
+	6% {-webkit-transform: rotate(67.2deg);}
+	7% {-webkit-transform: rotate(68.4deg);}
+	8% {-webkit-transform: rotate(69.6deg);}
+	9% {-webkit-transform: rotate(70.8deg);}
+	10% {-webkit-transform: rotate(72deg);}
+	11% {-webkit-transform: rotate(73.2deg);}
+	12% {-webkit-transform: rotate(74.4deg);}
+	13% {-webkit-transform: rotate(75.6deg);}
+	14% {-webkit-transform: rotate(76.8deg);}
+	15% {-webkit-transform: rotate(78deg);}
+	16% {-webkit-transform: rotate(79.2deg);}
+	17% {-webkit-transform: rotate(80.4deg);}
+	18% {-webkit-transform: rotate(81.6deg);}
+	19% {-webkit-transform: rotate(82.8deg);}
+	20% {-webkit-transform: rotate(84deg);}
+	21% {-webkit-transform: rotate(85.2deg);}
+	22% {-webkit-transform: rotate(86.4deg);}
+	23% {-webkit-transform: rotate(87.6deg);}
+	24% {-webkit-transform: rotate(88.8deg);}
+	25% {-webkit-transform: rotate(90deg);}
+	26% {-webkit-transform: rotate(91.2deg);}
+	27% {-webkit-transform: rotate(92.4deg);}
+	28% {-webkit-transform: rotate(93.6deg);}
+	29% {-webkit-transform: rotate(94.8deg);}
+	30% {-webkit-transform: rotate(96deg);}
+	31% {-webkit-transform: rotate(97.2deg);}
+	32% {-webkit-transform: rotate(98.4deg);}
+	33% {-webkit-transform: rotate(99.6deg);}
+	34% {-webkit-transform: rotate(100.8deg);}
+	35% {-webkit-transform: rotate(102deg);}
+	36% {-webkit-transform: rotate(103.2deg);}
+	37% {-webkit-transform: rotate(104.4deg);}
+	38% {-webkit-transform: rotate(105.6deg);}
+	39% {-webkit-transform: rotate(106.8deg);}
+	40% {-webkit-transform: rotate(108deg);}
+	41% {-webkit-transform: rotate(109.2deg);}
+	42% {-webkit-transform: rotate(110.4deg);}
+	43% {-webkit-transform: rotate(111.6deg);}
+	44% {-webkit-transform: rotate(112.8deg);}
+	45% {-webkit-transform: rotate(114deg);}
+	46% {-webkit-transform: rotate(115.2deg);}
+	47% {-webkit-transform: rotate(116.4deg);}
+	48% {-webkit-transform: rotate(117.6deg);}
+	49% {-webkit-transform: rotate(118.8deg);}
+	50% {-webkit-transform: rotate(120deg);}
+	51% {-webkit-transform: rotate(118.8deg);}
+	52% {-webkit-transform: rotate(117.6deg);}
+	53% {-webkit-transform: rotate(116.4deg);}
+	54% {-webkit-transform: rotate(115.2deg);}
+	55% {-webkit-transform: rotate(114deg);}
+	56% {-webkit-transform: rotate(112.8deg);}
+	57% {-webkit-transform: rotate(111.6deg);}
+	58% {-webkit-transform: rotate(110.4deg);}
+	59% {-webkit-transform: rotate(109.2deg);}
+	60% {-webkit-transform: rotate(108deg);}
+	61% {-webkit-transform: rotate(106.8deg);}
+	62% {-webkit-transform: rotate(105.6deg);}
+	63% {-webkit-transform: rotate(104.4deg);}
+	64% {-webkit-transform: rotate(103.2deg);}
+	65% {-webkit-transform: rotate(102deg);}
+	66% {-webkit-transform: rotate(100.8deg);}
+	67% {-webkit-transform: rotate(99.6deg);}
+	68% {-webkit-transform: rotate(98.4deg);}
+	69% {-webkit-transform: rotate(97.2deg);}
+	70% {-webkit-transform: rotate(96deg);}
+	71% {-webkit-transform: rotate(94.8deg);}
+	72% {-webkit-transform: rotate(93.6deg);}
+	73% {-webkit-transform: rotate(92.4deg);}
+	74% {-webkit-transform: rotate(91.2deg);}
+	75% {-webkit-transform: rotate(90deg);}
+	76% {-webkit-transform: rotate(88.8deg);}
+	77% {-webkit-transform: rotate(87.6deg);}
+	78% {-webkit-transform: rotate(86.4deg);}
+	79% {-webkit-transform: rotate(85.2deg);}
+	80% {-webkit-transform: rotate(84deg);}
+	81% {-webkit-transform: rotate(82.8deg);}
+	82% {-webkit-transform: rotate(81.6deg);}
+	83% {-webkit-transform: rotate(80.4deg);}
+	84% {-webkit-transform: rotate(79.2deg);}
+	85% {-webkit-transform: rotate(78deg);}
+	86% {-webkit-transform: rotate(76.8deg);}
+	87% {-webkit-transform: rotate(75.6deg);}
+	88% {-webkit-transform: rotate(74.4deg);}
+	89% {-webkit-transform: rotate(73.2deg);}
+	90% {-webkit-transform: rotate(72deg);}
+	91% {-webkit-transform: rotate(70.8deg);}
+	92% {-webkit-transform: rotate(69.6deg);}
+	93% {-webkit-transform: rotate(68.4deg);}
+	94% {-webkit-transform: rotate(67.2deg);}
+	95% {-webkit-transform: rotate(66deg);}
+	96% {-webkit-transform: rotate(64.8deg);}
+	97% {-webkit-transform: rotate(63.6deg);}
+	98% {-webkit-transform: rotate(62.4deg);}
+	99% {-webkit-transform: rotate(61.2deg);}
+	100% {-webkit-transform: rotate(60deg);}
+}
