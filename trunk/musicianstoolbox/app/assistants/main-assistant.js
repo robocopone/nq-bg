@@ -35,12 +35,13 @@ tapTempo.initialized = false;
 tapTempo.pitchKey = 'A'
 tapTempo.pitchOctave = 4;
 tapTempo.pitchDuration = 5;
+tapTempo.pitchInitialAudioAttempt = true;
 
 tapTempo.cookie = ({
 	initialize: function() {
 		this.cookieData = new Mojo.Model.Cookie("netBradleyGraberTapTempo");
 		storedData = this.cookieData.get();
-		if (storedData && storedData.version == "1.1.0") {
+		if (storedData && storedData.version >= "1.1.0") {
 			tapTempo.resetDuration = storedData.resetDuration;
 			tapTempo.currentNum = storedData.currentNum;
 			tapTempo.metroTempo = storedData.metroTempo
@@ -55,11 +56,14 @@ tapTempo.cookie = ({
 			tapTempo.pitchOctave = storedData.pitchOctave
 			tapTempo.pitchDuration = storedData.pitchDuration
 		}
+		if (storedData && storedData.version == "1.1.1") {
+			tapTempo.pitchInitialAudioAttempt = storedData.pitchInitialAudioAttempt
+		}
 		this.storeCookie();
 	},
 	storeCookie: function() {
 		this.cookieData.put({  
-			version: "1.1.0",
+			version: "1.1.1",
 			resetDuration: tapTempo.resetDuration,
 			currentNum: tapTempo.currentNum,
 			metroTempo: tapTempo.metroTempo,
@@ -73,6 +77,7 @@ tapTempo.cookie = ({
 			pitchDuration: tapTempo.pitchDuration,
 			metroBeatSetup: tapTempo.metroBeatSetup.slice(0),
 			initialized: tapTempo.initialized,
+			pitchInitialAudioAttempt: tapTempo.pitchInitialAudioAttempt,
 		});		
 	}
 });
@@ -96,8 +101,8 @@ MainAssistant.prototype.setup = function() {
 	}
 
 	// Load the MediaExtension library
-//	try{ this.libs = MojoLoader.require({ name: "mediaextension", version: "1.0"}); }
-//	catch(e){ Mojo.Log.error("Cannot load mediaextension library: "+e.message); }	
+	try{ this.libs = MojoLoader.require({ name: "mediaextension", version: "1.0"}); }
+	catch(e){ Mojo.Log.error("Cannot load mediaextension library: "+e.message); }	
 
 	var local = {}
 	
@@ -106,7 +111,7 @@ MainAssistant.prototype.setup = function() {
 	tapTempo.elements.currentTempo = this.controller.get('currentTempo')
 	
 	tapTempo.elements.tapTempoArea = this.controller.get('tapTempoArea')
-//	tapTempo.elements.pitchPipeArea = this.controller.get('pitchPipeArea')
+	tapTempo.elements.pitchPipeArea = this.controller.get('pitchPipeArea')
 	tapTempo.elements.metronomeArea = this.controller.get('metronomeArea')
 
 	tapTempo.elements.currentLock = this.controller.get('currentLock')
@@ -242,8 +247,6 @@ MainAssistant.prototype.setup = function() {
 	});
 
 
-
-/*
 	//Pitch Key select
 	this.controller.setupWidget("pitchKeySelector", {
 		labelPlacement: Mojo.Widget.labelPlacementLeft,
@@ -331,7 +334,7 @@ MainAssistant.prototype.setup = function() {
 		modelProperty: 'value',
 		min: 1,
 		max: 20,
-	}, {
+	}, this.pitchDurationSelectorModel = {
 		value: tapTempo.pitchDuration
 	});
 
@@ -343,7 +346,7 @@ MainAssistant.prototype.setup = function() {
 		buttonClass: 'affirmative',
 		disabled: false
 	});
-*/
+
 	this.unlockFlick = Mojo.Function.debounce(undefined, this.doUnlockFlick.bind(this), .1);
 	this.lock = Mojo.Function.debounce(undefined, this.doLock.bind(this), tapTempo.resetDuration);
 	this.runMetronome = Mojo.Function.debounce(undefined, this.doRunMetronome.bind(this), .01);
@@ -363,10 +366,10 @@ MainAssistant.prototype.setup = function() {
 	this.controller.listen("metroBeatSetupMeasure11", Mojo.Event.tap, this.metroBeatSetupMeasure11.bindAsEventListener(this))
 	this.controller.listen("metroBeatSetupMeasure12", Mojo.Event.tap, this.metroBeatSetupMeasure12.bindAsEventListener(this))
 	this.controller.listen("metroBeatSetupButton", Mojo.Event.tap, this.metroBeatSetupButton.bindAsEventListener(this))
-//	this.controller.listen("pitchStart", Mojo.Event.tap, this.pitchStart.bindAsEventListener(this))	
-//	this.controller.listen("pitchDurationSelector", Mojo.Event.propertyChange, this.pitchDurationSelector.bindAsEventListener(this));
-//	this.controller.listen("pitchKeySelector", Mojo.Event.propertyChange, this.pitchKeySelector.bindAsEventListener(this));
-//	this.controller.listen("pitchOctaveSelector",Mojo.Event.propertyChange, this.pitchOctaveSelector.bindAsEventListener(this));
+	this.controller.listen("pitchStart", Mojo.Event.tap, this.pitchStart.bindAsEventListener(this))	
+	this.controller.listen("pitchDurationSelector", Mojo.Event.propertyChange, this.pitchDurationSelector.bindAsEventListener(this));
+	this.controller.listen("pitchKeySelector", Mojo.Event.propertyChange, this.pitchKeySelector.bindAsEventListener(this));
+	this.controller.listen("pitchOctaveSelector",Mojo.Event.propertyChange, this.pitchOctaveSelector.bindAsEventListener(this));
 	this.controller.listen(tapTempo.elements.avgLock,Mojo.Event.propertyChange,this.lockAvg.bindAsEventListener(this));
 	this.controller.listen(tapTempo.elements.currentLock,Mojo.Event.propertyChange,this.lockCurrent.bindAsEventListener(this));
 	this.controller.listen(this.controller.document, Mojo.Event.flick, this.catchFlick.bindAsEventListener(this))
@@ -387,13 +390,14 @@ MainAssistant.prototype.setup = function() {
 //	this.pitchAudio = this.controller.get('pitchAudio');
 //	this.pitchExtAudio = this.libs.mediaextension.MediaExtension.getInstance(this.pitchAudio);
 //	this.pitchExtAudio.audioClass = 'media';
+//	this.pitchAudio.play();
 //	this.audioSetup();
 }
 MainAssistant.prototype.cleanup = function(event) {
-//	this.controller.stopListening("pitchStart", Mojo.Event.tap, this.pitchStart.bindAsEventListener(this))	
-//	this.controller.stopListening("pitchKeySelector", Mojo.Event.propertyChange, this.pitchKeySelector.bindAsEventListener(this));
-//	this.controller.stopListening("pitchOctaveSelector",Mojo.Event.propertyChange, this.pitchOctaveSelector.bindAsEventListener(this));
-//	this.controller.stopListening("pitchDurationSelector", Mojo.Event.propertyChange, this.pitchDurationSelector.bindAsEventListener(this));
+	this.controller.stopListening("pitchStart", Mojo.Event.tap, this.pitchStart.bindAsEventListener(this))	
+	this.controller.stopListening("pitchKeySelector", Mojo.Event.propertyChange, this.pitchKeySelector.bindAsEventListener(this));
+	this.controller.stopListening("pitchOctaveSelector",Mojo.Event.propertyChange, this.pitchOctaveSelector.bindAsEventListener(this));
+	this.controller.stopListening("pitchDurationSelector", Mojo.Event.propertyChange, this.pitchDurationSelector.bindAsEventListener(this));
 	this.controller.stopListening("metroBeatSetupOkButton", Mojo.Event.tap, this.metroBeatSetupOkButton.bindAsEventListener(this))
 	this.controller.stopListening("metroBeatSetupMeasure1", Mojo.Event.tap, this.metroBeatSetupMeasure1.bindAsEventListener(this))
 	this.controller.stopListening("metroBeatSetupMeasure2", Mojo.Event.tap, this.metroBeatSetupMeasure2.bindAsEventListener(this))
@@ -485,20 +489,59 @@ MainAssistant.prototype.handleAudioEvent = function (event) {
 		Mojo.Log.error("PlayAudioAssistant::eventHandlerMedia threw: ", Object.toJSON(e));
 	}
 }
-MainAssistant.prototype.pitchStart = function () {
-	var local = {}
-	local.key = tapTempo.pitchKey + tapTempo.pitchOctave
-	
-	this.pitchAudio.play()
-}
 MainAssistant.prototype.doReplay = function () {
 	this.pitchAudio.currentTime = 0.0
 }
 */
-MainAssistant.prototype.pitchDurationSelector = function (event) {
-	tapTempo.pitchDuration = event.value
+
+MainAssistant.prototype.pitchStart = function () {
+	if (tapTempo.pitchInitialAudioAttempt)
+		this.controller.showAlertDialog({
+			onChoose: this.pitchInitialAudioAttempt,
+			title: $L("Audio Alert"),
+			message: $L('The volume buttons on the side will only control the volume of the tone while the tone is playing.  This is another audio issue that is out of my control'),
+			choices: [{
+				label: $L('Ok'),
+				value: 'ok',
+				type: 'affirmative'
+			}, {
+				label: $L('Don\'t tell me again'),
+				value: 'no',
+				type: 'negative'
+			}, ]
+		});
+
+	var local = {}
+	local.key = tapTempo.pitchKey + tapTempo.pitchOctave
+	
+	local.audio = new Audio()
+	local.audio.src = Mojo.appPath + "/audio/" + local.key + ".mp3"
+	local.audio.play()
+}
+MainAssistant.prototype.pitchInitialAudioAttempt = function(choice) {
+	if (choice == 'no') {
+		tapTempo.pitchInitialAudioAttempt = false;
+	}
 	tapTempo.cookie.storeCookie();
 }
+
+MainAssistant.prototype.pitchDurationSelector = function(event){
+//	tapTempo.pitchDuration = event.value
+//	tapTempo.cookie.storeCookie();
+	this.controller.showAlertDialog({
+		onChoose: this.metroInitialAudioAttempt,
+		title: $L("Audio Disclaimer"),
+		message: $L('I apologize, but until I can find a satisfactory way of looping audio with no pauses on the Pre I cannot support variable length tones.  If you\'re aware of an app that does, please let me know & I will look into it.'),
+		choices: [{
+			label: $L('Ok'),
+			value: 'ok',
+			type: 'affirmative'
+		}, ]
+	});
+	this.pitchDurationSelectorModel.value = 5;
+	this.controller.modelChanged(this.pitchDurationSelectorModel, this);
+}
+		
 MainAssistant.prototype.pitchKeySelector = function (event) {
 	tapTempo.pitchKey = event.value
 	tapTempo.cookie.storeCookie();
@@ -718,19 +761,19 @@ MainAssistant.prototype.catchFlick = function(event) {
 	if (tapTempo.flickLock)
 		return;
 	var local = {}
-//	local.pitchPipeAreaLeft = parseInt(tapTempo.elements.pitchPipeArea.getStyle('left'))
+	local.pitchPipeAreaLeft = parseInt(tapTempo.elements.pitchPipeArea.getStyle('left'))
 	local.tapTempoAreaLeft = parseInt(tapTempo.elements.tapTempoArea.getStyle('left'))
 	local.metronomeAreaLeft = parseInt(tapTempo.elements.metronomeArea.getStyle('left'))
 	
 	//Move Left
-	if (event.velocity.x > 0 && local.tapTempoAreaLeft != 0) {
-//		tapTempo.elements.pitchPipeArea.setStyle({ left: local.pitchPipeAreaLeft + 320 + 'px'})
+	if (event.velocity.x > 0 && local.pitchPipeAreaLeft != 0) {
+		tapTempo.elements.pitchPipeArea.setStyle({ left: local.pitchPipeAreaLeft + 320 + 'px'})
 		tapTempo.elements.tapTempoArea.setStyle({ left: local.tapTempoAreaLeft + 320 + 'px'})
 		tapTempo.elements.metronomeArea.setStyle({ left: local.metronomeAreaLeft + 320 + 'px'})
 	}
 	//Move Right
 	if (event.velocity.x < 0 && local.metronomeAreaLeft != 0) {
-//		tapTempo.elements.pitchPipeArea.setStyle({ left: local.pitchPipeAreaLeft - 320 + 'px'})
+		tapTempo.elements.pitchPipeArea.setStyle({ left: local.pitchPipeAreaLeft - 320 + 'px'})
 		tapTempo.elements.tapTempoArea.setStyle({ left: local.tapTempoAreaLeft - 320 + 'px'})
 		tapTempo.elements.metronomeArea.setStyle({ left: local.metronomeAreaLeft - 320 + 'px'})
 	}
