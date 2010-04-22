@@ -1,3 +1,4 @@
+<!-- Tap Tempo Area -->
 <div id="tapTempoArea">
 	<div class="palm-page-header">
 		<div class="palm-page-header-wrapper">
@@ -35,6 +36,8 @@
 	<div id="currentNumLine2">beats</div>
 	<div id="currentNumPicker" x-mojo-element="IntegerPicker"></div>
 </div>
+
+<!-- Pitch Pipe Area -->
 <div id="pitchPipeArea">
 	<div class="palm-page-header">
 		<div class="palm-page-header-wrapper">
@@ -44,20 +47,26 @@
 			</div>
 		</div>
 	</div>
-
-	<div id="pitchKeyGroup" class="palm-group">
-		<div class="palm-group-title">   
-			<div id="pitchKeyGroupTitle">Key</div>
+	<!-- <div id="pitchTunerSelector" x-mojo-element="RadioButton"></div> -->
+	<div id="pitchPitch">
+		<div id="pitchKeyGroup" class="palm-group">
+			<div class="palm-group-title">   
+				<div id="pitchKeyGroupTitle">Pitch</div>
+			</div>
+			<div id="pitchKeySelector" x-mojo-element="ListSelector"></div>
+			<div id="pitchOctaveSelector" x-mojo-element="ListSelector"></div>
 		</div>
-		<div id="pitchKeySelector" x-mojo-element="ListSelector"></div>
-		<div id="pitchOctaveSelector" x-mojo-element="ListSelector"></div>
+		<div id="pitchDurationSelectionline1">Play tone for</div>
+		<div id="pitchDurationSelectionline2">seconds</div>
+		<div id="pitchDurationSelector" x-mojo-element="IntegerPicker"></div>
+		<div id="pitchStart" x-mojo-element="Button"></div>
 	</div>
-	<div id="pitchDurationSelectionline1">Play tone for</div>
-	<div id="pitchDurationSelectionline2">seconds</div>
-	<div id="pitchDurationSelector" x-mojo-element="IntegerPicker"></div>
-	<div id="pitchStart" x-mojo-element="Button"></div>
+	<div id="pitchTuner">
+	</div>
 	<!--<audio id="pitchAudio" controls="false" x-palm-media-audio-class="media"  src="audio/A4.mp3">-->
 </div>
+
+<!-- Metronome Area -->
 <div id="metronomeArea">
 	<div class="palm-page-header">
 		<div class="palm-page-header-wrapper">

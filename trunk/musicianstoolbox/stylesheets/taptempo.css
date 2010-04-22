@@ -3,7 +3,7 @@
 .floatRight { float: right; }
 
 #tapTitle { margin-left: 77px; float: left; }
-#pitchTitle { margin-left: 83px; float: left; }
+#pitchTitle { margin-left: 90px; float: left; }
 #metroTitle { margin-left: 83px; float: left; }
 
 /*
@@ -127,14 +127,19 @@
 	width: 120px;
 }
 #pitchKeyGroup {
+	margin-top: 70px;
 	height: 31px;
 }
+#pitchTunerSelector {
+	width: 320px;
+}
+
 #pitchKeySelector {
 	width: 100px;
 	padding-top: 15px;
 	height: 45px;
 	position: absolute;
-	top: 85px;
+	top: 150px;
 	left: 45px;
 }
 #pitchOctaveSelector {
@@ -142,27 +147,27 @@
 	height: 45px;
 	width: 130px;
 	position: absolute;
-	top: 85px;
+	top: 150px;
 	left: 150px;
 }
 #pitchDurationSelectionline1 {
 	position: absolute;
-	top: 165px;
+	top: 230px;
 	left: 30px;
 }
 #pitchDurationSelectionline2 {
 	position: absolute;
-	top: 165px;
+	top: 230px;
 	left: 210px;
 }
 #pitchDurationSelector {
 	position: absolute;
-	top: 150px;
+	top: 215px;
 	left: 120px;
 }
 #pitchStart {
 	position: absolute;
-	top: 205px;
+	top: 270px;
 	width: 320px;
 }
 /*
