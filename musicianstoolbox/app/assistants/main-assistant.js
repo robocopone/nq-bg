@@ -362,7 +362,7 @@ MainAssistant.prototype.setup = function(){
 	// Pitch Start Button Widget
 	this.controller.setupWidget('pitchStart', {
 		type: Mojo.Widget.defaultButton
-	}, this.metroStartStopModel = {
+	}, {
 		buttonLabel: $L("Go"),
 		buttonClass: 'affirmative',
 		disabled: false
@@ -652,9 +652,6 @@ MainAssistant.prototype.metroStartStop = function () {
 	}
 	else {
 		tapTempo.metroIsRunning = true;
-		this.metroStartStopModel.buttonLabel = 'Stop';
-		this.metroStartStopModel.buttonClass = 'negative';
-		this.controller.modelChanged(this.metroStartStopModel, this);
 		tapTempo.metroDelay = (1 / (tapTempo.metroTempo / 60)) * 1000
 		tapTempo.metroTotalBeats = 1;
 		tapTempo.currentBeat = 1;
@@ -665,13 +662,16 @@ MainAssistant.prototype.metroStartStop = function () {
 		if (tapTempo.metroAlertAudible)
 			this.playAudibleAlert();
 		this.runMetronome();
+		this.metroStartStopModel.buttonLabel = 'Stop';
+		this.metroStartStopModel.buttonClass = 'negative';
+		this.controller.modelChanged(this.metroStartStopModel, this);
 	}
 }
 MainAssistant.prototype.doRunMetronome = function () {
-	this.finish = new Date().getTime()
-	var deltaT = this.finish - this.start
+	var deltaT = new Date().getTime() - this.start
+	if (tapTempo.metroIsRunning)
+		this.runMetronome();
 	if (deltaT > tapTempo.metroDelay * tapTempo.metroTotalBeats) {
-		this.lagFighter();
 		tapTempo.metroTotalBeats++
 		tapTempo.currentBeat++
 		if (tapTempo.currentBeat > tapTempo.metroMeasure) 
@@ -688,9 +688,8 @@ MainAssistant.prototype.doRunMetronome = function () {
 		// Audible Alert
 		if (tapTempo.metroAlertAudible)
 			this.playAudibleAlert();
+		this.lagFighter();
 	}
-	if (tapTempo.metroIsRunning)
-		this.runMetronome();
 }
 MainAssistant.prototype.playVisableAlert = function () {
 	tapTempo.elements.metroVisualAlert.removeClassName('hidden')
