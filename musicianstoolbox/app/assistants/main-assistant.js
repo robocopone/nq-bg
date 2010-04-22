@@ -37,6 +37,9 @@ tapTempo.pitchKey = 'A'
 tapTempo.pitchOctave = 4;
 tapTempo.pitchDuration = 5;
 tapTempo.pitchInitialAudioAttempt = true;
+//tapTempo.pitchTunerSelector = 'pitch'
+//tapTempo.pitchTunerGuitar = '6string'
+//tapTempo.pitchTunerTuning = 'standard'
 
 tapTempo.cookie = ({
 	initialize: function() {
@@ -60,6 +63,7 @@ tapTempo.cookie = ({
 		if (storedData && storedData.version == "1.1.1") {
 			tapTempo.pitchInitialAudioAttempt = storedData.pitchInitialAudioAttempt
 			tapTempo.tapTempoAreaLeft = storedData.tapTempoAreaLeft
+			tapTempo.pitchTunerSelector = storedData.pitchTunerSelector
 		}
 		this.storeCookie();
 	},
@@ -81,6 +85,7 @@ tapTempo.cookie = ({
 			initialized: tapTempo.initialized,
 			pitchInitialAudioAttempt: tapTempo.pitchInitialAudioAttempt,
 			tapTempoAreaLeft: tapTempo.tapTempoAreaLeft,
+			pitchTunerSelector: tapTempo.pitchTunerSelector,
 		});		
 	}
 });
@@ -123,10 +128,16 @@ MainAssistant.prototype.setup = function(){
 	tapTempo.elements.metronomeArea = this.controller.get('metronomeArea')
 	local.pitchAreaLeft = tapTempo.tapTempoAreaLeft - 320
 	local.metroAreaLeft = tapTempo.tapTempoAreaLeft + 320
-	tapTempo.elements.tapTempoArea.setStyle({ "left": tapTempo.tapTempoAreaLeft + "px" })
-	tapTempo.elements.pitchPipeArea.setStyle({ "left": local.pitchAreaLeft + "px" })
-	tapTempo.elements.metronomeArea.setStyle({ "left": local.metroAreaLeft + "px" })
-
+	tapTempo.elements.tapTempoArea.setStyle({
+		"left": tapTempo.tapTempoAreaLeft + "px"
+	})
+	tapTempo.elements.pitchPipeArea.setStyle({
+		"left": local.pitchAreaLeft + "px"
+	})
+	tapTempo.elements.metronomeArea.setStyle({
+		"left": local.metroAreaLeft + "px"
+	})
+	
 	tapTempo.elements.currentLock = this.controller.get('currentLock')
 	tapTempo.elements.avgLock = this.controller.get('avgLock')
 	
@@ -138,7 +149,7 @@ MainAssistant.prototype.setup = function(){
 	tapTempo.elements.metroStartStop = this.controller.get('metroStartStop')
 	tapTempo.elements.metroVisualAlert = this.controller.get('metroVisualAlert')
 	tapTempo.elements.metroVisualAlertNum = this.controller.get('metroVisualAlertNum')
-
+	
 	tapTempo.elements.metroBeatSetupButton = []
 	this.metroBeatSetupButtonModel = []
 	var element;
@@ -155,7 +166,7 @@ MainAssistant.prototype.setup = function(){
 	}
 	
 	tapTempo.elements.pitchTitle = this.controller.get('pitchTitle')
-
+	
 	this.controller.setupWidget('resetDuration2', {
 		label: $L(" "),
 		modelProperty: 'value',
@@ -164,7 +175,7 @@ MainAssistant.prototype.setup = function(){
 	}, {
 		value: tapTempo.resetDuration
 	});
-
+	
 	this.controller.setupWidget('resetDuration', {
 		label: $L(" "),
 		modelProperty: 'value',
@@ -173,7 +184,7 @@ MainAssistant.prototype.setup = function(){
 	}, {
 		value: tapTempo.resetDuration
 	});
-
+	
 	this.controller.setupWidget('currentNumPicker', {
 		label: $L(" "),
 		modelProperty: 'value',
@@ -182,21 +193,21 @@ MainAssistant.prototype.setup = function(){
 	}, {
 		value: tapTempo.currentNum
 	});
-
+	
 	this.controller.setupWidget('currentLock', {
 		trueLabel: $L("Locked"),
 		falseLabel: $L("Ready")
 	}, this.currentLockModel = {
 		value: false,
 	});
-
+	
 	this.controller.setupWidget('avgLock', {
 		trueLabel: $L("Locked"),
 		falseLabel: $L("Ready")
 	}, this.avgLockModel = {
 		value: false,
 	});
-
+	
 	this.controller.setupWidget('setMetroTempo', {
 		label: $L(" "),
 		modelProperty: 'value',
@@ -205,7 +216,7 @@ MainAssistant.prototype.setup = function(){
 	}, this.setMetroTempoModel = {
 		value: tapTempo.metroTempo
 	});
-
+	
 	this.controller.setupWidget('setMetroMeasure', {
 		label: $L(" "),
 		modelProperty: 'value',
@@ -214,7 +225,7 @@ MainAssistant.prototype.setup = function(){
 	}, this.setMetroMeasureModel = {
 		value: tapTempo.metroMeasure
 	});
-
+	
 	// Metro Start/Stop Button Widget
 	this.controller.setupWidget('metroStartStop', {
 		type: Mojo.Widget.defaultButton
@@ -223,24 +234,21 @@ MainAssistant.prototype.setup = function(){
 		buttonClass: 'affirmative',
 		disabled: false
 	});
-
+	
 	// Types of alerts checkboxes
-	this.controller.setupWidget("metroAlertVisable", {
-	}, {
+	this.controller.setupWidget("metroAlertVisable", {}, {
 		value: tapTempo.metroAlertVisable,
 		disabled: false
 	});
-	this.controller.setupWidget("metroAlertAudible", {
-	}, {
+	this.controller.setupWidget("metroAlertAudible", {}, {
 		value: tapTempo.metroAlertAudible,
 		disabled: false
 	});
-	this.controller.setupWidget("metroAlertVibration", {
-	}, {
+	this.controller.setupWidget("metroAlertVibration", {}, {
 		value: tapTempo.metroAlertVibration,
 		disabled: false
 	});
-
+	
 	// Metro Beat setup Button Widget
 	this.controller.setupWidget('metroBeatSetupButton', {
 		type: Mojo.Widget.defaultButton
@@ -249,7 +257,7 @@ MainAssistant.prototype.setup = function(){
 		buttonClass: 'normal',
 		disabled: false
 	});
-
+	
 	// Metro Beat setup OK Button Widget
 	this.controller.setupWidget('metroBeatSetupOkButton', {
 		type: Mojo.Widget.defaultButton
@@ -258,8 +266,8 @@ MainAssistant.prototype.setup = function(){
 		buttonClass: 'affirmative',
 		disabled: false
 	});
-
-
+	
+	
 	//Pitch Key select
 	this.controller.setupWidget("pitchKeySelector", {
 		labelPlacement: Mojo.Widget.labelPlacementLeft,
@@ -341,7 +349,7 @@ MainAssistant.prototype.setup = function(){
 		value: tapTempo.pitchOctave,
 		disabled: false
 	});
-
+	
 	this.controller.setupWidget('pitchDurationSelector', {
 		label: $L(" "),
 		modelProperty: 'value',
@@ -350,7 +358,7 @@ MainAssistant.prototype.setup = function(){
 	}, this.pitchDurationSelectorModel = {
 		value: tapTempo.pitchDuration
 	});
-
+	
 	// Pitch Start Button Widget
 	this.controller.setupWidget('pitchStart', {
 		type: Mojo.Widget.defaultButton
@@ -359,6 +367,21 @@ MainAssistant.prototype.setup = function(){
 		buttonClass: 'affirmative',
 		disabled: false
 	});
+
+/*	
+	this.controller.setupWidget('pitchTunerSelector', {
+		choices: [{
+			label: 'Pitch Pipe',
+			value: 'pitch'
+		}, {
+			label: 'Guitar Tuner',
+			value: 'tuner'
+		}]
+	}, {
+		value: tapTempo.pitchTunerSelector,
+		disabled: false
+	});
+*/
 
 	this.unlockFlick = Mojo.Function.debounce(undefined, this.doUnlockFlick.bind(this), .1);
 	this.lock = Mojo.Function.debounce(undefined, this.doLock.bind(this), tapTempo.resetDuration);
@@ -382,7 +405,8 @@ MainAssistant.prototype.setup = function(){
 	this.controller.listen("pitchStart", Mojo.Event.tap, this.pitchStart.bindAsEventListener(this))	
 	this.controller.listen("pitchDurationSelector", Mojo.Event.propertyChange, this.pitchDurationSelector.bindAsEventListener(this));
 	this.controller.listen("pitchKeySelector", Mojo.Event.propertyChange, this.pitchKeySelector.bindAsEventListener(this));
-	this.controller.listen("pitchOctaveSelector",Mojo.Event.propertyChange, this.pitchOctaveSelector.bindAsEventListener(this));
+	this.controller.listen("pitchOctaveSelector", Mojo.Event.propertyChange, this.pitchOctaveSelector.bindAsEventListener(this));
+//	this.controller.listen("pitchTunerSelector", Mojo.Event.propertyChange,this.pitchTunerSelector.bindAsEventListener(this));
 	this.controller.listen(tapTempo.elements.avgLock,Mojo.Event.propertyChange,this.lockAvg.bindAsEventListener(this));
 	this.controller.listen(tapTempo.elements.currentLock,Mojo.Event.propertyChange,this.lockCurrent.bindAsEventListener(this));
 	this.controller.listen(this.controller.document, Mojo.Event.flick, this.catchFlick.bindAsEventListener(this))
@@ -407,6 +431,7 @@ MainAssistant.prototype.setup = function(){
 //	this.audioSetup();
 }
 MainAssistant.prototype.cleanup = function(event) {
+//	this.controller.stopListening("pitchTunerSelector",Mojo.Event.propertyChange,this.pitchTunerSelector.bindAsEventListener(this));
 	this.controller.stopListening("pitchStart", Mojo.Event.tap, this.pitchStart.bindAsEventListener(this))	
 	this.controller.stopListening("pitchKeySelector", Mojo.Event.propertyChange, this.pitchKeySelector.bindAsEventListener(this));
 	this.controller.stopListening("pitchOctaveSelector",Mojo.Event.propertyChange, this.pitchOctaveSelector.bindAsEventListener(this));
@@ -457,7 +482,16 @@ MainAssistant.prototype.metroBeatSetupOkButton = function () {
 	}
 }
 
-
+/*
+MainAssistant.prototype.pitchTunerSelector = function (event) {
+	if (event.value == 'pitch') {
+		
+	}
+	if (event.value == 'tuner') {
+		
+	}
+}
+*/
 /*
 MainAssistant.prototype.audioSetup = function() {
 	this.pitchAudio.addEventListener('play', this.handleAudioEvent.bindAsEventListener(this), false);
