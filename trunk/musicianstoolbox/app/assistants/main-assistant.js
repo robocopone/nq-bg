@@ -31,6 +31,7 @@ tapTempo.metroBeatSetup[11] = 'primary'
 tapTempo.metroBeatSetup[12] = 'primary'
 tapTempo.metroBeatSetup[13] = 'primary'
 tapTempo.initialized = false;
+tapTempo.tapTempoAreaLeft = 0;
 
 tapTempo.pitchKey = 'A'
 tapTempo.pitchOctave = 4;
@@ -58,6 +59,7 @@ tapTempo.cookie = ({
 		}
 		if (storedData && storedData.version == "1.1.1") {
 			tapTempo.pitchInitialAudioAttempt = storedData.pitchInitialAudioAttempt
+			tapTempo.tapTempoAreaLeft = storedData.tapTempoAreaLeft
 		}
 		this.storeCookie();
 	},
@@ -78,6 +80,7 @@ tapTempo.cookie = ({
 			metroBeatSetup: tapTempo.metroBeatSetup.slice(0),
 			initialized: tapTempo.initialized,
 			pitchInitialAudioAttempt: tapTempo.pitchInitialAudioAttempt,
+			tapTempoAreaLeft: tapTempo.tapTempoAreaLeft,
 		});		
 	}
 });
@@ -87,7 +90,7 @@ function MainAssistant() {
 
 }
 
-MainAssistant.prototype.setup = function() {
+MainAssistant.prototype.setup = function(){
 	tapTempo.cookie.initialize();
 	if (!tapTempo.initialized) {
 		Mojo.Log.error('Initializing')
@@ -99,20 +102,30 @@ MainAssistant.prototype.setup = function() {
 		tapTempo.cookie.storeCookie();
 		tapTempo.cookie.initialize();
 	}
-
-	// Load the MediaExtension library
-	try{ this.libs = MojoLoader.require({ name: "mediaextension", version: "1.0"}); }
-	catch(e){ Mojo.Log.error("Cannot load mediaextension library: "+e.message); }	
-
-	var local = {}
 	
-	tapTempo.cookie.initialize();
+	// Load the MediaExtension library
+	try {
+		this.libs = MojoLoader.require({
+			name: "mediaextension",
+			version: "1.0"
+		});
+	} 
+	catch (e) {
+		Mojo.Log.error("Cannot load mediaextension library: " + e.message);
+	}
+	
+	var local = {}
 	tapTempo.elements.avgTempo = this.controller.get('avgTempo')
 	tapTempo.elements.currentTempo = this.controller.get('currentTempo')
 	
 	tapTempo.elements.tapTempoArea = this.controller.get('tapTempoArea')
 	tapTempo.elements.pitchPipeArea = this.controller.get('pitchPipeArea')
 	tapTempo.elements.metronomeArea = this.controller.get('metronomeArea')
+	local.pitchAreaLeft = tapTempo.tapTempoAreaLeft - 320
+	local.metroAreaLeft = tapTempo.tapTempoAreaLeft + 320
+	tapTempo.elements.tapTempoArea.setStyle({ "left": tapTempo.tapTempoAreaLeft + "px" })
+	tapTempo.elements.pitchPipeArea.setStyle({ "left": local.pitchAreaLeft + "px" })
+	tapTempo.elements.metronomeArea.setStyle({ "left": local.metroAreaLeft + "px" })
 
 	tapTempo.elements.currentLock = this.controller.get('currentLock')
 	tapTempo.elements.avgLock = this.controller.get('avgLock')
@@ -767,16 +780,19 @@ MainAssistant.prototype.catchFlick = function(event) {
 	
 	//Move Left
 	if (event.velocity.x > 0 && local.pitchPipeAreaLeft != 0) {
+		tapTempo.tapTempoAreaLeft = local.tapTempoAreaLeft + 320
 		tapTempo.elements.pitchPipeArea.setStyle({ left: local.pitchPipeAreaLeft + 320 + 'px'})
-		tapTempo.elements.tapTempoArea.setStyle({ left: local.tapTempoAreaLeft + 320 + 'px'})
+		tapTempo.elements.tapTempoArea.setStyle({ left: tapTempo.tapTempoAreaLeft + 'px'})
 		tapTempo.elements.metronomeArea.setStyle({ left: local.metronomeAreaLeft + 320 + 'px'})
 	}
 	//Move Right
 	if (event.velocity.x < 0 && local.metronomeAreaLeft != 0) {
+		tapTempo.tapTempoAreaLeft = local.tapTempoAreaLeft - 320
 		tapTempo.elements.pitchPipeArea.setStyle({ left: local.pitchPipeAreaLeft - 320 + 'px'})
-		tapTempo.elements.tapTempoArea.setStyle({ left: local.tapTempoAreaLeft - 320 + 'px'})
+		tapTempo.elements.tapTempoArea.setStyle({ left: tapTempo.tapTempoAreaLeft + 'px'})
 		tapTempo.elements.metronomeArea.setStyle({ left: local.metronomeAreaLeft - 320 + 'px'})
 	}
+	tapTempo.cookie.storeCookie();
 }
 MainAssistant.prototype.reset = function () {
 	tapTempo.duration = {};
