@@ -1,0 +1,37 @@
+#tall { height: 150px }
+#rawDataGroup { height: 80px; }
+.rawTitle { float: left; }
+.rawData {
+	margin-top: 5px;
+	margin-right: 5px;
+	margin-left: 5px;
+	float: left;
+	width: 90px;
+	text-align: right;
+	font-family: "Courier New", Courier, monospace !important
+}
+
+#xMinMaxGroup { height: 30px; }
+#yMinMaxGroup { height: 30px; }
+#zMinMaxGroup { height: 30px; }
+#netMinMaxGroup { height: 30px; }
+
+.netTitle { float: left; }
+.minData {
+	margin-top: 3px;
+	margin-right: 6px;
+	margin-left: 6px;
+	float: left;
+	width: 85px;
+	text-align: left;
+	font-family: "Courier New", Courier, monospace !important
+}
+.maxData {
+	margin-top: 3px;
+	margin-right: 6px;
+	margin-left: 6px;
+	float: left;
+	width: 80px;
+	text-align: left;
+	font-family: "Courier New", Courier, monospace !important
+}
