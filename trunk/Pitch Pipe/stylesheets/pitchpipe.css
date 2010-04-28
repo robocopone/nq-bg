@@ -1,0 +1,49 @@
+#pitchTitle { margin-left: 90px;}
+.keySelect {
+	float: left;
+	width: 120px;
+}
+#pitchKeyGroup {
+	margin-top: 70px;
+	height: 31px;
+}
+#pitchTunerSelector {
+	width: 320px;
+}
+
+#pitchKeySelector {
+	width: 100px;
+	padding-top: 15px;
+	height: 45px;
+	position: absolute;
+	top: 150px;
+	left: 45px;
+}
+#pitchOctaveSelector {
+	padding-top: 15px;
+	height: 45px;
+	width: 130px;
+	position: absolute;
+	top: 150px;
+	left: 150px;
+}
+#pitchDurationSelectionline1 {
+	position: absolute;
+	top: 230px;
+	left: 30px;
+}
+#pitchDurationSelectionline2 {
+	position: absolute;
+	top: 230px;
+	left: 210px;
+}
+#pitchDurationSelector {
+	position: absolute;
+	top: 215px;
+	left: 120px;
+}
+#pitchStart {
+	position: absolute;
+	top: 270px;
+	width: 320px;
+}
