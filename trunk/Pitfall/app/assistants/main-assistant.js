@@ -211,7 +211,7 @@ MainAssistant.prototype.setup = function(){
 	}, local.buyButtonModel);
 
 	this.goEasy = Mojo.Function.debounce(undefined, this.doGo.bind(this), .5);
-	this.goHard = Mojo.Function.debounce(undefined, this.doGo.bind(this), .25);
+	this.goHard = Mojo.Function.debounce(undefined, this.doGo.bind(this), .10);
 
 	this.controller.listen(elements.buyButton, Mojo.Event.tap, this.tapBuyButton.bindAsEventListener(this))
 	this.controller.listen(elements.appHeader,Mojo.Event.tap, this.nav.bindAsEventListener(this));
@@ -225,6 +225,9 @@ MainAssistant.prototype.setup = function(){
 	
 
 	this.initGame();
+	this.timing = {}
+	this.timing.start = new Date().getTime()
+	this.timing.accelStart = new Date().getTime()
 }
 
 /*
@@ -252,6 +255,11 @@ MainAssistant.prototype.activate = function(event) {
  * Iterative function
  */
 MainAssistant.prototype.doGo = function(){
+	this.timing.finish = new Date().getTime()
+	Mojo.Log.error('**************************************')
+	Mojo.Log.error('((Start main loop)) duration: ' + (this.timing.finish - this.timing.start))
+
+	var start = new Date().getTime()
 	this.controller.stageController.setWindowProperties({
 		fastAccelerometer: false
 	});
@@ -274,15 +282,22 @@ MainAssistant.prototype.doGo = function(){
 	}
 	else 
 		this.stop('paused');
+	var finish = new Date().getTime()
+	Mojo.Log.error('((End main loop)) duration: ' + (finish - start))
+	Mojo.Log.error('**************************************')
+	this.timing.start = new Date().getTime()
 }
 
 /*
  * Accelerometer function
  */
 MainAssistant.prototype.checkAccel = function(event){
+	this.timing.accelFinish = new Date().getTime()
 	global.accelTimingFinish = new Date().getTime();
 	var deltaT = global.accelTimingFinish - global.accelTimingStart
-	if (deltaT > 100 && deltaT < 500) {
+	if (deltaT > 10 && deltaT < 500) {
+	Mojo.Log.error('.............................Accel Start - Time Outside: ' +
+				(this.timing.accelFinish - this.timing.accelStart))
 		elements.clock.update(Mojo.Format.formatDate( new Date(), { time: 'medium' } ) );
 		if (!global.moveable) 
 			return;
@@ -295,7 +310,7 @@ MainAssistant.prototype.checkAccel = function(event){
 	else if (deltaT >= 500) {
 		global.paused = true;
 	}
-	
+	this.timing.accelStart = new Date().getTime()
 }
 
 MainAssistant.prototype.moveShip = function (direction, magnitude) {
