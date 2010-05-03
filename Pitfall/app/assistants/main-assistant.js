@@ -275,7 +275,7 @@ MainAssistant.prototype.checkAccel = function(event){
 	global.accelTimingFinish = new Date().getTime();
 	var deltaT = global.accelTimingFinish - global.accelTimingStart
 //	Mojo.Log.error('t' + deltaT)
-	if (deltaT >= 200) {
+	if (deltaT >= 500) {
 		this.stop('paused')
 //		Mojo.Log.error(deltaT)
 	}
@@ -308,19 +308,26 @@ MainAssistant.prototype.moveShip = function (direction, magnitude) {
 		return;
 	global.moving = true;
 	var local = {}
+	if (magnitude > 20) {
+		magnitude /= 2
+		deltaPosition = 4
+	}
+	else
+		deltaPosition = 2
+		
 	local.position = this.getShipPosition();
 	local.leftBound = this.getLayerLeft(global.shipLayer);
 	local.rightBound = local.leftBound + this.getLayerWidth(global.shipLayer);
 	for (var x= 0; x < magnitude && (x == 0 || !(local.position == local.leftBound + 1 || local.position == local.rightBound - 14)); x++) {
-		if (direction == 'left' && local.position - 13 > local.leftBound)
-			local.position -= 2;
+		if (direction == 'left' && local.position - deltaPosition > local.leftBound)
+			local.position -= deltaPosition;
 		else if (direction == 'left')
 			local.position = local.leftBound + 1;
-		else if (direction == 'right' && local.position + 13 + 13 < local.rightBound)
-			local.position += 2;
+		else if (direction == 'right' && local.position + 13 + deltaPosition < local.rightBound)
+			local.position += deltaPosition;
 		else if (direction == 'right')
 			local.position = local.rightBound - 14;
-		if (x % 3 == 0) {
+		if (x % 5 == 0) {
 			this.checkMulti(global.shipLayer, local.position - local.leftBound);
 			this.checkObstacleCollision(global.shipLayer, local.position - local.leftBound);
 		}
