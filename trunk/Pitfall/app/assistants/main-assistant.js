@@ -250,6 +250,8 @@ MainAssistant.prototype.activate = function(event) {
 		this.controller.get('displayText').update("Free time has expired.  <BR /> Please purchase FreeFall! for $.99 <BR /> in the App Catalog")		
 	}
 	global.accelTimingStart = new Date().getTime();	
+	this.average = 0
+	this.count = 0
 }
 
 /*
@@ -274,10 +276,9 @@ MainAssistant.prototype.checkAccel = function(event){
 
 	global.accelTimingFinish = new Date().getTime();
 	var deltaT = global.accelTimingFinish - global.accelTimingStart
-//	Mojo.Log.error('t' + deltaT)
+	var start1 = new Date().getTime();
 	if (deltaT >= 500) {
 		this.stop('paused')
-//		Mojo.Log.error(deltaT)
 	}
 
 	if (deltaT > 60) {
@@ -301,6 +302,9 @@ MainAssistant.prototype.checkAccel = function(event){
 	}
 	else if (collided) 
 		this.stop('collision')
+	var finish1 = new Date().getTime();
+	count++
+	this.average += finish1 - start1
 }
 
 MainAssistant.prototype.moveShip = function (direction, magnitude) {
