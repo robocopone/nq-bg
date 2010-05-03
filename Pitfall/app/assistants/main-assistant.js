@@ -210,8 +210,8 @@ MainAssistant.prototype.setup = function(){
 		type: Mojo.Widget.defaultButton
 	}, local.buyButtonModel);
 
-	this.goEasy = Mojo.Function.debounce(undefined, this.doGo.bind(this), .5);
-	this.goHard = Mojo.Function.debounce(undefined, this.doGo.bind(this), .10);
+//	this.goEasy = Mojo.Function.debounce(undefined, this.doGo.bind(this), .5);
+//	this.goHard = Mojo.Function.debounce(undefined, this.doGo.bind(this), .25);
 
 	this.controller.listen(elements.buyButton, Mojo.Event.tap, this.tapBuyButton.bindAsEventListener(this))
 	this.controller.listen(elements.appHeader,Mojo.Event.tap, this.nav.bindAsEventListener(this));
@@ -222,12 +222,12 @@ MainAssistant.prototype.setup = function(){
 	this.controller.listen(elements.difficultyButton, Mojo.Event.tap, this.tapDifficultyButton.bindAsEventListener(this));
 	this.controller.listen(elements.supportButton, Mojo.Event.tap, this.tapSupportButton.bindAsEventListener(this));
 	this.controller.listen(elements.pause, Mojo.Event.tap, this.pause.bindAsEventListener(this));
-	
 
 	this.initGame();
 	this.timing = {}
 	this.timing.start = new Date().getTime()
-	this.timing.accelStart = new Date().getTime()
+//	this.timing.accelStart = new Date().getTime()
+	global.shipMoves = 1
 }
 
 /*
@@ -249,68 +249,58 @@ MainAssistant.prototype.activate = function(event) {
 		this.controller.modelChanged(global.hideButtonModel, this);
 		this.controller.get('displayText').update("Free time has expired.  <BR /> Please purchase FreeFall! for $.99 <BR /> in the App Catalog")		
 	}
+	global.accelTimingStart = new Date().getTime();	
 }
 
 /*
  * Iterative function
  */
 MainAssistant.prototype.doGo = function(){
-	this.timing.finish = new Date().getTime()
-	Mojo.Log.error('**************************************')
-	Mojo.Log.error('((Start main loop)) duration: ' + (this.timing.finish - this.timing.start))
+	var currLastLayer = this.bumpUp();
+	this.fillLayer(currLastLayer, currLastLayer)
+	this.updateScore();
 
-	var start = new Date().getTime()
-	this.controller.stageController.setWindowProperties({
-		fastAccelerometer: false
-	});
-	this.controller.stageController.setWindowProperties({
-		fastAccelerometer: true
-	});
-	
-	if (!global.paused) {
-		var currLastLayer = this.bumpUp();
-		this.fillLayer(currLastLayer, currLastLayer)
-		this.updateScore();
-		if (!this.collision()) {
-			if (global.difficulty == 'Easy') 
-				this.goEasy();
-			if (global.difficulty == 'Hard') 
-				this.goHard();
-		}
-		else 
-			this.stop('collision')
+	if (((Math.random() * 100) % 20).toFixed() == 0) {
+		this.controller.stageController.setWindowProperties({ fastAccelerometer: false });
+		this.controller.stageController.setWindowProperties({ fastAccelerometer: true  });
 	}
-	else 
-		this.stop('paused');
-	var finish = new Date().getTime()
-	Mojo.Log.error('((End main loop)) duration: ' + (finish - start))
-	Mojo.Log.error('**************************************')
-	this.timing.start = new Date().getTime()
 }
 
 /*
  * Accelerometer function
  */
 MainAssistant.prototype.checkAccel = function(event){
-	this.timing.accelFinish = new Date().getTime()
+//	elements.clock.update(Mojo.Format.formatDate( new Date(), { time: 'medium' } ) );
+
 	global.accelTimingFinish = new Date().getTime();
 	var deltaT = global.accelTimingFinish - global.accelTimingStart
-	if (deltaT > 10 && deltaT < 500) {
-	Mojo.Log.error('.............................Accel Start - Time Outside: ' +
-				(this.timing.accelFinish - this.timing.accelStart))
-		elements.clock.update(Mojo.Format.formatDate( new Date(), { time: 'medium' } ) );
-		if (!global.moveable) 
-			return;
-		if (event.accelY > .05) 
-			this.moveShip('left', Math.pow(event.accelY * 10, 2))
-		if (event.accelY < -.05) 
-			this.moveShip('right', Math.pow(event.accelY * 10, 2))
+//	Mojo.Log.error('t' + deltaT)
+	if (deltaT >= 200) {
+		this.stop('paused')
+//		Mojo.Log.error(deltaT)
+	}
+
+	if (deltaT > 60) {
 		global.accelTimingStart = new Date().getTime();
+		if (event.accelY > .05) 
+			this.moveShip('left', Math.pow(event.accelY * 7, 2))
+		if (event.accelY < -.05) 
+			this.moveShip('right', Math.pow(event.accelY * 7, 2))
+		if (global.moveable) 
+			global.shipMoves++
 	}
-	else if (deltaT >= 500) {
-		global.paused = true;
+
+	var collided = this.collision()
+	if (!collided && !global.paused && global.difficulty == 'Easy' && global.shipMoves >= 8) {
+		global.shipMoves = 1
+		this.doGo()
 	}
-	this.timing.accelStart = new Date().getTime()
+	else if (!collided && !global.paused && global.difficulty == 'Hard' && global.shipMoves >= 4) {
+		global.shipMoves = 1
+		this.doGo()
+	}
+	else if (collided) 
+		this.stop('collision')
 }
 
 MainAssistant.prototype.moveShip = function (direction, magnitude) {
@@ -330,8 +320,10 @@ MainAssistant.prototype.moveShip = function (direction, magnitude) {
 			local.position += 2;
 		else if (direction == 'right')
 			local.position = local.rightBound - 14;
-		this.checkMulti(global.shipLayer, local.position - local.leftBound);
-		this.checkObstacleCollision(global.shipLayer, local.position - local.leftBound);
+		if (x % 3 == 0) {
+			this.checkMulti(global.shipLayer, local.position - local.leftBound);
+			this.checkObstacleCollision(global.shipLayer, local.position - local.leftBound);
+		}
 	}
 	elements.ship.setStyle({ left: local.position + 'px' })
 	global.moving = false;
@@ -493,7 +485,7 @@ MainAssistant.prototype.checkLeft = function (num, inWidth) {
 
 MainAssistant.prototype.deactivate = function(event){
 	this.controller.stageController.setWindowProperties({
-		blockScreenTimeout: false,
+		blockScreenTimeout: true,
 		fastAccelerometer: false
 	});
 }
@@ -536,7 +528,7 @@ MainAssistant.prototype.tapBuyButton = function() {
 
 MainAssistant.prototype.cleanup = function(event) {
 	this.controller.stageController.setWindowProperties({
-		blockScreenTimeout: false,
+		blockScreenTimeout: true,
 		fastAccelerometer: false
 	});
 
@@ -591,26 +583,30 @@ MainAssistant.prototype.tapGoButton = function() {
 	});
 	elements.display.addClassName('hidden');
 	elements.lowerDisplay.addClassName('hidden');
+/*
 	if (global.difficulty == 'Easy') 
 		this.goEasy();
 	if (global.difficulty == 'Hard') 
 		this.goHard();
+*/
 }
 
 MainAssistant.prototype.pause = function () {
-	global.paused = true;
+	this.stop('paused')
 }
 
 MainAssistant.prototype.stop = function (state) {
 	this.controller.stageController.setWindowProperties({
-		blockScreenTimeout: false,
+		blockScreenTimeout: true,
 		fastAccelerometer: true
 	});
 	elements.lowerDisplay.removeClassName('hidden');
 	global.moveable = false;
 	if (state == 'paused') {
+		global.paused = true;
 	}
 	if (state == 'collision') {
+		global.paused = true;
 		global.savedScore = global.score;
 		for (var x = 1; x <= 10; x++) {
 			if (global.scores[x] && global.score > global.scores[x].score) {
