@@ -1,4 +1,4 @@
-﻿{
+{
 	"Yes": "Oui",
 	"No": "Non",
 
@@ -49,7 +49,7 @@
 			"N/S/E/W": "N/S/E/O",
 			"Degrees": "Degrés",
 	"Dashboard Prefs": "Préf de Dashboard",
-		"Dashboard View (First 3 Displayed)": "Vue de Dash(3 Premières Affichées)",
+		"Dashboard View (First 3 Displayed)": "Vue de Dash.(3 Premières Affichées)",
 			"Average Speed": "Vitesse moyenne",
 			"Top Speed": "Vitesse maximale",
 			"Distance Traveled": "Distance parcourue",
