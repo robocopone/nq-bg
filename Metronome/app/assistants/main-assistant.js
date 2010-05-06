@@ -84,7 +84,7 @@ MainAssistant.prototype.setup = function() {
 	tapTempo.elements.metroStartStop = this.controller.get('metroStartStop')
 	tapTempo.elements.metroVisualAlert = this.controller.get('metroVisualAlert')
 	tapTempo.elements.metroVisualAlertNum = this.controller.get('metroVisualAlertNum')
-	tapTempo.elements.metroSwingingArm = this.controller.get('metroSwingingArm')
+//	tapTempo.elements.metroSwingingArm = this.controller.get('metroSwingingArm')
 	
 	tapTempo.elements.metroBeatSetupButton = []
 	this.metroBeatSetupButtonModel = []
@@ -181,7 +181,7 @@ MainAssistant.prototype.setup = function() {
 		disabled: false
 	});
 
-	this.runMetronome = Mojo.Function.debounce(undefined, this.doRunMetronome.bind(this), .1);
+	this.runMetronome = Mojo.Function.debounce(undefined, this.doRunMetronome.bind(this), .01);
 
 	this.controller.listen("metroTempoMarkingsButton", Mojo.Event.tap, this.metroTempoMarkingsButton.bindAsEventListener(this))
 	this.controller.listen("metroTempoMarkingsOkButton", Mojo.Event.tap, this.metroTempoMarkingsOkButton.bindAsEventListener(this))
@@ -298,7 +298,7 @@ MainAssistant.prototype.metroAlertVibrationChanged = function (event) {
 MainAssistant.prototype.metroStartStop = function () {
 	this.start = new Date().getTime();
 	if (tapTempo.metroIsRunning) {
-		tapTempo.elements.metroSwingingArm.removeClassName('swing')
+//		tapTempo.elements.metroSwingingArm.removeClassName('swing')
 		tapTempo.metroIsRunning = false;
 		this.metroStartStopModel.buttonLabel = 'Start';
 		this.metroStartStopModel.buttonClass = 'affirmative';
@@ -311,8 +311,8 @@ MainAssistant.prototype.metroStartStop = function () {
 		this.metroStartStopModel.buttonClass = 'negative';
 		this.controller.modelChanged(this.metroStartStopModel, this);
 		tapTempo.metroDelay = (1 / (tapTempo.metroTempo / 60)) * 1000
-		tapTempo.elements.metroSwingingArm.setStyle({"-webkit-animation-duration":(tapTempo.metroDelay/1000)+"s"});
-		tapTempo.elements.metroSwingingArm.addClassName('swing')
+//		tapTempo.elements.metroSwingingArm.setStyle({"-webkit-animation-duration":(tapTempo.metroDelay/1000)+"s"});
+//		tapTempo.elements.metroSwingingArm.addClassName('swing')
 		tapTempo.metroTotalBeats = 1;
 		tapTempo.currentBeat = 1;
 		if (tapTempo.metroAlertVisable)

@@ -1,6 +1,6 @@
 {
 	"id": "net.bradleygraber.metronome",
-	"version": "1.0.3",
+	"version": "1.0.5",
 	"vendor": "Bradley Graber",
 	"type": "web",
 	"main": "index.html",
