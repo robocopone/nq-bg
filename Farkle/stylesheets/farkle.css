@@ -1,40 +1,22 @@
-#background {
-	z-index: -1;
-}
+.hidden { display: none }
+#background { z-index: -1; }
+
 .dice {
 	z-index: 4;
 	position: absolute;
+	-webkit-transition-duration: .5s;
 }
 
-#die1 {
-	left: 20px;
-	top: 20px;
-}
-
-#die2 {
-	left: 20px;
-	top: 75px;
-}
-#die3 {
-	left: 20px;
-	top: 75px;
-}
-#die4 {
-	left: 20px;
-	top: 75px;
-}
-#die5 {
-	left: 20px;
-	top: 75px;
-}
-#die6 {
-	left: 20px;
-	top: 75px;
-}
+#die1 {}
+#die2 {}
+#die3 {}
+#die4 {}
+#die5 {}
+#die6 {}
 
 #cup {
 	position: absolute;
-	top: 300px;
+	top: 320px;
 	left: 200px;
 }
 
