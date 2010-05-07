@@ -9,6 +9,7 @@ function MainAssistant() {
 
 MainAssistant.prototype.setup = function() {
 	Mojo.Log.info('****************Started Setup Function****************')
+	Mojo.Log.info(' ')
 	this.getElements();	
 
 	this.stopShaking = Mojo.Function.debounce(undefined, this.doStopShaking.bind(this), 1);
@@ -22,7 +23,8 @@ MainAssistant.prototype.setup = function() {
 };
 
 MainAssistant.prototype.cleanup = function(event) {
-	Mojo.Log.info('****************Started Cleanup Function****************')
+	Mojo.Log.info('***************Started Cleanup Function***************')
+	Mojo.Log.info(' ')
 	this.controller.stopListening(this.elements.cup, Mojo.Event.tap, this.shakeCup.bindAsEventListener(this))
 	this.controller.stopListening(this.die[1].getHandler(), Mojo.Event.tap, this.die1Tapped.bindAsEventListener(this))
 	this.controller.stopListening(this.die[2].getHandler(), Mojo.Event.tap, this.die2Tapped.bindAsEventListener(this))
@@ -65,7 +67,7 @@ MainAssistant.prototype.getElements = function () {
 MainAssistant.prototype.activate = function(event) {};
 MainAssistant.prototype.deactivate = function(event) {};
 
-MainAssistant.prototype.die1Tapped = function(){ this.dieTapped(1) }
+MainAssistant.prototype.die1Tapped = function(event){ Mojo.Log.info('value =' + Object.toJSON(event.srcElement)); this.dieTapped(1) }
 MainAssistant.prototype.die2Tapped = function(){ this.dieTapped(2) }
 MainAssistant.prototype.die3Tapped = function(){ this.dieTapped(3) }
 MainAssistant.prototype.die4Tapped = function(){ this.dieTapped(4) }
