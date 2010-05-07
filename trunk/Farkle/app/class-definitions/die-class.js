@@ -3,6 +3,7 @@ function die(id, handler) {
 	this.id = id
 
 	this.cupPos = new position(320,230)
+	this.currentPosition = new position(320, 230)
 	switch (id) {
 		case 1: this.boardPos = new position(25, 270); break;
 		case 2: this.boardPos = new position(7, 200); break;
@@ -17,10 +18,9 @@ function die(id, handler) {
 }
 
 die.prototype.setPosition = function(inPosition){
-	this.currentPosition = inPosition
-	this.delay = Mojo.Function.debounce(undefined, this.doSetPosition.bind(this), .01);
-	var savedPosition = new position(inPosition.getTop(),inPosition.getLeft())
-	this.delay(savedPosition)
+	this.currentPosition.set(inPosition)
+	this.delaySet = Mojo.Function.debounce(undefined, this.doSetPosition.bind(this), .01);
+	this.delaySet(this.currentPosition)
 }
 die.prototype.doSetPosition = function(position) {
 	this.handler.setStyle({
@@ -32,17 +32,16 @@ die.prototype.doSetPosition = function(position) {
 die.prototype.tapped = function(position) {
 	if (this.currentPosition.equals(this.boardPos)) {
 		this.setPosition(position)
-		position.increment()
+		return position.increment()
 	}
 	else {
 		this.setPosition(this.boardPos)
-		position.decrement()
+		return position.decrement()
 	}
-	return position
 }
 
 die.prototype.moveLeft = function() {
-	if (!this.currentPosition.equals(this.boardPos))
+	if (!this.currentPosition.equals(this.boardPos) && this.currentPosition.getLeft() != 14)
 		this.setPosition(this.currentPosition.decrement())
 }
 

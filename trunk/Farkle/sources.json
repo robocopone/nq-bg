@@ -4,6 +4,7 @@
         "scenes": "main",
         "source": "app/assistants/main-assistant.js"
     },
-    {"source": "app/assistants/die-class.js"},
-    {"source": "app/assistants/position-class.js"}
+    {"source": "app/class-definitions/die-class.js"},
+    {"source": "app/class-definitions/position-class.js"}
+    {"source": "app/class-definitions/board-class.js"}
 ]

@@ -1,8 +1,17 @@
 function position(top, left) {
-	this.top = top
-	this.left = left
+	if (typeof top == 'object') {
+		this.top = top.getTop();
+		this.left = top.getLeft();
+	}
+	else {
+		this.top = top
+		this.left = left
+	}
 }
-
+position.prototype.set = function(pos) {
+	this.top = pos.getTop();
+	this.left = pos.getLeft();
+}
 position.prototype.equals = function (pos2) {
 	if (pos2.getTop() == this.top && pos2.getLeft() == this.left)
 		return true;
