@@ -3,6 +3,7 @@ function MainAssistant() {
 	this.die = []
 	this.currentPlayPosition = new position(264,14)
 	this.oldPlayPosition = new position(264,14)
+	this.playArea = new board();
 }
 
 
@@ -44,7 +45,7 @@ MainAssistant.prototype.doStopShaking = function() {
 }
 
 MainAssistant.prototype.dieTapped = function(die) {
-	this.playArea.add(this.die[die])
+	this.playArea.dieTapped(this.die[die])
 /*
 	this.oldPlayPosition.set(this.currentPlayPosition)
 	this.currentPlayPosition.set(this.die[die].tapped(this.currentPlayPosition))
