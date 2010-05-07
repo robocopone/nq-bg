@@ -1,9 +1,11 @@
 function die(id, handler) {
 	this.handler = handler
 	this.id = id
+	this.value = 2
+	this.handler.src = "images/die_two.png"
 
 	this.cupPos = new position(320,230)
-	this.currentPosition = new position(320, 230)
+	this.currentPos = new position(320, 230)
 	switch (id) {
 		case 1: this.boardPos = new position(25, 270); break;
 		case 2: this.boardPos = new position(7, 200); break;
@@ -17,10 +19,14 @@ function die(id, handler) {
 	this.setPosition(this.cupPos)
 }
 
+die.prototype.isNotInPlay = function() {
+	return this.currentPos.equals(this.boardPos)
+}
+
 die.prototype.setPosition = function(inPosition){
-	this.currentPosition.set(inPosition)
+	this.currentPos.set(inPosition)
 	this.delaySet = Mojo.Function.debounce(undefined, this.doSetPosition.bind(this), .01);
-	this.delaySet(this.currentPosition)
+	this.delaySet(this.currentPos)
 }
 die.prototype.doSetPosition = function(position) {
 	this.handler.setStyle({
@@ -29,20 +35,9 @@ die.prototype.doSetPosition = function(position) {
 	})
 }
 
-die.prototype.tapped = function(position) {
-	if (this.currentPosition.equals(this.boardPos)) {
-		this.setPosition(position)
-		return position.increment()
-	}
-	else {
-		this.setPosition(this.boardPos)
-		return position.decrement()
-	}
-}
-
 die.prototype.moveLeft = function() {
-	if (!this.currentPosition.equals(this.boardPos) && this.currentPosition.getLeft() != 14)
-		this.setPosition(this.currentPosition.decrement())
+	if (!this.currentPos.equals(this.boardPos) && this.currentPos.getLeft() != 14)
+		this.setPosition(this.currentPos.decrement())
 }
 
 die.prototype.hide = function() { this.handler.addClassName('hidden') }
@@ -50,4 +45,6 @@ die.prototype.show = function() { this.handler.removeClassName('hidden') }
 
 die.prototype.getBoardPos = function() { return this.boardPos }
 die.prototype.getCupPos = function() { return this.cupPos }
+die.prototype.getCurrentPos = function() { return this.currentPos}
 die.prototype.getHandler = function() { return this.handler }
+die.prototype.getId = function() { return this.id}
