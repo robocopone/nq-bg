@@ -2,6 +2,7 @@ function MainAssistant() {
 	this.elements = {}
 	this.die = []
 	this.currentPlayPosition = new position(264,14)
+	this.oldPlayPosition = new position(264,14)
 }
 
 
@@ -43,13 +44,14 @@ MainAssistant.prototype.doStopShaking = function() {
 }
 
 MainAssistant.prototype.dieTapped = function(die) {
-	var oldPlayPosition = new position(this.currentPlayPosition.getTop(), this.currentPlayPosition.getLeft())
-	this.currentPlayPosition=this.die[die].tapped(this.currentPlayPosition);
-	Mojo.Log.info(oldPlayPosition.getLeft())
-	Mojo.Log.info(this.currentPlayPosition.getLeft())
-	if (oldPlayPosition.getLeft() > this.currentPlayPosition.getLeft())
+	this.playArea.add(this.die[die])
+/*
+	this.oldPlayPosition.set(this.currentPlayPosition)
+	this.currentPlayPosition.set(this.die[die].tapped(this.currentPlayPosition))
+	if (this.oldPlayPosition.getLeft() > this.currentPlayPosition.getLeft())
 		for (var x = 1; x <= 6; x++)
 			this.die[x].moveLeft()
+*/
 }
 
 MainAssistant.prototype.getElements = function () {
