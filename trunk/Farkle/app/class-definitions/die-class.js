@@ -2,7 +2,6 @@ function die(id, handler) {
 	this.handler = handler
 	this.id = id
 	this.value = 2
-	this.handler.src = "images/die_two.png"
 
 	this.cupPos = new position(320,230)
 	this.currentPos = new position(320, 230)
@@ -19,11 +18,24 @@ function die(id, handler) {
 	this.setPosition(this.cupPos)
 }
 
+die.prototype.roll = function () {
+	var randomNumber = Math.floor((Math.random() * 5) + 1)
+	this.handler.src = 'images/die' + randomNumber + '.png'
+	this.value = randomNumber
+}
+
 die.prototype.isNotInPlay = function() {
 	return this.currentPos.equals(this.boardPos)
 }
 
-die.prototype.setPosition = function(inPosition){
+die.prototype.setPosition = function(inPosition, doTwist){
+	if (doTwist) {
+		var randomNumber = Math.floor((Math.random() * 354))
+		this.handler.setStyle({'-webkit-transform': 'rotate(' + randomNumber + 'deg)'})
+	}
+	else
+		this.handler.setStyle({'-webkit-transform': 'rotate(0deg)'})
+
 	this.currentPos.set(inPosition)
 	this.delaySet = Mojo.Function.debounce(undefined, this.doSetPosition.bind(this), .01);
 	this.delaySet(this.currentPos)
@@ -47,4 +59,5 @@ die.prototype.getBoardPos = function() { return this.boardPos }
 die.prototype.getCupPos = function() { return this.cupPos }
 die.prototype.getCurrentPos = function() { return this.currentPos}
 die.prototype.getHandler = function() { return this.handler }
-die.prototype.getId = function() { return this.id}
+die.prototype.getId = function() { return this.id }
+die.prototype.getValue = function() { return this.value }
