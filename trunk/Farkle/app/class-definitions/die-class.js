@@ -20,6 +20,7 @@ function die(id, handler) {
 }
 
 die.prototype.setRollable = function(value) { this.rollable = value }
+die.prototype.isRollable = function() { return this.rollable }
 
 die.prototype.rollPrep = function() {
 	if (this.rollable) {
