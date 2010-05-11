@@ -2,6 +2,7 @@ function die(id, handler) {
 	this.handler = handler
 	this.id = id
 	this.value = 2
+	this.rollable = true;
 
 	this.cupPos = new position(320,230)
 	this.currentPos = new position(320, 230)
@@ -18,10 +19,26 @@ function die(id, handler) {
 	this.setPosition(this.cupPos)
 }
 
+die.prototype.setRollable = function(value) { this.rollable = value }
+
+die.prototype.rollPrep = function() {
+	if (this.rollable) {
+		this.setPosition(this.cupPos, false)
+		this.delayHide = Mojo.Function.debounce(undefined, this.doDelayHide.bind(this), .5);
+		this.delayHide();
+	}
+}
+die.prototype.doDelayHide = function() { this.hide() }
+
 die.prototype.roll = function () {
-	var randomNumber = Math.floor((Math.random() * 5) + 1)
-	this.handler.src = 'images/die' + randomNumber + '.png'
-	this.value = randomNumber
+	if (this.rollable) {
+		var randomNumber = Math.floor((Math.random() * 5) + 1)
+		this.handler.src = 'images/die' + randomNumber + '.png'
+		this.value = randomNumber
+
+		this.show();
+		this.setPosition(this.boardPos, true)
+	}
 }
 
 die.prototype.isNotInPlay = function() {

@@ -20,12 +20,25 @@ board.prototype.getDieHandler = function (die) { return this.die[die].getHandler
 
 board.prototype.roll = function () {
 	if (this.rollable) {
+		for (var x = 1; x <= 6; x++)
+			if (this.playGrid[this.layer] && this.playGrid[this.layer][x])
+				this.playGrid[this.layer][x].setRollable(false)
 		this.layer++
+
+		for (var x = 1; x <= 6; x++)
+			this.die[x].rollPrep();
+
 		this.cupHandler.addClassName('shake')
 		this.stopShaking = Mojo.Function.debounce(undefined, this.doStopShaking.bind(this), 1);
 		this.stopShaking();
 		this.setRollable(false)
 	}
+}
+
+board.prototype.doStopShaking = function() {
+	this.cupHandler.removeClassName('shake')
+	for (var x = 1; x <= 6; x++)
+		this.die[x].roll();
 }
 
 board.prototype.setRollable = function(isRollable) {
@@ -36,15 +49,6 @@ board.prototype.setRollable = function(isRollable) {
 	else {
 		this.rollable = false;
 		this.cupHandler.src = 'images/FeltCup.png'
-	}
-}
-
-board.prototype.doStopShaking = function() {
-	this.cupHandler.removeClassName('shake')
-	for (var x = 1; x <= 6; x++) {
-		this.die[x].roll();
-		this.die[x].show();
-		this.die[x].setPosition(this.die[x].getBoardPos(), true)
 	}
 }
 
@@ -98,10 +102,43 @@ board.prototype.dieTapped = function(dieNum) {
 }
 
 board.prototype.checkPlayGrid = function () {
-	var rollable = false;
-	for (var x = 1; x <= 6; x++) {
-		if (this.playGrid[this.layer][x] && (this.playGrid[this.layer][x].getValue() == 1 || this.playGrid[this.layer][x].getValue() == 5))
-			rollable = true;
-	}
+	var numGrid = []
+	for (var x = 1; x <= 6; x++)
+		numGrid[x] = 0
+		
+	for (var x = 1; x <= 6; x++)
+		if (this.playGrid[this.layer][x])
+			numGrid[this.playGrid[this.layer][x].getValue()]++
+
+	var rollable = this.checkNumGrid(numGrid)
+		
 	this.setRollable(rollable);
+}
+
+board.prototype.checkNumGrid = function(numGrid) {
+	var rollable = true;
+	var zeros = 0;
+	var singles = 0;
+	var pairs = 0;
+
+	for (var x = 1; x <= 6; x++) {
+		if (numGrid[x] == 0) 
+			zeros++
+		if (numGrid[x] == 1) 
+			singles++
+		if (numGrid[x] == 2) 
+			pairs++
+
+		if (x != 1 && x != 5 && rollable)
+			if (numGrid[x] > 0 && numGrid[x] < 3)
+				rollable = false;
+	}
+	if (zeros == 6)
+		rollable = false;
+	if (pairs == 3)
+		rollable = true;
+	if (singles == 6)
+		rollable = true;
+
+	return rollable;
 }
