@@ -1,9 +1,11 @@
 function board(cupHandler, dice) {
-	this.state = 'unrolled'
+	this.rollable = true
+	this.layer = 0;
 	this.cupHandler = cupHandler
 	this.die = dice
-	this.layer = 1;
 	this.playGrid = []
+	for (var x = 1; x <=6; x++)
+		this.playGrid[x] = []
 	this.positionGrid = []
 	for (var x = 1; x <=6; x++)
 		this.positionGrid[x] = []
@@ -17,15 +19,23 @@ board.prototype.getCupHandler = function () { return this.cupHandler }
 board.prototype.getDieHandler = function (die) { return this.die[die].getHandler() }
 
 board.prototype.roll = function () {
-	if (this.state == 'unrolled') {
+	if (this.rollable) {
+		this.layer++
 		this.cupHandler.addClassName('shake')
 		this.stopShaking = Mojo.Function.debounce(undefined, this.doStopShaking.bind(this), 1);
 		this.stopShaking();
-		this.state = 'rolled'
-		this.cupHandler.src = 'images/FeltCup.png'
+		this.setRollable(false)
 	}
-	else if (this.state == 'rolled') {
-		
+}
+
+board.prototype.setRollable = function(isRollable) {
+	if (isRollable) {
+		this.rollable = true;
+		this.cupHandler.src = 'images/FeltCupStroked.png'
+	}
+	else {
+		this.rollable = false;
+		this.cupHandler.src = 'images/FeltCup.png'
 	}
 }
 
@@ -45,46 +55,42 @@ board.prototype.dieTapped = function(dieNum) {
 	var tmpDie = undefined
 	if (this.die[dieNum].isNotInPlay()) {
 		for (var x = 1; x <= 6; x++) 
-			if (!this.playGrid[x] && !bump) {
-				Mojo.Log.warn('no bump insert')
-				this.playGrid[x] = this.die[dieNum]
-				this.playGrid[x].setPosition(this.positionGrid[this.layer][x], false)
+			if (!this.playGrid[this.layer][x] && !bump) {
+				this.playGrid[this.layer][x] = this.die[dieNum]
+				this.playGrid[this.layer][x].setPosition(this.positionGrid[this.layer][x], false)
 				break;
 			}
-			else if (!this.playGrid[x] && bump) {
-				Mojo.Log.warn('bump insert')
-				this.playGrid[x] = storedDie
-				this.playGrid[x].setPosition(this.positionGrid[this.layer][x], false)
+			else if (!this.playGrid[this.layer][x] && bump) {
+				this.playGrid[this.layer][x] = storedDie
+				this.playGrid[this.layer][x].setPosition(this.positionGrid[this.layer][x], false)
 				break;
 			}
-			else if (this.die[dieNum].getValue() < this.playGrid[x].getValue()) {
-				Mojo.Log.warn('initial bump - x=' + x)
-				storedDie = this.playGrid[x]
-				this.playGrid[x] = this.die[dieNum]
-				this.playGrid[x].setPosition(this.positionGrid[this.layer][x], false)
+			else if (this.die[dieNum].getValue() < this.playGrid[this.layer][x].getValue() && !bump) {
+				storedDie = this.playGrid[this.layer][x]
+				this.playGrid[this.layer][x] = this.die[dieNum]
+				this.playGrid[this.layer][x].setPosition(this.positionGrid[this.layer][x], false)
 				bump = true;
 			}
-			else if (this.playGrid[x] && bump) {
-				Mojo.Log.warn(x + ' bump')
-				tmpDie = this.playGrid[x]
-				this.playGrid[x] = storedDie
-				this.playGrid[x].setPosition(this.positionGrid[this.layer][x], false)
+			else if (this.playGrid[this.layer][x] && bump) {
+				tmpDie = this.playGrid[this.layer][x]
+				this.playGrid[this.layer][x] = storedDie
+				this.playGrid[this.layer][x].setPosition(this.positionGrid[this.layer][x], false)
 				storedDie = tmpDie
 			}
 	}
 	else {
 		for (var x = 1; x <= 6; x++) {
-			if (this.playGrid[x] && move) {
-				this.playGrid[x].moveLeft();
-				this.playGrid[x-1] = this.playGrid[x]
-				this.playGrid[x] = undefined
+			if (this.playGrid[this.layer][x] && move) {
+				this.playGrid[this.layer][x].moveLeft();
+				this.playGrid[this.layer][x-1] = this.playGrid[this.layer][x]
+				this.playGrid[this.layer][x] = undefined
 			}
-			else if (this.playGrid[x] && this.playGrid[x].getId() == this.die[dieNum].getId()) {
+			else if (this.playGrid[this.layer][x] && this.playGrid[this.layer][x].getId() == this.die[dieNum].getId()) {
 				this.die[dieNum].setPosition(this.die[dieNum].getBoardPos(), true)
-				this.playGrid[x] = undefined
+				this.playGrid[this.layer][x] = undefined
 				move = true;
 			}
-			else if (!this.playGrid[x]) 
+			else if (!this.playGrid[this.layer][x]) 
 				move = true;
 		}
 	}
@@ -92,5 +98,10 @@ board.prototype.dieTapped = function(dieNum) {
 }
 
 board.prototype.checkPlayGrid = function () {
-	
+	var rollable = false;
+	for (var x = 1; x <= 6; x++) {
+		if (this.playGrid[this.layer][x] && (this.playGrid[this.layer][x].getValue() == 1 || this.playGrid[this.layer][x].getValue() == 5))
+			rollable = true;
+	}
+	this.setRollable(rollable);
 }
