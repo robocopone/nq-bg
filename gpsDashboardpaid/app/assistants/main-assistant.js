@@ -29,7 +29,8 @@ gpsDashboard.prevLoc = undefined;				// Previous location
 gpsDashboard.prevRotation = 'r-30';				// Preveious rotation of the needle
 gpsDashboard.speedLimit = 55;
 gpsDashboard.processSpeedometer = true;
-
+gpsDashboard.sirenPref = 'speedo'
+gpsDashboard.sirenPlaying = false
 
 gpsDashboard.dashAvgSpeed = true;
 gpsDashboard.dashTopSpeed = false;
@@ -76,14 +77,18 @@ gpsDashboard.cookie = ({
 			gpsDashboard.dashTripDuration = storedData.dashTripDuration;
 			gpsDashboard.theme = storedData.theme;
 		}
-		if (storedData && storedData.version == "1.3.7") {
+		if (storedData && storedData.version >= "1.3.7") {
 			gpsDashboard.headingPref = storedData.headingPref;
+		}
+		if (storedData && storedData.version == "1.4.6") {
+			gpsDashboard.sirenPref = storedData.sirenPref;
 		}
 		this.storeCookie();
 	},
 	storeCookie: function() {
 		this.cookieData.put({  
-			version: "1.3.7",
+			version: "1.4.6",
+			sirenPref: gpsDashboard.sirenPref,
 			headingPref: gpsDashboard.headingPref,
 			units: gpsDashboard.units,                                                
 			backlight: gpsDashboard.backlight,
@@ -308,7 +313,7 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 //		event.velocity = speed -= 2;
 //	event.latitude = lati+=.00151
 //	event.longitude = longi+=.001
-//	event.horizAccuracy = 1000;
+//	event.horizAccuracy = 5;
 //	event.errorCode = 1;
 
 	if (gpsDashboard.stage)
@@ -373,6 +378,16 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 			scenes[0].get('dashTripDuration').update(this.tripDuration(event));
 	}
 
+	if (gpsDashboard.sirenPref == 'always' || (gpsDashboard.sirenPref == 'speedo' && !elements.speedometer.hasClassName('hidden'))) {
+		var currSpeed = undefined 
+		if (gpsDashboard.units == 1)
+			currSpeed = event.velocity * 2.23693629
+		if (gpsDashboard.units == 2)
+			currSpeed = event.velocity * 3.6
+		if (currSpeed > gpsDashboard.speedLimit)
+			this.playSiren()
+	}
+
 	elements.speed.update(this.speed(event));
 	elements.speedometerSpeedValue.update(this.speed(event));
 	elements.heading.update(this.heading(event));
@@ -413,7 +428,21 @@ MainAssistant.prototype.handleServiceResponse = function(event){
 	if (event.errorCode != 0)
 		this.controller.stageController.pushScene("gpsError", event.errorCode);
 }
+MainAssistant.prototype.playSiren = function() {
+	var local = {}
 
+	if (!gpsDashboard.sirenPlaying) {
+		local.audio = new Audio()
+		local.audio.src = Mojo.appPath + "/audio/siren.mp3"
+		local.audio.play()
+		gpsDashboard.sirenPlaying = true
+		this.stopSiren = Mojo.Function.debounce(undefined, this.doStopSiren.bind(this), 5);
+		this.stopSiren()
+	}
+}
+MainAssistant.prototype.doStopSiren = function () {
+	gpsDashboard.sirenPlaying = false
+}
 MainAssistant.prototype.handleServiceResponseError = function(event) {
 	this.controller.stageController.pushScene("gpsError", event.errorCode);
 }

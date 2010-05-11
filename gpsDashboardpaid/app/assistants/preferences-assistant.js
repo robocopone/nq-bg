@@ -255,6 +255,24 @@ PreferencesAssistant.prototype.setup = function(){
 		disabled: false
 	});
 
+	//Siren pref widget
+	this.controller.setupWidget("sirenPref", {
+		label: $L("Siren"),
+		choices: [{
+			label: $L("Off"),
+			value: 'off'
+		}, {
+			label: $L("On in Speedometer Display"),
+			value: 'speedo'
+		}, {
+			label: $L("Always on"),
+			value: 'always'
+		}, ],
+	}, {
+		value: gpsDashboard.sirenPref,
+		disabled: false
+	});
+
 	//coloredSpeedPref Selector Widget
 	this.controller.setupWidget("coloredSpeedPref", attr = {
 		label: $L("Speed Color"),
@@ -301,6 +319,7 @@ PreferencesAssistant.prototype.setup = function(){
 	this.controller.listen("backlightSelector", Mojo.Event.propertyChange, this.changeBacklightSelector.bindAsEventListener(this));
 	this.controller.listen("avgSpeedPref", Mojo.Event.propertyChange, this.changeAvgSpeed.bindAsEventListener(this));
 	this.controller.listen("shakePref", Mojo.Event.propertyChange, this.shakePref.bindAsEventListener(this));
+	this.controller.listen("sirenPref", Mojo.Event.propertyChange, this.sirenPref.bindAsEventListener(this));
 	this.controller.listen("coloredSpeedPref", Mojo.Event.propertyChange, this.coloredSpeedPref.bindAsEventListener(this));
 	this.controller.listen("maxErrorPrefSelector", Mojo.Event.propertyChange, this.maxErrorSelector.bindAsEventListener(this));
 }
@@ -367,6 +386,10 @@ PreferencesAssistant.prototype.shakePref = function (event) {
 	gpsDashboard.shakePref = event.value;
 	gpsDashboard.cookie.storeCookie();
 }
+PreferencesAssistant.prototype.sirenPref = function (event) {
+	gpsDashboard.sirenPref = event.value;
+	gpsDashboard.cookie.storeCookie();
+}
 PreferencesAssistant.prototype.maxErrorSelector = function (event) {
 	gpsDashboard.maxError = event.value;
 	gpsDashboard.cookie.storeCookie();
@@ -402,6 +425,7 @@ PreferencesAssistant.prototype.cleanup = function(event){
 	this.controller.stopListening("backlightSelector", Mojo.Event.propertyChange, this.changeBacklightSelector.bindAsEventListener(this));
 	this.controller.stopListening("avgSpeedPref", Mojo.Event.propertyChange, this.changeAvgSpeed.bindAsEventListener(this));
 	this.controller.stopListening("shakePref", Mojo.Event.propertyChange, this.shakePref.bindAsEventListener(this));
+	this.controller.stopListening("sirenPref", Mojo.Event.propertyChange, this.sirenPref.bindAsEventListener(this));
 	this.controller.stopListening("coloredSpeedPref", Mojo.Event.propertyChange, this.coloredSpeedPref.bindAsEventListener(this));
 	this.controller.stopListening("maxErrorPrefSelector", Mojo.Event.propertyChange, this.maxErrorSelector.bindAsEventListener(this));
 
