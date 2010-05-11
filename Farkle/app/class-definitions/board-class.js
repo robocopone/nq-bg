@@ -1,11 +1,17 @@
-function board(cupHandler, dice) {
+function board(cupHandler, dice, currScoreHandler, totalScoreHandler, roundHandler) {
+	this.roundHandler = roundHandler
+	this.currentScoreHandler = currScoreHandler
+	this.totalScoreHandler = totalScoreHandler
+	this.currentScore = 0
+	this.totalScore = 0
+	this.round = 1
+	this.currentScoreHandler.update(this.currentScore)
+	this.totalScoreHandler.update(this.totalScore)
+	this.roundHandler.update(this.round)
 	this.rollable = true
 	this.layer = 0;
 	this.cupHandler = cupHandler
 	this.die = dice
-	this.playGrid = []
-	for (var x = 1; x <=6; x++)
-		this.playGrid[x] = []
 	this.positionGrid = []
 	for (var x = 1; x <=6; x++)
 		this.positionGrid[x] = []
@@ -13,32 +19,91 @@ function board(cupHandler, dice) {
 	for (var x = 0; x <= 5; x++) 
 		for (var y = 0; y <= 5; y++)
 			this.positionGrid[x + 1][y + 1] = new position(264 - (x * 50), (y * 50) + 14)
+	this.resetPlayGrid();
 }
 
 board.prototype.getCupHandler = function () { return this.cupHandler }
 board.prototype.getDieHandler = function (die) { return this.die[die].getHandler() }
+board.prototype.getCurrentScoreHandler = function () { return this.currentScoreHandler }
 
-board.prototype.roll = function () {
-	if (this.rollable) {
-		for (var x = 1; x <= 6; x++)
-			if (this.playGrid[this.layer] && this.playGrid[this.layer][x])
-				this.playGrid[this.layer][x].setRollable(false)
-		this.layer++
-
-		for (var x = 1; x <= 6; x++)
-			this.die[x].rollPrep();
-
-		this.cupHandler.addClassName('shake')
-		this.stopShaking = Mojo.Function.debounce(undefined, this.doStopShaking.bind(this), 1);
-		this.stopShaking();
-		this.setRollable(false)
+board.prototype.currentScoreTapped = function (farkle) {
+	if (farkle) {
+		this.currentScore = 0;
+		this.round++;
+		this.currentScoreHandler.update(this.currentScore)
+		this.totalScoreHandler.update(this.totalScore)
+		this.currentScoreHandler.removeClassName('highlighted')
+		this.roundHandler.update(this.round);
+		this.resetDice();
+		this.setRollable(true);
+		return;
 	}
+	var tmpScore = this.tallyScore('playGrid')
+	if (tmpScore >= 300) {
+		this.totalScore += tmpScore
+		this.currentScore = 0;
+		this.currentScoreHandler.update(this.currentScore)
+		this.totalScoreHandler.update(this.totalScore)
+		this.currentScoreHandler.removeClassName('highlighted')
+		this.resetDice();
+		this.round++
+		this.roundHandler.update(this.round);
+	}
+}
+
+board.prototype.resetPlayGrid = function() {
+	this.playGrid = []
+	for (var x = 1; x <=6; x++)
+		this.playGrid[x] = []
+}
+
+board.prototype.tallyScore = function(choice) {
+	var numGrid = this.buildNumGrid(choice)
+	var tmpScore = this.currentScore;
+
+	var singles = 0;
+	var doubles = 0;
+	for (var x = 1; x <= 6; x++) {
+		if (numGrid[x] == 1)
+			singles++
+		if (numGrid[x] == 2)
+			doubles++
+	}
+	
+	if (singles == 6)
+		tmpScore += 1500
+	else if (doubles == 3)
+		tmpScore += 750
+	else {
+		for (var x = 1; x <= 6; x++) {
+//			Mojo.Log.warn('x=' + x + ' tmpScore=' + tmpScore + ' numGrid[x]=' + numGrid[x])
+			if (x == 1) {
+				if (numGrid[x] < 3)
+					tmpScore += 100 * numGrid[x]
+				else
+					tmpScore += 1000 + ((numGrid[x] - 3) * 1000)
+			}
+			else if (x == 5) {
+				if (numGrid[x] < 3)
+					tmpScore += 50 * numGrid[x]
+				else
+					tmpScore += 500 + ((numGrid[x] - 3) * 500)
+			}
+			else if (numGrid[x] >= 3){
+				tmpScore += (x * 100) + ((numGrid[x] - 3) * (x * 100))
+			}
+		}
+	}
+	return tmpScore;
 }
 
 board.prototype.doStopShaking = function() {
 	this.cupHandler.removeClassName('shake')
 	for (var x = 1; x <= 6; x++)
 		this.die[x].roll();
+	if ((this.tallyScore('board') - this.currentScore) == 0) {
+		this.currentScoreTapped(true)
+	}
 }
 
 board.prototype.setRollable = function(isRollable) {
@@ -99,20 +164,74 @@ board.prototype.dieTapped = function(dieNum) {
 		}
 	}
 	this.checkPlayGrid()
+	var tmpScore = this.tallyScore('playGrid')
+	this.currentScoreHandler.update(tmpScore)
+	if (tmpScore >= 300)
+		this.currentScoreHandler.addClassName('highlighted')
+	else
+		this.currentScoreHandler.removeClassName('highlighted')
 }
 
-board.prototype.checkPlayGrid = function () {
-	var numGrid = []
-	for (var x = 1; x <= 6; x++)
-		numGrid[x] = 0
-		
-	for (var x = 1; x <= 6; x++)
-		if (this.playGrid[this.layer][x])
-			numGrid[this.playGrid[this.layer][x].getValue()]++
+board.prototype.roll = function () {
+	if (this.rollable) {
+		this.currentScore = this.tallyScore('playGrid')
+		this.currentScoreHandler.update(this.currentScore)
 
+		for (var x = 1; x <= 6; x++)
+			if (this.playGrid[this.layer] && this.playGrid[this.layer][x])
+				this.playGrid[this.layer][x].setRollable(false)
+
+		var rollableDice = false
+		for (var x = 1; x <= 6; x++) 
+			if (this.die[x].isRollable())
+				rollableDice = true
+		if (!rollableDice)
+			this.resetDice()
+
+		this.layer++
+
+		for (var x = 1; x <= 6; x++)
+			this.die[x].rollPrep();
+
+		this.cupHandler.addClassName('shake')
+		this.stopShaking = Mojo.Function.debounce(undefined, this.doStopShaking.bind(this), 1);
+		this.stopShaking();
+		this.setRollable(false)
+	}
+}
+
+board.prototype.resetDice = function() {
+	for (var x = 1; x <= 6; x++) {
+		this.die[x].setRollable(true)
+//		this.die[x].rollPrep()
+	}
+	this.resetPlayGrid();
+	this.layer = 0;
+}
+board.prototype.checkPlayGrid = function () {
+	var numGrid = this.buildNumGrid('playGrid')
+		
 	var rollable = this.checkNumGrid(numGrid)
 		
 	this.setRollable(rollable);
+}
+
+board.prototype.buildNumGrid = function (choice) {
+	var numGrid = []
+
+	for (var x = 1; x <= 6; x++)
+		numGrid[x] = 0
+
+	if (choice == 'playGrid')
+		for (var x = 1; x <= 6; x++)
+			if (this.playGrid[this.layer] && this.playGrid[this.layer][x])
+				numGrid[this.playGrid[this.layer][x].getValue()]++
+	if (choice == 'board')
+		for (var x = 1; x <= 6; x++)
+			if (this.die[x].isRollable())
+				numGrid[this.die[x].getValue()]++
+
+	return numGrid
 }
 
 board.prototype.checkNumGrid = function(numGrid) {

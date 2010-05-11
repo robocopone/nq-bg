@@ -16,8 +16,8 @@
 
 #cup {
 	position: absolute;
-	top: 320px;
-	left: 200px;
+	top: 315px;
+	left: 214px;
 }
 
 #cup.shake {
@@ -74,5 +74,50 @@
 #placeholder1-5 { left: 214px; top: 264px; }
 #placeholder1-6 { left: 264px; top: 264px; }
 
-
-
+#scoreBox {
+	background-color: white;
+	border: solid;
+	border-color: black;
+	border-width: 5px;
+	position: absolute;
+	top: 314px;
+	left: 12px;
+	width: 188px;
+	height: 123px;
+}
+.scoreHead {
+	float: left;
+	margin-left: 5px;
+	margin-top: 10px;
+	font-size: 90%;
+	width: 120px;
+	padding-bottom: 3px;
+}
+.score {
+	padding-right: 3px;
+	padding-bottom: 3px;
+	width: 55px;
+	text-align: right;
+	margin-top: 10px;
+	font-size: 90%;
+	float: left;
+}
+#currentScore {
+	padding-bottom: 3px;
+	padding-right: 3px;
+	font-size: 90%;
+	text-align: right;
+	position: absolute;
+	height: 22px;
+	width: 54px;
+	top: 10px;
+	left: 125px;
+}
+#currentScore.highlighted {
+	position: absolute;
+	top: 8px;
+	left: 123px;
+	border: solid;
+	border-color: red;
+	border-width: 2px;
+}
