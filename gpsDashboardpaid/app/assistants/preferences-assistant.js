@@ -262,10 +262,10 @@ PreferencesAssistant.prototype.setup = function(){
 			label: $L("Off"),
 			value: 'off'
 		}, {
-			label: $L("On in Speedometer Display"),
+			label: $L("Only in Speedometer Display"),
 			value: 'speedo'
 		}, {
-			label: $L("Always on"),
+			label: $L("Always On"),
 			value: 'always'
 		}, ],
 	}, {
