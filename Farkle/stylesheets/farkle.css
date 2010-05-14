@@ -135,3 +135,34 @@
 	border-color: red;
 	border-width: 2px;
 }
+
+.topNameHead {
+	float: left;
+	width: 38%;
+	text-align: center;
+}
+.topScoreHead {
+	float: left;
+	width: 28%;
+	text-align: center;
+}
+.topDateHead {
+	float: left;
+	width: 31%;
+	text-align: center;
+}
+.topName {
+	text-align: left;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	float: left;
+	width: 38%;
+}
+.topScore {
+	text-align: center;
+	float: left;
+	width: 28%;
+}
+.topDate {
+}
