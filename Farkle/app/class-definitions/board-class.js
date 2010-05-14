@@ -228,14 +228,14 @@ board.prototype.farkle = function(){
     this.currentScoreTapped(true)
     this.farkleHandler.setStyle({
         '-webkit-transform': 'rotate(0deg)',
-		'left': '0px'
+		'left': '0px',
     })
 }
 board.prototype.moveFarkleRight = function() {
     this.farkleHandler.setStyle({
-		'-webkit-transform-origin': 'right',
         '-webkit-transform': 'rotate(180deg)',
-		'left': '320px'
+		'left': '320px',
+		'-webkit-transform-origin': 'right',
     })
     this.moveFarkleLeft = Mojo.Function.debounce(undefined, this.doMoveFarkleLeft.bind(this), 1);
 	this.moveFarkleLeft();
