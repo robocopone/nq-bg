@@ -6,7 +6,7 @@ function board(cupHandler, dice, currScoreHandler, totalScoreHandler, roundHandl
     this.totalScoreHandler = totalScoreHandler
     this.currentScore = 0
     this.totalScore = 0
-    this.round = 10
+    this.round = 1
     this.currentScoreHandler.update(this.currentScore)
     this.totalScoreHandler.update(this.totalScore)
     this.roundHandler.update(this.round)
