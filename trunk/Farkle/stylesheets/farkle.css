@@ -1,6 +1,20 @@
 .hidden { display: none }
 #background { z-index: -1; }
 
+#farkle {
+	font-size: 350%;
+	position: absolute;
+	top: 120px;
+	left: -320px;
+	width: 320px;
+	text-align: center;
+	z-index: 10;
+	color: white;
+	-webkit-transform: rotate(-180deg);
+	-webkit-transition-duration: 1s;
+	-webkit-transform-origin: left;
+}
+
 .dice {
 	z-index: 4;
 	position: absolute;
