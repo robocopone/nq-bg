@@ -152,17 +152,22 @@
 	text-align: center;
 }
 .topName {
+	background-color: green;
 	text-align: left;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	float: left;
-	width: 38%;
+	width: 42%;
 }
 .topScore {
+	background-color: blue;
 	text-align: center;
 	float: left;
-	width: 28%;
+	width: 20%;
 }
 .topDate {
+	text-align: center;
+	float: left;
+	width: 38%;
 }

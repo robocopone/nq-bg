@@ -39,8 +39,18 @@ MainAssistant.prototype.setup = function(){
     Mojo.Log.warn(' ');
     Mojo.Log.warn('****************Started Setup Function****************')
     
-    this.initialize();
 	farkleCookie.initialize();
+	if (!global.initialized) {
+		global.scores[1] = {}
+		global.scores[1].name = "bleh"
+		global.scores[1].score = 1
+		global.scores[1].date = new Date()
+		global.initialized = true;
+	}
+	farkleCookie.storeCookie();
+	farkleCookie.initialize();
+
+    this.initialize();
     
     this.controller.listen(this.playArea.getCupHandler(), Mojo.Event.tap, this.cupTapped.bindAsEventListener(this))
     this.controller.listen(this.playArea.getCurrentScoreHandler(), Mojo.Event.tap, this.currentScoreTapped.bindAsEventListener(this))

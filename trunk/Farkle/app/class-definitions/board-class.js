@@ -1,4 +1,5 @@
 function board(cupHandler, dice, currScoreHandler, totalScoreHandler, roundHandler, farkleHandler, controller){
+	this.audio = new Audio();
 	this.controller = controller
     this.farkleHandler = farkleHandler
     this.roundHandler = roundHandler
@@ -197,6 +198,9 @@ board.prototype.dieTapped = function(dieNum){
 }
 
 board.prototype.roll = function(){
+	this.audio.src = Mojo.appPath + "/audio/shakeandroll.mp3"
+	this.audio.play()
+
     this.farkleHandler.removeClassName('hidden')
     if (this.rollable) {
         this.currentScore = this.tallyScore('playGrid')
@@ -228,11 +232,13 @@ board.prototype.roll = function(){
 }
 
 board.prototype.farkle = function(){
-    this.currentScoreTapped(true)
-    this.farkleHandler.setStyle({
-        '-webkit-transform': 'rotate(0deg)',
-        'left': '0px',
-    })
+	this.audio.src = Mojo.appPath + "/audio/farkle.mp3"
+	this.audio.play()
+	this.currentScoreTapped(true)
+	this.farkleHandler.setStyle({
+		'-webkit-transform': 'rotate(0deg)',
+		'left': '0px',
+	})
 }
 board.prototype.moveFarkleRight = function(){
     this.farkleHandler.setStyle({
@@ -369,7 +375,7 @@ var doDialog = Class.create({
         global.scores[global.scoreSlot] = {}
         global.scores[global.scoreSlot].name = this.name.value;
         global.scores[global.scoreSlot].score = global.savedScore;
-        global.scores[global.scoreSlot].date = Mojo.Format.formatDate(new Date(), {
+        global.scores[global.scoreSlot].date = Mojo.Format.formatDate(new Date(2010,11,25), {
             date: 'medium'
         });
         this.controller.stageController.pushScene({
