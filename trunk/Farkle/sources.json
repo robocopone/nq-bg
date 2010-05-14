@@ -6,5 +6,13 @@
     },
     {"source": "app/class-definitions/die-class.js"},
     {"source": "app/class-definitions/position-class.js"},
-    {"source": "app/class-definitions/board-class.js"}
+    {"source": "app/class-definitions/board-class.js"},
+    {
+        "scenes": "scoring",
+        "source": "app/assistants/scoring-assistant.js"
+    },
+    {
+        "scenes": "nameDialog",
+        "source": "app/assistants/nameDialog-assistant.js"
+    }
 ]

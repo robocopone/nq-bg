@@ -1,11 +1,12 @@
-function board(cupHandler, dice, currScoreHandler, totalScoreHandler, roundHandler, farkleHandler){
+function board(cupHandler, dice, currScoreHandler, totalScoreHandler, roundHandler, farkleHandler, controller){
+	this.controller = controller
     this.farkleHandler = farkleHandler
     this.roundHandler = roundHandler
     this.currentScoreHandler = currScoreHandler
     this.totalScoreHandler = totalScoreHandler
     this.currentScore = 0
     this.totalScore = 0
-    this.round = 1
+    this.round = 10
     this.currentScoreHandler.update(this.currentScore)
     this.totalScoreHandler.update(this.totalScore)
     this.roundHandler.update(this.round)
@@ -52,16 +53,18 @@ board.prototype.currentScoreTapped = function(farkle){
         }
     
     if (this.round > 10) {
-        this.round = 1
-        this.currentScore = 0
-        this.totalScore = 0
+		global.savedScore = this.totalScore
+        this.checkHighScores()
+        this.set('currentScore', 0)
+        this.set('totalScore', 0)
+        this.set('round', 1)
         this.resetDice();
     }
 }
 
 board.prototype.set = function(property, value){
     this[property] = value
-    this[property + 'Handler'].update(this[property])
+    this[property + 'Handler'].update(value)
 }
 
 board.prototype.resetPlayGrid = function(){
@@ -194,7 +197,7 @@ board.prototype.dieTapped = function(dieNum){
 }
 
 board.prototype.roll = function(){
-	this.farkleHandler.removeClassName('hidden')
+    this.farkleHandler.removeClassName('hidden')
     if (this.rollable) {
         this.currentScore = this.tallyScore('playGrid')
         this.currentScoreHandler.update(this.currentScore)
@@ -220,32 +223,32 @@ board.prototype.roll = function(){
         this.stopShaking();
         this.setRollable(false)
     }
-	if (this.farkleHandler.getStyle('left') == '0px')
-		this.moveFarkleRight();
+    if (this.farkleHandler.getStyle('left') == '0px') 
+        this.moveFarkleRight();
 }
 
 board.prototype.farkle = function(){
     this.currentScoreTapped(true)
     this.farkleHandler.setStyle({
         '-webkit-transform': 'rotate(0deg)',
-		'left': '0px',
+        'left': '0px',
     })
 }
-board.prototype.moveFarkleRight = function() {
+board.prototype.moveFarkleRight = function(){
     this.farkleHandler.setStyle({
         '-webkit-transform': 'rotate(180deg)',
-		'left': '320px',
-		'-webkit-transform-origin': 'right',
+        'left': '320px',
+        '-webkit-transform-origin': 'right',
     })
     this.moveFarkleLeft = Mojo.Function.debounce(undefined, this.doMoveFarkleLeft.bind(this), 1);
-	this.moveFarkleLeft();
+    this.moveFarkleLeft();
 }
-board.prototype.doMoveFarkleLeft = function () {
-	this.farkleHandler.addClassName('hidden')
+board.prototype.doMoveFarkleLeft = function(){
+    this.farkleHandler.addClassName('hidden')
     this.farkleHandler.setStyle({
-		'-webkit-transform-origin': 'left',
+        '-webkit-transform-origin': 'left',
         '-webkit-transform': 'rotate(-180deg)',
-		'left': '-320px'
+        'left': '-320px'
     })
 }
 
@@ -310,3 +313,72 @@ board.prototype.checkNumGrid = function(numGrid){
     
     return rollable;
 }
+
+board.prototype.checkHighScores = function(){
+    for (var x = 1; x <= 10; x++) {
+        if (global.scores[x] && global.savedScore > global.scores[x].score) {
+            this.bumpScores(x);
+            global.scoreSlot = x;
+            this.controller.showDialog({
+                template: 'nameDialog/nameDialog-scene',
+                assistant: new doDialog(this)
+            });
+            break;
+        }
+        else 
+            if (!global.scores[x]) {
+                global.scoreSlot = x;
+                this.controller.showDialog({
+                    template: 'nameDialog/nameDialog-scene',
+                    assistant: new doDialog(this)
+                });
+                break;
+            }
+    }
+	farkleCookie.storeCookie();
+}
+
+board.prototype.bumpScores = function(num){
+    if (global.scores[num + 1]) {
+        this.bumpScores(num + 1)
+        global.scores[num + 1] = global.scores[num]
+    }
+    else 
+        global.scores[num + 1] = global.scores[num]
+}
+
+var doDialog = Class.create({
+    initialize: function(sceneAssistant){
+        this.sceneAssistant = sceneAssistant;
+        this.controller = sceneAssistant.controller;
+    },
+    
+    setup: function(widget){
+        this.widget = widget;
+        this.name = {
+            value: global.name
+        };
+        this.controller.get('newHighScore').update(global.savedScore)
+        this.controller.setupWidget("username", {}, this.name);
+        this.controller.get('dialogOkButton').addEventListener(Mojo.Event.tap, this.okPressed.bindAsEventListener(this));
+        this.controller.get('dialogCancelButton').addEventListener(Mojo.Event.tap, this.cancelPressed.bindAsEventListener(this));
+    },
+    
+    okPressed: function(){
+        global.name = this.name.value;
+        global.scores[global.scoreSlot] = {}
+        global.scores[global.scoreSlot].name = this.name.value;
+        global.scores[global.scoreSlot].score = global.savedScore;
+        global.scores[global.scoreSlot].date = Mojo.Format.formatDate(new Date(), {
+            date: 'medium'
+        });
+        this.controller.stageController.pushScene({
+            name: "scoring",
+            transition: Mojo.Transition.crossFade
+        })
+        this.widget.mojo.close();
+    },
+    cancelPressed: function(){
+        this.widget.mojo.close();
+    }
+});
