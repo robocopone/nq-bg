@@ -1,10 +1,34 @@
-function board(cupHandler, dice, currScoreHandler, totalScoreHandler, roundHandler, farkleHandler, controller){
-	this.audio = new Audio();
+function board(controller){
 	this.controller = controller
-    this.farkleHandler = farkleHandler
-    this.roundHandler = roundHandler
-    this.currentScoreHandler = currScoreHandler
-    this.totalScoreHandler = totalScoreHandler
+
+	this.die = []
+    for (var x = 1; x <= 6; x++) 
+        this.die[x] = new die(x, this.controller.get('die' + x))
+
+	this.cupHandler = this.controller.get('cup')
+	this.currentScoreHandler = this.controller.get('currentScore')
+	this.totalScoreHandler = this.controller.get('totalScore')
+    this.farkleHandler = this.controller.get('farkle')
+    this.roundHandler = this.controller.get('round')
+
+	this.audio = {}
+
+	this.audio.shake = new Audio();
+	this.audio.shake.src = Mojo.appPath + "/audio/shakeandroll.mp3"
+	this.audio.shake.load()
+
+	this.audio.farkle = new Audio()
+	this.audio.farkle.src = Mojo.appPath + "/audio/farkle.mp3"
+	this.audio.farkle.load()
+
+	this.audio.tada = new Audio()
+	this.audio.tada.src = Mojo.appPath + "/audio/tada.mp3"
+	this.audio.tada.load()
+
+	this.audio.ding = new Audio()
+	this.audio.ding.src = Mojo.appPath + "/audio/ding.mp3"
+	this.audio.ding.load()
+
     this.currentScore = 0
     this.totalScore = 0
     this.round = 1
@@ -13,8 +37,6 @@ function board(cupHandler, dice, currScoreHandler, totalScoreHandler, roundHandl
     this.roundHandler.update(this.round)
     this.rollable = true
     this.layer = 0;
-    this.cupHandler = cupHandler
-    this.die = dice
     this.positionGrid = []
     for (var x = 1; x <= 6; x++) 
         this.positionGrid[x] = []
@@ -23,6 +45,56 @@ function board(cupHandler, dice, currScoreHandler, totalScoreHandler, roundHandl
         for (var y = 0; y <= 5; y++) 
             this.positionGrid[x + 1][y + 1] = new position(264 - (x * 50), (y * 50) + 14)
     this.resetPlayGrid();
+}
+board.prototype.roll = function(){
+    this.farkleHandler.removeClassName('hidden')
+    if (this.rollable) {
+		this.audio.shake.play()
+		this.set('currentScore', this.tallyScore('playGrid'))
+//		this.currentScore = this.tallyScore('playGrid')
+//		this.currentScoreHandler.update(this.currentScore)
+        
+        for (var x = 1; x <= 6; x++) 
+            if (this.playGrid[this.layer] && this.playGrid[this.layer][x]) 
+                this.playGrid[this.layer][x].setRollable(false)
+        
+        if (!this.rollableDice()) 
+            this.resetDice()
+        
+        this.layer++
+        
+        for (var x = 1; x <= 6; x++) 
+			this.die[x].rollPrep();
+        
+        this.cupHandler.addClassName('shake')
+        this.stopShaking = Mojo.Function.debounce(undefined, this.doStopShaking.bind(this), 1);
+        this.stopShaking();
+        this.setRollable(false)
+    }
+    if (this.farkleHandler.getStyle('left') == '0px') 
+        this.moveFarkleRight();
+}
+
+board.prototype.rollableDice = function(){
+	var rollableDice = false
+	for (var x = 1; x <= 6; x++) 
+		if (this.die[x].isRollable()) 
+			rollableDice = true
+	return rollableDice;
+}
+
+board.prototype.farkle = function(message){
+	if (message == 'Farkle!') {
+		this.audio.farkle.play()
+		this.farkleHandler.update(message)
+		this.currentScoreTapped(true)
+	}
+	else
+		this.farkleHandler.update(message)
+	this.farkleHandler.setStyle({
+		'-webkit-transform': 'rotate(0deg)',
+		'left': '0px',
+	})
 }
 
 board.prototype.getCupHandler = function(){
@@ -42,10 +114,11 @@ board.prototype.currentScoreTapped = function(farkle){
         this.set('round', this.round += 1)
         this.currentScoreHandler.removeClassName('highlighted')
         this.resetDice();
-        this.setRollable(true);
+		this.setRollable(true);
     }
     else 
         if (tmpScore >= 300) {
+			this.audio.ding.play()
             this.set('currentScore', 0)
             this.set('totalScore', this.totalScore += tmpScore)
             this.set('round', this.round += 1)
@@ -56,11 +129,17 @@ board.prototype.currentScoreTapped = function(farkle){
     if (this.round > 10) {
 		global.savedScore = this.totalScore
         this.checkHighScores()
-        this.set('currentScore', 0)
-        this.set('totalScore', 0)
-        this.set('round', 1)
-        this.resetDice();
+		this.newGame();
     }
+}
+board.prototype.newGame = function () {
+	this.currentScoreHandler.removeClassName('highlighted')
+	this.set('currentScore', 0)
+	this.set('totalScore', 0)
+	this.set('round', 1)
+	this.resetDice();
+    for (var x = 1; x <= 6; x++) 
+		this.die[x].rollPrep();
 }
 
 board.prototype.set = function(property, value){
@@ -122,7 +201,7 @@ board.prototype.doStopShaking = function(){
     for (var x = 1; x <= 6; x++) 
         this.die[x].roll();
     if ((this.tallyScore('board') - this.currentScore) == 0) 
-        this.farkle();
+        this.farkle('Farkle!');
 }
 
 board.prototype.setRollable = function(isRollable){
@@ -189,56 +268,22 @@ board.prototype.dieTapped = function(dieNum){
             return;
     
     this.checkPlayGrid()
+	if (this.rollable && this.allDiceInPlay()) {
+		this.farkle('Free Roll!')
+	}
     var tmpScore = this.tallyScore('playGrid')
     this.currentScoreHandler.update(tmpScore)
     if (tmpScore >= 300) 
-        this.currentScoreHandler.addClassName('highlighted')
-    else 
+		this.currentScoreHandler.addClassName('highlighted')
+    else
         this.currentScoreHandler.removeClassName('highlighted')
 }
-
-board.prototype.roll = function(){
-	this.audio.src = Mojo.appPath + "/audio/shakeandroll.mp3"
-	this.audio.play()
-
-    this.farkleHandler.removeClassName('hidden')
-    if (this.rollable) {
-        this.currentScore = this.tallyScore('playGrid')
-        this.currentScoreHandler.update(this.currentScore)
-        
-        for (var x = 1; x <= 6; x++) 
-            if (this.playGrid[this.layer] && this.playGrid[this.layer][x]) 
-                this.playGrid[this.layer][x].setRollable(false)
-        
-        var rollableDice = false
-        for (var x = 1; x <= 6; x++) 
-            if (this.die[x].isRollable()) 
-                rollableDice = true
-        if (!rollableDice) 
-            this.resetDice()
-        
-        this.layer++
-        
-        for (var x = 1; x <= 6; x++) 
-            this.die[x].rollPrep();
-        
-        this.cupHandler.addClassName('shake')
-        this.stopShaking = Mojo.Function.debounce(undefined, this.doStopShaking.bind(this), 1);
-        this.stopShaking();
-        this.setRollable(false)
-    }
-    if (this.farkleHandler.getStyle('left') == '0px') 
-        this.moveFarkleRight();
-}
-
-board.prototype.farkle = function(){
-	this.audio.src = Mojo.appPath + "/audio/farkle.mp3"
-	this.audio.play()
-	this.currentScoreTapped(true)
-	this.farkleHandler.setStyle({
-		'-webkit-transform': 'rotate(0deg)',
-		'left': '0px',
-	})
+board.prototype.allDiceInPlay = function() {
+	var bool = true
+	for (var x = 1; x <= 6; x++)
+		if (this.die[x].isNotInPlay())
+			bool = false;
+	return bool;
 }
 board.prototype.moveFarkleRight = function(){
     this.farkleHandler.setStyle({
@@ -259,10 +304,9 @@ board.prototype.doMoveFarkleLeft = function(){
 }
 
 board.prototype.resetDice = function(){
-    for (var x = 1; x <= 6; x++) {
+    for (var x = 1; x <= 6; x++)
         this.die[x].setRollable(true)
-        //		this.die[x].rollPrep()
-    }
+	this.setRollable(true);
     this.resetPlayGrid();
     this.layer = 0;
 }
@@ -321,28 +365,47 @@ board.prototype.checkNumGrid = function(numGrid){
 }
 
 board.prototype.checkHighScores = function(){
+	var highScore = false
     for (var x = 1; x <= 10; x++) {
         if (global.scores[x] && global.savedScore > global.scores[x].score) {
+			this.audio.tada.play()
             this.bumpScores(x);
             global.scoreSlot = x;
             this.controller.showDialog({
                 template: 'nameDialog/nameDialog-scene',
                 assistant: new doDialog(this)
             });
+			highScore = true
             break;
         }
         else 
             if (!global.scores[x]) {
+				this.audio.tada.play()
                 global.scoreSlot = x;
                 this.controller.showDialog({
                     template: 'nameDialog/nameDialog-scene',
                     assistant: new doDialog(this)
                 });
+				highScore = true
                 break;
             }
     }
+	if (!highScore) {
+		this.audio.farkle.play()
+		this.controller.showAlertDialog({
+			onChoose: this.doChoice,
+			title: $L("Game Ended"),
+			message: "You scored " + global.savedScore + " points, but did not make the top 10.",
+			choices: [{
+				label: $L('Ok'),
+				value: 'yes',
+				type: 'affirmative'
+			}]
+		});	
+	}
 	farkleCookie.storeCookie();
 }
+board.prototype.doChoice = function(choice) {}
 
 board.prototype.bumpScores = function(num){
     if (global.scores[num + 1]) {
@@ -375,7 +438,7 @@ var doDialog = Class.create({
         global.scores[global.scoreSlot] = {}
         global.scores[global.scoreSlot].name = this.name.value;
         global.scores[global.scoreSlot].score = global.savedScore;
-        global.scores[global.scoreSlot].date = Mojo.Format.formatDate(new Date(2010,11,25), {
+        global.scores[global.scoreSlot].date = Mojo.Format.formatDate(new Date(), {
             date: 'medium'
         });
         this.controller.stageController.pushScene({

@@ -10,6 +10,28 @@ ScoringAssistant.prototype.setup = function() {
 		scoringElements.score[x] = this.controller.get('score' + x);
 		scoringElements.date[x] = this.controller.get('date' + x);
 	}
+
+	// Ok Button Widget
+	this.controller.setupWidget('resetHighScores', atts = {
+		type: Mojo.Widget.defaultButton
+	}, {
+		buttonLabel: 'Reset Scores',
+		buttonClass: 'negative',
+		disabled: false
+	});
+
+	this.resetHighScoresHandler = this.resetHighScores.bindAsEventListener(this)
+	
+	this.controller.listen('resetHighScores', Mojo.Event.tap, this.resetHighScoresHandler)
+}
+
+ScoringAssistant.prototype.resetHighScores = function () {
+	global.scores = []
+	for (var x = 1; x <= 10; x++) {
+		scoringElements.name[x].update('')
+		scoringElements.score[x].update('')
+		scoringElements.date[x].update('')
+	}
 }
 
 ScoringAssistant.prototype.activate = function(event) {
@@ -27,4 +49,5 @@ ScoringAssistant.prototype.deactivate = function(event) {
 }
 
 ScoringAssistant.prototype.cleanup = function(event) {
+	this.controller.stopListening('resetHighScores', Mojo.Event.tap, this.resetHighScoresHandler)
 }

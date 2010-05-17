@@ -33,7 +33,7 @@ die.prototype.doDelayHide = function() { this.hide() }
 
 die.prototype.roll = function () {
 	if (this.rollable) {
-		var randomNumber = Math.floor((Math.random() * 5) + 1)
+		var randomNumber = Math.floor((Math.random() * 6) + 1)
 		this.handler.src = 'images/die' + randomNumber + '.png'
 		this.value = randomNumber
 
