@@ -89,10 +89,13 @@ MainAssistant.prototype.setup = function(){
 			label: "Scoring Help",
 			command: 'scoringHelp',
 			shortcut: 's'
+		}, {
+			label: "Help",
+			command: 'help',
 		}]
 	}
 	 
-	this.controller.setupWidget(Mojo.Menu.appMenu, {}, this.appMenuModel); 
+	this.controller.setupWidget(Mojo.Menu.appMenu, {omitDefaultItems: true}, this.appMenuModel); 
 };
 
 MainAssistant.prototype.cleanup = function(event){
@@ -160,7 +163,7 @@ MainAssistant.prototype.handleCommand = function (event) {
 */
 	if (event.type == Mojo.Event.command) {
 		switch (event.command) {
-			case Mojo.Menu.helpCmd:
+			case 'help':
 				Mojo.Controller.stageController.pushAppSupportInfoScene();
 				break;
 			case 'highScores':

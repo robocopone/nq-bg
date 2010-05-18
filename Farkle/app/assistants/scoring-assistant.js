@@ -26,11 +26,29 @@ ScoringAssistant.prototype.setup = function() {
 }
 
 ScoringAssistant.prototype.resetHighScores = function () {
-	global.scores = []
-	for (var x = 1; x <= 10; x++) {
-		scoringElements.name[x].update('')
-		scoringElements.score[x].update('')
-		scoringElements.date[x].update('')
+	this.controller.showAlertDialog({
+		onChoose: this.doResets,
+		title: $L("Reset!"),
+		message: $L("Are you sure?"),
+		choices: [{
+			label: $L("Yes"),
+			value: 'yes',
+			type: 'affirmative'
+		}, {
+			label: $L("No"),
+			value: 'no',
+			type: 'negative'
+		}, ]
+	});
+}
+ScoringAssistant.prototype.doResets = function(choice){
+	if (choice == 'yes') {
+		global.scores = []
+		for (var x = 1; x <= 10; x++) {
+			scoringElements.name[x].update('')
+			scoringElements.score[x].update('')
+			scoringElements.date[x].update('')
+		}
 	}
 }
 
