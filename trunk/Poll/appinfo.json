@@ -1,0 +1,9 @@
+{
+	"id": "net.bradleygraber.poll",
+	"version": "1.0.0",
+	"vendor": "Bradley Graber",
+	"type": "web",
+	"main": "index.html",
+	"title": "Poll",
+	"icon": "icon.png"
+}
