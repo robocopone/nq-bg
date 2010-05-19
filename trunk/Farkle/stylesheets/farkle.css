@@ -1,3 +1,10 @@
+#test {
+	position: absolute;
+	top: 200px;
+	left: 100px;
+	z-index: 30;
+	color: red;
+}
 .hidden { display: none }
 #background { z-index: -1; }
 
@@ -84,6 +91,12 @@
 	background-color: #306642;
 	width: 43px;
 	height: 43px;
+}
+#audio {
+	position: absolute;
+	top: 14px;
+	left: 64px;
+	z-index: 2;
 }
 
 #placeholder6-1 { left: 14px; top: 14px; }

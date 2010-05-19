@@ -1,4 +1,4 @@
-function board(controller){
+function board(controller, audioEnabled){
 	this.controller = controller
 
 	this.die = []
@@ -10,9 +10,12 @@ function board(controller){
 	this.totalScoreHandler = this.controller.get('totalScore')
     this.farkleHandler = this.controller.get('farkle')
     this.roundHandler = this.controller.get('round')
+	this.audioHandler = this.controller.get('audio')
 
 	this.audio = {}
 
+	this.setAudio(audioEnabled)
+	
 	this.audio.shake = new Audio();
 	this.audio.shake.src = Mojo.appPath + "/audio/shakeandroll.mp3"
 	this.audio.shake.load()
@@ -46,10 +49,19 @@ function board(controller){
             this.positionGrid[x + 1][y + 1] = new position(264 - (x * 50), (y * 50) + 14)
     this.resetPlayGrid();
 }
+board.prototype.setAudio = function(value) { 
+	this.audio.enabled = value
+	if (this.audio.enabled) 
+		this.audioHandler.src = "images/audio_on.png"
+	else
+		this.audioHandler.src = "images/audio_off.png"
+}
+
 board.prototype.roll = function(){
     this.farkleHandler.removeClassName('hidden')
     if (this.rollable) {
-		this.audio.shake.play()
+		if (this.audio.enabled)
+			this.audio.shake.play()
 		this.set('currentScore', this.tallyScore('playGrid'))
 //		this.currentScore = this.tallyScore('playGrid')
 //		this.currentScoreHandler.update(this.currentScore)
@@ -85,12 +97,16 @@ board.prototype.rollableDice = function(){
 
 board.prototype.farkle = function(message){
 	if (message == 'Farkle!') {
-		this.audio.farkle.play()
+		if (this.audio.enabled) 
+			this.audio.farkle.play()
 		this.farkleHandler.update(message)
 		this.currentScoreTapped(true)
 	}
-	else
+	else {
+		if (this.audio.enabled)
+			this.audio.tada.play();
 		this.farkleHandler.update(message)
+	}
 	this.farkleHandler.setStyle({
 		'-webkit-transform': 'rotate(0deg)',
 		'left': '0px',
@@ -118,7 +134,8 @@ board.prototype.currentScoreTapped = function(farkle){
     }
     else 
         if (tmpScore >= 300) {
-			this.audio.ding.play()
+			if (this.audio.enabled)
+				this.audio.ding.play()
             this.set('currentScore', 0)
             this.set('totalScore', this.totalScore += tmpScore)
             this.set('round', this.round += 1)
@@ -368,7 +385,8 @@ board.prototype.checkHighScores = function(){
 	var highScore = false
     for (var x = 1; x <= 10; x++) {
         if (global.scores[x] && global.savedScore > global.scores[x].score) {
-			this.audio.tada.play()
+			if (this.audio.enabled)
+				this.audio.tada.play()
             this.bumpScores(x);
             global.scoreSlot = x;
             this.controller.showDialog({
@@ -380,7 +398,8 @@ board.prototype.checkHighScores = function(){
         }
         else 
             if (!global.scores[x]) {
-				this.audio.tada.play()
+				if (this.audio.enabled)
+					this.audio.tada.play()
                 global.scoreSlot = x;
                 this.controller.showDialog({
                     template: 'nameDialog/nameDialog-scene',
@@ -391,7 +410,8 @@ board.prototype.checkHighScores = function(){
             }
     }
 	if (!highScore) {
-		this.audio.farkle.play()
+		if (this.audio.enabled)
+			this.audio.farkle.play()
 		this.controller.showAlertDialog({
 			onChoose: this.doChoice,
 			title: $L("Game Ended"),
