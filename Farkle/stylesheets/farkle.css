@@ -1,3 +1,17 @@
+.highRollClass {
+	margin-bottom: 10px;
+	float: left;
+	color: white;
+}
+#highRollHead {
+	text-align: right;
+	width: 55%;
+}
+#highRoll {
+	width: 20%;
+	text-align: right;
+	
+}
 #test {
 	position: absolute;
 	top: 200px;
@@ -6,7 +20,12 @@
 	color: red;
 }
 .hidden { display: none }
-#background { z-index: -1; }
+#background {
+	position: absolute;
+	top: 0px;
+	left: 0px; 
+	z-index: -1; 
+}
 
 #scoring {
 	border: solid;
@@ -175,21 +194,29 @@
 }
 
 .topNameHead {
+	color: white;
+	background-color: #306642;
+	float: left;
+	width: 42%;
+	text-align: center;
+}
+.topScoreHead {
+	color: white;
+	background-color: #306642;
+	float: left;
+	width: 20%;
+	text-align: center;
+}
+.topDateHead {
+	color: white;
+	background-color: #306642;
 	float: left;
 	width: 38%;
 	text-align: center;
 }
-.topScoreHead {
-	float: left;
-	width: 28%;
-	text-align: center;
-}
-.topDateHead {
-	float: left;
-	width: 31%;
-	text-align: center;
-}
 .topName {
+	color: white;
+	background-color: #306642;
 	text-align: left;
 	white-space: nowrap;
 	overflow: hidden;
@@ -198,11 +225,15 @@
 	width: 42%;
 }
 .topScore {
+	color: white;
+	background-color: #306642;
 	text-align: center;
 	float: left;
 	width: 20%;
 }
 .topDate {
+	color: white;
+	background-color: #306642;
 	text-align: center;
 	float: left;
 	width: 38%;

@@ -53,6 +53,7 @@ ScoringAssistant.prototype.doResets = function(choice){
 }
 
 ScoringAssistant.prototype.activate = function(event) {
+	this.controller.get('highRoll').update(global.highRoll)
 	for (var x = 1; x <= 10; x++) {
 		if (global.scores[x]) {
 			scoringElements.name[x].update('#' + x + ' - ' + global.scores[x].name)
