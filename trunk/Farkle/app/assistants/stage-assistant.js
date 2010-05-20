@@ -2,12 +2,8 @@ function StageAssistant() {
 }
 
 StageAssistant.prototype.setup = function() {
-//	this.controller.listen(Mojo.Event.deactivate, this.onBlurHandler.bind(this));
-//	this.controller.listen(Mojo.Event.activate, this.onFocusHandler.bind(this));
-
 	window.document.addEventListener (Mojo.Event.deactivate, this.onBlurHandler.bind(this));
 	window.document.addEventListener (Mojo.Event.activate, this.onFocusHandler.bind(this));
-
 	this.foregroundVolumeMarker = this.markAppForeground();
 
 	this.controller.pushScene({
