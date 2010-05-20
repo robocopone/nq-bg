@@ -1,4 +1,3 @@
-//next commit... audio finished, help scene added, scoring/play help added
 var global = {
 	initialDate: new Date().getTime(),
 	name: "",
@@ -131,6 +130,7 @@ MainAssistant.prototype.cleanup = function(event){
     this.controller.stopListening(document, 'shakestart', this.handleShakeListener);
 	farkleCookie.storeCookie();
 };
+
 
 MainAssistant.prototype.dragging = function (event) {
 	if (this.lastId != event.move.toElement.id)
