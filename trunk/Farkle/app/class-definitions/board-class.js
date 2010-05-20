@@ -136,6 +136,10 @@ board.prototype.currentScoreTapped = function(farkle){
         if (tmpScore >= 300) {
 			if (this.audio.enabled)
 				this.audio.ding.play()
+			if (tmpScore > global.highRoll) {
+				global.highRoll = tmpScore
+				farkleCookie.storeCookie()
+			}
             this.set('currentScore', 0)
             this.set('totalScore', this.totalScore += tmpScore)
             this.set('round', this.round += 1)

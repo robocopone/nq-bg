@@ -5,6 +5,7 @@ var global = {
 	scores: [],
 	initialized: false,
 	audio: true,
+	highRoll: 0,
 }
 
 var farkleCookie = ({
@@ -17,20 +18,24 @@ var farkleCookie = ({
 			global.initialDate = storedData.initialDate;
 			global.initialized = storedData.initialized;
 		}
-		if (storedData && storedData.version == "1.0.1") {
+		if (storedData && storedData.version >= "1.0.1") {
 			global.audio = storedData.audio
+		}
+		if (storedData && storedData.version == "1.0.2") {
+			global.highRoll = storedData.highRoll
 		}
 		this.storeCookie();
 	},
 	storeCookie: function() {
 		var tmpScores = global.scores.slice(0)
 		this.cookieData.put({
-			version: "1.0.1",
+			version: "1.0.2",
 			initialDate: global.initialDate,
 			scores: tmpScores,
 			name: global.name,
 			initialized: global.initialized,
-			audio: global.audio
+			audio: global.audio,
+			highRoll: global.highRoll,
 		})		
 	}
 });
