@@ -1,1 +1,19 @@
-/* TODO: put your application-specific CSS here */
+#accountExistsHead {
+	margin: 5px;
+	float: left;
+}
+#accountExists {
+	margin: 5px;
+	float: left;
+	width: 50px;
+}
+
+#displayNameHead {
+	margin: 5px;
+	float: left;
+}
+
+#displayName {
+	margin: 5px;
+	float: left;
+}
