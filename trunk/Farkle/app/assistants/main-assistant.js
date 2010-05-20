@@ -107,11 +107,10 @@ MainAssistant.prototype.setup = function(){
     this.controller.listen(this.playArea.getCupHandler(), Mojo.Event.tap, this.cupTappedListener)
     this.controller.listen(this.playArea.getCurrentScoreHandler(), Mojo.Event.tap, this.currentScoreTappedListener)
 
-    for (var x = 1; x <= 6; x++) {
+	this.controller.listen(document, Mojo.Event.dragStart, this.dieTappedListener)
+	this.controller.listen(document, Mojo.Event.dragging, this.draggingListener)
+    for (var x = 1; x <= 6; x++)
 		this.controller.listen(this.playArea.getDieHandler(x), Mojo.Event.tap, this.dieTappedListener)
-		this.controller.listen(this.playArea.getDieHandler(x), Mojo.Event.dragStart, this.dieTappedListener)
-		this.controller.listen(this.playArea.getDieHandler(x), Mojo.Event.dragging, this.draggingListener)
-	}
 	this.testOutput = this.controller.get('test')
 };
 MainAssistant.prototype.cleanup = function(event){
@@ -125,11 +124,10 @@ MainAssistant.prototype.cleanup = function(event){
     this.controller.stopListening('scoringOkButton', Mojo.Event.tap, this.scoringOkButtonListener)
     this.controller.stopListening(this.playArea.getCupHandler(), Mojo.Event.tap, this.cupTappedListener)
     this.controller.stopListening(this.playArea.getCurrentScoreHandler(), Mojo.Event.tap, this.currentScoreTappedListener)
-    for (var x = 1; x <= 6; x++) {
+	this.controller.stopListening(document, Mojo.Event.dragStart, this.dieTappedListener)
+	this.controller.stopListening(document, Mojo.Event.dragging, this.draggingListener)
+    for (var x = 1; x <= 6; x++)
 		this.controller.stopListening(this.playArea.getDieHandler(x), Mojo.Event.tap, this.dieTappedListener)
-		this.controller.stopListening(this.playArea.getDieHandler(x), Mojo.Event.dragStart, this.dieTappedListener)
-		this.controller.stopListening(this.playArea.getDieHandler(x), Mojo.Event.dragging, this.draggingListener)
-	}
     this.controller.stopListening(document, 'shakestart', this.handleShakeListener);
 	farkleCookie.storeCookie();
 };
