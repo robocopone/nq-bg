@@ -107,7 +107,7 @@ MainAssistant.prototype.setup = function(){
 		tapTempo.cookie.storeCookie();
 		tapTempo.cookie.initialize();
 	}
-	
+
 	// Load the MediaExtension library
 	try {
 		this.libs = MojoLoader.require({
