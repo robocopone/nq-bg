@@ -6,10 +6,15 @@ StageAssistant.prototype.setup = function() {
 	window.document.addEventListener (Mojo.Event.activate, this.onFocusHandler.bind(this));
 	this.foregroundVolumeMarker = this.markAppForeground();
 
+	if (Mojo.Environment.DeviceInfo.screenHeight < 480)
+		var enabled = false;
+	else
+		var enabled = true;
+
 	this.controller.pushScene({
 		name: "main",
 		transition: Mojo.Transition.crossFade,
-		disableSceneScroller: true
+		disableSceneScroller: enabled
 	});
 };
 
