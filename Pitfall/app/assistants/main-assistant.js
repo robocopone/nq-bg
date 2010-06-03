@@ -211,7 +211,7 @@ MainAssistant.prototype.setup = function(){
 	}, local.buyButtonModel);
 
 //	this.goEasy = Mojo.Function.debounce(undefined, this.doGo.bind(this), .5);
-//	this.goHard = Mojo.Function.debounce(undefined, this.doGo.bind(this), .25);
+	this.go = Mojo.Function.debounce(undefined, this.doGo.bind(this), .0625);
 
 	this.controller.listen(elements.buyButton, Mojo.Event.tap, this.tapBuyButton.bindAsEventListener(this))
 	this.controller.listen(elements.appHeader,Mojo.Event.tap, this.nav.bindAsEventListener(this));
@@ -252,20 +252,50 @@ MainAssistant.prototype.activate = function(event) {
 	global.accelTimingStart = new Date().getTime();	
 	this.average = 0
 	this.count = 0
+	this.go()
 }
 
 /*
  * Iterative function
  */
 MainAssistant.prototype.doGo = function(){
+	global.accelTimingFinish = new Date().getTime();
+	var deltaT = global.accelTimingFinish - global.accelTimingStart
+	if (deltaT >= 150) {
+		this.stop('paused')
+	}
+	this.go()
+	
+	if (global.accelY > .05) 
+		this.moveShip('left', Math.pow(global.accelY * 7, 2))
+	if (global.accelY < -.05) 
+		this.moveShip('right', Math.pow(global.accelY * 7, 2))
+	if (global.moveable) 
+		global.shipMoves++
+
+	var collided = this.collision()
+	if (!collided && !global.paused && global.difficulty == 'Easy' && global.shipMoves >= 8) {
+		global.shipMoves = 1
+		this.levelUp()
+	}
+	else if (!collided && !global.paused && global.difficulty == 'Hard' && global.shipMoves >= 4) {
+		global.shipMoves = 1
+		this.levelUp()
+	}
+	else if (collided) 
+		this.stop('collision')
+	global.accelTimingStart = new Date().getTime();
+}
+
+MainAssistant.prototype.levelUp = function() {
 	var currLastLayer = this.bumpUp();
 	this.fillLayer(currLastLayer, currLastLayer)
 	this.updateScore();
 
-	if (((Math.random() * 100) % 20).toFixed() == 0) {
-		this.controller.stageController.setWindowProperties({ fastAccelerometer: false });
-		this.controller.stageController.setWindowProperties({ fastAccelerometer: true  });
-	}
+//	if (((Math.random() * 100) % 20).toFixed() == 0) {
+//		this.controller.stageController.setWindowProperties({ fastAccelerometer: false });
+//		this.controller.stageController.setWindowProperties({ fastAccelerometer: true  });
+//	}
 }
 
 /*
@@ -273,38 +303,8 @@ MainAssistant.prototype.doGo = function(){
  */
 MainAssistant.prototype.checkAccel = function(event){
 //	elements.clock.update(Mojo.Format.formatDate( new Date(), { time: 'medium' } ) );
-
-	global.accelTimingFinish = new Date().getTime();
-	var deltaT = global.accelTimingFinish - global.accelTimingStart
-	var start1 = new Date().getTime();
-	if (deltaT >= 500) {
-		this.stop('paused')
-	}
-
-	if (deltaT > 60) {
-		global.accelTimingStart = new Date().getTime();
-		if (event.accelY > .05) 
-			this.moveShip('left', Math.pow(event.accelY * 7, 2))
-		if (event.accelY < -.05) 
-			this.moveShip('right', Math.pow(event.accelY * 7, 2))
-		if (global.moveable) 
-			global.shipMoves++
-	}
-
-	var collided = this.collision()
-	if (!collided && !global.paused && global.difficulty == 'Easy' && global.shipMoves >= 8) {
-		global.shipMoves = 1
-		this.doGo()
-	}
-	else if (!collided && !global.paused && global.difficulty == 'Hard' && global.shipMoves >= 4) {
-		global.shipMoves = 1
-		this.doGo()
-	}
-	else if (collided) 
-		this.stop('collision')
-	var finish1 = new Date().getTime();
-	count++
-	this.average += finish1 - start1
+	global.accelX = event.accelX
+	global.accelY = event.accelY
 }
 
 MainAssistant.prototype.moveShip = function (direction, magnitude) {
@@ -431,6 +431,9 @@ MainAssistant.prototype.fillLayer = function (start, finish){
 	}
 }
 
+MainAssistant.prototype.moveLayer = function() {
+	var local = {}
+}
 MainAssistant.prototype.bumpUp = function () {
 	var local = {}
 	for (var x = 1; x <= global.lastLayer; x++){
@@ -453,7 +456,6 @@ MainAssistant.prototype.bumpUp = function () {
 		if (x == this.shipLayerLookBehind() && global.doDot)
 			trail[this.shipLayerLookBehind()].removeClassName('hidden')
 	}
-
 	while (global.moving);
 	global.lock = true;
 	local.position = this.getShipPosition() - this.getLayerLeft(global.shipLayer) + 4;
