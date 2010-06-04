@@ -1,0 +1,15 @@
+[
+    {"source": "app/assistants/stage-assistant.js"},
+    {
+        "scenes": "main",
+        "source": "app/assistants/main-assistant.js"
+    },
+    {
+        "scenes": "scoring",
+        "source": "app/assistants/scoring-assistant.js"
+    },
+    {
+        "scenes": "nameDialog",
+        "source": "app/assistants/nameDialog-assistant.js"
+    }
+]
